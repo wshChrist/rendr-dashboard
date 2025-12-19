@@ -9,13 +9,7 @@ import { cn } from '@/lib/utils';
 type SelectProps = React.ComponentPropsWithoutRef<typeof SelectPrimitive.Root>;
 
 const Select = ({ ...props }: SelectProps) => {
-  return (
-    <SelectPrimitive.Root
-      data-slot='select'
-      suppressHydrationWarning
-      {...props}
-    />
-  );
+  return <SelectPrimitive.Root data-slot='select' {...props} />;
 };
 
 function SelectGroup({
