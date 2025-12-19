@@ -22,7 +22,7 @@ const baseConfig: NextConfig = {
       }
     ]
   },
-  transpilePackages: ['geist']
+  transpilePackages: ['geist', '@radix-ui/react-select']
 };
 
 let configWithPlugins = baseConfig;
