@@ -26,12 +26,13 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-  SidebarRail
+  SidebarRail,
+  useSidebar
 } from '@/components/ui/sidebar';
 import { UserAvatarProfile } from '@/components/user-avatar-profile';
 import { navItems } from '@/config/nav-config';
 import { useMediaQuery } from '@/hooks/use-media-query';
-import { useOrganization, useUser } from '@clerk/nextjs';
+import { useClerk, useOrganization, useUser } from '@clerk/nextjs';
 import { useFilteredNavItems } from '@/hooks/use-nav';
 import {
   IconBell,
@@ -41,20 +42,27 @@ import {
   IconLogout,
   IconUserCircle
 } from '@tabler/icons-react';
-import { SignOutButton } from '@clerk/nextjs';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import * as React from 'react';
 import { Icons } from '../icons';
-import { OrgSwitcher } from '../org-switcher';
+import { RendRLogo } from '../rendr-logo';
 
 export default function AppSidebar() {
   const pathname = usePathname();
   const { isOpen } = useMediaQuery();
   const { user } = useUser();
   const { organization } = useOrganization();
+  const { signOut } = useClerk();
   const router = useRouter();
+
+  const handleSignOut = async () => {
+    await signOut();
+    router.push('/auth/sign-in');
+  };
   const filteredItems = useFilteredNavItems(navItems);
+  const { state: sidebarState } = useSidebar();
+  const isCollapsed = sidebarState === 'collapsed';
 
   React.useEffect(() => {
     // Side effects based on sidebar state changes
@@ -63,59 +71,144 @@ export default function AppSidebar() {
   return (
     <Sidebar collapsible='icon'>
       <SidebarHeader>
-        <OrgSwitcher />
+        <RendRLogo />
       </SidebarHeader>
       <SidebarContent className='overflow-x-hidden'>
         <SidebarGroup>
-          <SidebarGroupLabel>Overview</SidebarGroupLabel>
+          <SidebarGroupLabel>Menu Principal</SidebarGroupLabel>
           <SidebarMenu>
-            {filteredItems.map((item) => {
+            {filteredItems.map((item, index) => {
               const Icon = item.icon ? Icons[item.icon] : Icons.logo;
-              return item?.items && item?.items?.length > 0 ? (
-                <Collapsible
-                  key={item.title}
-                  asChild
-                  defaultOpen={item.isActive}
-                  className='group/collapsible'
-                >
-                  <SidebarMenuItem>
-                    <CollapsibleTrigger asChild>
-                      <SidebarMenuButton
-                        tooltip={item.title}
-                        isActive={pathname === item.url}
-                      >
-                        {item.icon && <Icon />}
-                        <span>{item.title}</span>
-                        <IconChevronRight className='ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90' />
-                      </SidebarMenuButton>
-                    </CollapsibleTrigger>
-                    <CollapsibleContent>
-                      <SidebarMenuSub>
-                        {item.items?.map((subItem) => (
-                          <SidebarMenuSubItem key={subItem.title}>
-                            <SidebarMenuSubButton
+              const hasSubItems = item?.items && item?.items?.length > 0;
+              const isActiveParent = item.items?.some(
+                (subItem) => pathname === subItem.url
+              );
+
+              // Si le menu a des sous-éléments
+              if (hasSubItems) {
+                // Mode collapsed : utiliser DropdownMenu
+                if (isCollapsed) {
+                  return (
+                    <SidebarMenuItem
+                      key={item.title}
+                      className='animate-fade-in-up opacity-0'
+                      style={{
+                        animationDelay: `${index * 50}ms`,
+                        animationFillMode: 'forwards'
+                      }}
+                    >
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <SidebarMenuButton
+                            tooltip={item.title}
+                            isActive={isActiveParent}
+                            className='group transition-all duration-200'
+                          >
+                            {item.icon && (
+                              <Icon className='transition-transform duration-200 group-hover:scale-110' />
+                            )}
+                            <span>{item.title}</span>
+                            <IconChevronRight className='ml-auto transition-transform duration-200' />
+                          </SidebarMenuButton>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent
+                          side='right'
+                          align='start'
+                          sideOffset={8}
+                          className='min-w-48'
+                        >
+                          <DropdownMenuLabel>{item.title}</DropdownMenuLabel>
+                          <DropdownMenuSeparator />
+                          {item.items?.map((subItem) => (
+                            <DropdownMenuItem
+                              key={subItem.title}
                               asChild
-                              isActive={pathname === subItem.url}
+                              className={
+                                pathname === subItem.url ? 'bg-accent' : ''
+                              }
                             >
-                              <Link href={subItem.url}>
-                                <span>{subItem.title}</span>
+                              <Link
+                                href={subItem.url}
+                                className='cursor-pointer'
+                              >
+                                {subItem.title}
                               </Link>
-                            </SidebarMenuSubButton>
-                          </SidebarMenuSubItem>
-                        ))}
-                      </SidebarMenuSub>
-                    </CollapsibleContent>
-                  </SidebarMenuItem>
-                </Collapsible>
-              ) : (
-                <SidebarMenuItem key={item.title}>
+                            </DropdownMenuItem>
+                          ))}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </SidebarMenuItem>
+                  );
+                }
+
+                // Mode expanded : utiliser Collapsible
+                return (
+                  <Collapsible
+                    key={item.title}
+                    asChild
+                    defaultOpen={item.isActive || isActiveParent}
+                    className='group/collapsible'
+                  >
+                    <SidebarMenuItem
+                      className='animate-fade-in-up opacity-0'
+                      style={{
+                        animationDelay: `${index * 50}ms`,
+                        animationFillMode: 'forwards'
+                      }}
+                    >
+                      <CollapsibleTrigger asChild>
+                        <SidebarMenuButton
+                          tooltip={item.title}
+                          isActive={isActiveParent}
+                          className='group transition-all duration-200 hover:translate-x-1'
+                        >
+                          {item.icon && (
+                            <Icon className='transition-transform duration-200 group-hover:scale-110' />
+                          )}
+                          <span>{item.title}</span>
+                          <IconChevronRight className='ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90' />
+                        </SidebarMenuButton>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent>
+                        <SidebarMenuSub>
+                          {item.items?.map((subItem) => (
+                            <SidebarMenuSubItem key={subItem.title}>
+                              <SidebarMenuSubButton
+                                asChild
+                                isActive={pathname === subItem.url}
+                                className='transition-all duration-200 hover:translate-x-1'
+                              >
+                                <Link href={subItem.url}>
+                                  <span>{subItem.title}</span>
+                                </Link>
+                              </SidebarMenuSubButton>
+                            </SidebarMenuSubItem>
+                          ))}
+                        </SidebarMenuSub>
+                      </CollapsibleContent>
+                    </SidebarMenuItem>
+                  </Collapsible>
+                );
+              }
+
+              // Menu sans sous-éléments
+              return (
+                <SidebarMenuItem
+                  key={item.title}
+                  className='animate-fade-in-up opacity-0'
+                  style={{
+                    animationDelay: `${index * 50}ms`,
+                    animationFillMode: 'forwards'
+                  }}
+                >
                   <SidebarMenuButton
                     asChild
                     tooltip={item.title}
                     isActive={pathname === item.url}
+                    className='group transition-all duration-200 hover:translate-x-1'
                   >
                     <Link href={item.url}>
-                      <Icon />
+                      <Icon className='transition-transform duration-200 group-hover:scale-110' />
                       <span>{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
@@ -168,25 +261,23 @@ export default function AppSidebar() {
                     onClick={() => router.push('/dashboard/profile')}
                   >
                     <IconUserCircle className='mr-2 h-4 w-4' />
-                    Profile
+                    Profil
                   </DropdownMenuItem>
-                  {organization && (
-                    <DropdownMenuItem
-                      onClick={() => router.push('/dashboard/billing')}
-                    >
-                      <IconCreditCard className='mr-2 h-4 w-4' />
-                      Billing
-                    </DropdownMenuItem>
-                  )}
+                  <DropdownMenuItem
+                    onClick={() => router.push('/dashboard/withdrawals')}
+                  >
+                    <IconCreditCard className='mr-2 h-4 w-4' />
+                    Retraits
+                  </DropdownMenuItem>
                   <DropdownMenuItem>
                     <IconBell className='mr-2 h-4 w-4' />
                     Notifications
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={handleSignOut}>
                   <IconLogout className='mr-2 h-4 w-4' />
-                  <SignOutButton redirectUrl='/auth/sign-in' />
+                  Déconnexion
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

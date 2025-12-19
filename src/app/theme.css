@@ -26,14 +26,20 @@ body {
   }
 }
 
+/* ========================================
+   THEME RENDR - Monochrome
+   Noir et blanc uniquement
+   ======================================== */
 .theme-default,
-.theme-default-scaled {
-  --primary: var(--color-neutral-600);
-  --primary-foreground: var(--color-neutral-50);
+.theme-default-scaled,
+.theme-rendr,
+.theme-rendr-scaled {
+  --primary: oklch(0.15 0 0);
+  --primary-foreground: oklch(0.98 0 0);
 
   @variant dark {
-    --primary: var(--color-neutral-500);
-    --primary-foreground: var(--color-neutral-50);
+    --primary: oklch(0.95 0 0);
+    --primary-foreground: oklch(0.08 0 0);
   }
 }
 

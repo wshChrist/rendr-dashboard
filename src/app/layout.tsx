@@ -10,18 +10,20 @@ import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import './globals.css';
 import './theme.css';
 
+// Couleurs RendR
 const META_THEME_COLORS = {
-  light: '#ffffff',
-  dark: '#09090b'
+  light: '#fafafa',
+  dark: '#0a0a0f' // Fond sombre RendR
 };
 
 export const metadata: Metadata = {
-  title: 'Next Shadcn',
-  description: 'Basic dashboard with Next.js and Shadcn'
+  title: 'RendR - Cashback Traders',
+  description:
+    'Récupérez une partie de vos frais de trading grâce à notre partenariat IB avec des brokers régulés.'
 };
 
 export const viewport: Viewport = {
-  themeColor: META_THEME_COLORS.light
+  themeColor: META_THEME_COLORS.dark
 };
 
 export default async function RootLayout({
@@ -30,11 +32,11 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const cookieStore = await cookies();
-  const activeThemeValue = cookieStore.get('active_theme')?.value;
+  const activeThemeValue = cookieStore.get('active_theme')?.value || 'rendr';
   const isScaled = activeThemeValue?.endsWith('-scaled');
 
   return (
-    <html lang='en' suppressHydrationWarning>
+    <html lang='fr' suppressHydrationWarning>
       <head>
         <script
           dangerouslySetInnerHTML={{
@@ -49,19 +51,20 @@ export default async function RootLayout({
         />
       </head>
       <body
+        suppressHydrationWarning
         className={cn(
           'bg-background overflow-hidden overscroll-none font-sans antialiased',
-          activeThemeValue ? `theme-${activeThemeValue}` : '',
+          activeThemeValue ? `theme-${activeThemeValue}` : 'theme-rendr',
           isScaled ? 'theme-scaled' : '',
           fontVariables
         )}
       >
-        <NextTopLoader color='var(--primary)' showSpinner={false} />
+        <NextTopLoader color='#ffffff' showSpinner={false} />
         <NuqsAdapter>
           <ThemeProvider
             attribute='class'
-            defaultTheme='system'
-            enableSystem
+            defaultTheme='dark'
+            enableSystem={false}
             disableTransitionOnChange
             enableColorScheme
           >

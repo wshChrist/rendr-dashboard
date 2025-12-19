@@ -7,26 +7,32 @@
 
 # testing
 /coverage
+*.lcov
 
 # next.js
 /.next/
 /out/
+/.swc
 
 # production
 /build
+/dist
 
 # misc
-.DS_Store
 *.pem
 
 # debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
+bun-debug.log*
 
 # local env files
 .env*
 .env*.local
+!.env.example
+!env.example.txt
 
 # vercel
 .vercel
@@ -35,10 +41,14 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# IDE
 .idea/
+*.swp
+*.swo
+*~
+
 # clerk configuration (can include secrets)
 /.clerk/
-
 
 # cursor 
 .cursorrules
@@ -46,3 +56,20 @@ next-env.d.ts
 
 # Sentry Config File
 .env.sentry-build-plugin
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+*.log
+
+# Package manager locks (keep only the one you use)
+# Uncomment the ones you don't use:
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml

@@ -10,11 +10,18 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { UserAvatarProfile } from '@/components/user-avatar-profile';
-import { SignOutButton, useUser } from '@clerk/nextjs';
+import { useClerk, useUser } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 export function UserNav() {
   const { user } = useUser();
+  const { signOut } = useClerk();
   const router = useRouter();
+
+  const handleSignOut = async () => {
+    await signOut();
+    router.push('/auth/sign-in');
+  };
+
   if (user) {
     return (
       <DropdownMenu>
@@ -49,9 +56,7 @@ export function UserNav() {
             <DropdownMenuItem>New Team</DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>
-            <SignOutButton redirectUrl='/auth/sign-in' />
-          </DropdownMenuItem>
+          <DropdownMenuItem onClick={handleSignOut}>Sign out</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     );

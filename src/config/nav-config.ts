@@ -1,36 +1,11 @@
 import { NavItem } from '@/types';
 
 /**
- * Navigation configuration with RBAC support
- *
- * This configuration is used for both the sidebar navigation and Cmd+K bar.
+ * Configuration de navigation pour la plateforme de cashback traders
  *
  * RBAC Access Control:
  * Each navigation item can have an `access` property that controls visibility
  * based on permissions, plans, features, roles, and organization context.
- *
- * Examples:
- *
- * 1. Require organization:
- *    access: { requireOrg: true }
- *
- * 2. Require specific permission:
- *    access: { requireOrg: true, permission: 'org:teams:manage' }
- *
- * 3. Require specific plan:
- *    access: { plan: 'pro' }
- *
- * 4. Require specific feature:
- *    access: { feature: 'premium_access' }
- *
- * 5. Require specific role:
- *    access: { role: 'admin' }
- *
- * 6. Multiple conditions (all must be true):
- *    access: { requireOrg: true, permission: 'org:teams:manage', plan: 'pro' }
- *
- * Note: The `visible` function is deprecated but still supported for backward compatibility.
- * Use the `access` property for new items.
  */
 export const navItems: NavItem[] = [
   {
@@ -42,80 +17,75 @@ export const navItems: NavItem[] = [
     items: []
   },
   {
-    title: 'Workspaces',
-    url: '/dashboard/workspaces',
-    icon: 'workspace',
+    title: 'Transactions',
+    url: '/dashboard/transactions',
+    icon: 'transactions',
     isActive: false,
+    shortcut: ['t', 't'],
     items: []
   },
   {
-    title: 'Teams',
-    url: '/dashboard/workspaces/team',
-    icon: 'teams',
-    isActive: false,
-    items: [],
-    // Require organization to be active
-    access: { requireOrg: true }
-    // Alternative: require specific permission
-    // access: { requireOrg: true, permission: 'org:teams:view' }
-  },
-  {
-    title: 'Product',
-    url: '/dashboard/product',
-    icon: 'product',
-    shortcut: ['p', 'p'],
-    isActive: false,
-    items: []
-  },
-  {
-    title: 'Kanban',
-    url: '/dashboard/kanban',
-    icon: 'kanban',
-    shortcut: ['k', 'k'],
-    isActive: false,
-    items: []
-  },
-  {
-    title: 'Pro',
-    url: '#', // Placeholder as there is no direct link for the parent
-    icon: 'pro',
+    title: 'Brokers',
+    url: '/dashboard/brokers',
+    icon: 'brokers',
     isActive: true,
+    shortcut: ['b', 'b'],
     items: [
       {
-        title: 'Exclusive',
-        url: '/dashboard/exclusive',
-        icon: 'exclusive',
-        shortcut: ['m', 'm']
+        title: 'Mes Comptes',
+        url: '/dashboard/brokers/my-brokers',
+        icon: 'profile',
+        shortcut: ['b', 'm']
+      },
+      {
+        title: 'Brokers Partenaires',
+        url: '/dashboard/brokers/available',
+        icon: 'brokers',
+        shortcut: ['b', 'p']
       }
     ]
   },
   {
-    title: 'Account',
-    url: '#', // Placeholder as there is no direct link for the parent
+    title: 'Retraits',
+    url: '/dashboard/withdrawals',
+    icon: 'withdrawals',
+    isActive: false,
+    shortcut: ['r', 'r'],
+    items: []
+  },
+  {
+    title: 'Parrainage',
+    url: '/dashboard/referral',
+    icon: 'referral',
+    isActive: false,
+    shortcut: ['p', 'p'],
+    items: []
+  },
+  {
+    title: 'Nouveautés',
+    url: '/dashboard/updates',
+    icon: 'updates',
+    isActive: false,
+    shortcut: ['n', 'n'],
+    items: []
+  },
+  {
+    title: 'Compte',
+    url: '#',
     icon: 'account',
     isActive: true,
     items: [
       {
-        title: 'Profile',
+        title: 'Profil',
         url: '/dashboard/profile',
         icon: 'profile',
         shortcut: ['m', 'm']
       },
       {
-        title: 'Billing',
-        url: '/dashboard/billing',
-        icon: 'billing',
-        shortcut: ['b', 'b'],
-        // Only show billing if in organization context
-        access: { requireOrg: true }
-        // Alternative: require billing management permission
-        // access: { requireOrg: true, permission: 'org:manage:billing' }
-      },
-      {
-        title: 'Login',
+        title: 'Déconnexion',
         shortcut: ['l', 'l'],
         url: '/',
-        icon: 'login'
+        icon: 'logout'
       }
     ]
   }

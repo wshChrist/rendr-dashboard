@@ -50,15 +50,15 @@ export function DataTableViewOptions<TData>({
           className='ml-auto hidden h-8 lg:flex'
         >
           <Settings2 />
-          View
+          Affichage
           <CaretSortIcon className='ml-auto opacity-50' />
         </Button>
       </PopoverTrigger>
       <PopoverContent align='end' className='w-44 p-0'>
         <Command>
-          <CommandInput placeholder='Search columns...' />
+          <CommandInput placeholder='Rechercher une colonne...' />
           <CommandList>
-            <CommandEmpty>No columns found.</CommandEmpty>
+            <CommandEmpty>Aucune colonne trouvée.</CommandEmpty>
             <CommandGroup>
               {columns.map((column) => (
                 <CommandItem

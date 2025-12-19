@@ -172,6 +172,7 @@ function Sidebar({
           'bg-sidebar text-sidebar-foreground flex h-full w-(--sidebar-width) flex-col',
           className
         )}
+        suppressHydrationWarning
         {...props}
       >
         {children}
@@ -212,6 +213,7 @@ function Sidebar({
       data-variant={variant}
       data-side={side}
       data-slot='sidebar'
+      suppressHydrationWarning
     >
       {/* This is what handles the sidebar gap on desktop */}
       <div
@@ -244,6 +246,7 @@ function Sidebar({
           data-sidebar='sidebar'
           data-slot='sidebar-inner'
           className='bg-sidebar group-data-[variant=floating]:border-sidebar-border flex h-full w-full flex-col group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:shadow-sm'
+          suppressHydrationWarning
         >
           {children}
         </div>
@@ -376,6 +379,7 @@ function SidebarContent({ className, ...props }: React.ComponentProps<'div'>) {
         'flex min-h-0 flex-1 flex-col gap-2 overflow-auto group-data-[collapsible=icon]:overflow-hidden',
         className
       )}
+      suppressHydrationWarning
       {...props}
     />
   );
@@ -456,6 +460,7 @@ function SidebarMenu({ className, ...props }: React.ComponentProps<'ul'>) {
       data-slot='sidebar-menu'
       data-sidebar='menu'
       className={cn('flex w-full min-w-0 flex-col gap-1', className)}
+      suppressHydrationWarning
       {...props}
     />
   );

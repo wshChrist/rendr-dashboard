@@ -1,15 +1,9 @@
 import PageContainer from '@/components/layout/page-container';
-import { Badge } from '@/components/ui/badge';
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardAction,
-  CardFooter
-} from '@/components/ui/card';
-import { IconTrendingDown, IconTrendingUp } from '@tabler/icons-react';
 import React from 'react';
+import { StatsCards } from '@/features/overview/components/stats-cards';
+import { PlatformUpdates } from '@/features/overview/components/platform-updates';
+import { WelcomeHeader } from '@/features/overview/components/welcome-header';
+import { SectionHeading } from '@/components/ui/section-heading';
 
 export default function OverViewLayout({
   sales,
@@ -24,113 +18,74 @@ export default function OverViewLayout({
 }) {
   return (
     <PageContainer>
-      <div className='flex flex-1 flex-col space-y-2'>
-        <div className='flex items-center justify-between space-y-2'>
-          <h2 className='text-2xl font-bold tracking-tight'>
-            Hi, Welcome back 👋
-          </h2>
-        </div>
+      <div className='relative flex flex-1 flex-col space-y-6'>
+        {/* Décorations de fond subtiles */}
+        <div className='pointer-events-none absolute top-0 right-0 h-64 w-64 rounded-full bg-white/[0.02] blur-3xl' />
+        <div className='pointer-events-none absolute bottom-1/4 left-0 h-48 w-48 rounded-full bg-white/[0.01] blur-3xl' />
 
-        <div className='*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-1 gap-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs md:grid-cols-2 lg:grid-cols-4'>
-          <Card className='@container/card'>
-            <CardHeader>
-              <CardDescription>Total Revenue</CardDescription>
-              <CardTitle className='text-2xl font-semibold tabular-nums @[250px]/card:text-3xl'>
-                $1,250.00
-              </CardTitle>
-              <CardAction>
-                <Badge variant='outline'>
-                  <IconTrendingUp />
-                  +12.5%
-                </Badge>
-              </CardAction>
-            </CardHeader>
-            <CardFooter className='flex-col items-start gap-1.5 text-sm'>
-              <div className='line-clamp-1 flex gap-2 font-medium'>
-                Trending up this month <IconTrendingUp className='size-4' />
-              </div>
-              <div className='text-muted-foreground'>
-                Visitors for the last 6 months
-              </div>
-            </CardFooter>
-          </Card>
-          <Card className='@container/card'>
-            <CardHeader>
-              <CardDescription>New Customers</CardDescription>
-              <CardTitle className='text-2xl font-semibold tabular-nums @[250px]/card:text-3xl'>
-                1,234
-              </CardTitle>
-              <CardAction>
-                <Badge variant='outline'>
-                  <IconTrendingDown />
-                  -20%
-                </Badge>
-              </CardAction>
-            </CardHeader>
-            <CardFooter className='flex-col items-start gap-1.5 text-sm'>
-              <div className='line-clamp-1 flex gap-2 font-medium'>
-                Down 20% this period <IconTrendingDown className='size-4' />
-              </div>
-              <div className='text-muted-foreground'>
-                Acquisition needs attention
-              </div>
-            </CardFooter>
-          </Card>
-          <Card className='@container/card'>
-            <CardHeader>
-              <CardDescription>Active Accounts</CardDescription>
-              <CardTitle className='text-2xl font-semibold tabular-nums @[250px]/card:text-3xl'>
-                45,678
-              </CardTitle>
-              <CardAction>
-                <Badge variant='outline'>
-                  <IconTrendingUp />
-                  +12.5%
-                </Badge>
-              </CardAction>
-            </CardHeader>
-            <CardFooter className='flex-col items-start gap-1.5 text-sm'>
-              <div className='line-clamp-1 flex gap-2 font-medium'>
-                Strong user retention <IconTrendingUp className='size-4' />
-              </div>
-              <div className='text-muted-foreground'>
-                Engagement exceed targets
-              </div>
-            </CardFooter>
-          </Card>
-          <Card className='@container/card'>
-            <CardHeader>
-              <CardDescription>Growth Rate</CardDescription>
-              <CardTitle className='text-2xl font-semibold tabular-nums @[250px]/card:text-3xl'>
-                4.5%
-              </CardTitle>
-              <CardAction>
-                <Badge variant='outline'>
-                  <IconTrendingUp />
-                  +4.5%
-                </Badge>
-              </CardAction>
-            </CardHeader>
-            <CardFooter className='flex-col items-start gap-1.5 text-sm'>
-              <div className='line-clamp-1 flex gap-2 font-medium'>
-                Steady performance increase{' '}
-                <IconTrendingUp className='size-4' />
-              </div>
-              <div className='text-muted-foreground'>
-                Meets growth projections
-              </div>
-            </CardFooter>
-          </Card>
-        </div>
-        <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-7'>
-          <div className='col-span-4'>{bar_stats}</div>
-          <div className='col-span-4 md:col-span-3'>
-            {/* sales arallel routes */}
-            {sales}
+        {/* Header personnalisé avec nom de l'utilisateur */}
+        <WelcomeHeader />
+
+        {/* Stats Cards animées */}
+        <section>
+          <StatsCards />
+        </section>
+
+        {/* Section principale : Updates + Activité */}
+        <section className='space-y-4'>
+          <SectionHeading
+            title='Aperçu'
+            size='sm'
+            className='animate-fade-in-up opacity-0'
+            style={{ animationDelay: '350ms', animationFillMode: 'forwards' }}
+          />
+          <div className='grid grid-cols-1 gap-4 lg:grid-cols-2'>
+            {/* Nouveautés de la plateforme */}
+            <div
+              className='animate-fade-in-up opacity-0'
+              style={{ animationDelay: '400ms', animationFillMode: 'forwards' }}
+            >
+              <PlatformUpdates />
+            </div>
+            {/* Activité récente */}
+            <div
+              className='animate-fade-in-up opacity-0'
+              style={{ animationDelay: '500ms', animationFillMode: 'forwards' }}
+            >
+              {sales}
+            </div>
           </div>
-          <div className='col-span-4'>{area_stats}</div>
-          <div className='col-span-4 md:col-span-3'>{pie_stats}</div>
-        </div>
+        </section>
+
+        {/* Charts avec animations décalées */}
+        <section className='space-y-4'>
+          <SectionHeading
+            title='Statistiques'
+            size='sm'
+            className='animate-fade-in-up opacity-0'
+            style={{ animationDelay: '550ms', animationFillMode: 'forwards' }}
+          />
+          <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-7'>
+            <div
+              className='animate-fade-in-up col-span-4 opacity-0'
+              style={{ animationDelay: '600ms', animationFillMode: 'forwards' }}
+            >
+              {bar_stats}
+            </div>
+            <div
+              className='animate-fade-in-up col-span-4 opacity-0 md:col-span-3'
+              style={{ animationDelay: '700ms', animationFillMode: 'forwards' }}
+            >
+              {pie_stats}
+            </div>
+            <div
+              className='animate-fade-in-up col-span-7 opacity-0'
+              style={{ animationDelay: '800ms', animationFillMode: 'forwards' }}
+            >
+              {area_stats}
+            </div>
+          </div>
+        </section>
       </div>
     </PageContainer>
   );

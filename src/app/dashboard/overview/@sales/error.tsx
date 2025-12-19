@@ -7,9 +7,9 @@ export default function SalesError({ error }: { error: Error }) {
   return (
     <Alert variant='destructive'>
       <IconAlertCircle className='h-4 w-4' />
-      <AlertTitle>Error</AlertTitle>
+      <AlertTitle>Erreur</AlertTitle>
       <AlertDescription>
-        Failed to load sales data: {error.message}
+        Impossible de charger les données d'activité : {error.message}
       </AlertDescription>
     </Alert>
   );

@@ -1,6 +1,7 @@
 import {
   IconAlertTriangle,
   IconArrowRight,
+  IconBell,
   IconCheck,
   IconChevronLeft,
   IconChevronRight,
@@ -31,19 +32,30 @@ import {
   IconX,
   IconLayoutKanban,
   IconBrandGithub,
+  IconBrandGoogle,
   IconFolder,
   IconUsers,
   IconCrown,
   IconStar,
-  IconBox
+  IconBox,
+  // Icônes spécifiques trading/cashback
+  IconArrowsExchange,
+  IconBuildingBank,
+  IconWallet,
+  IconSparkles,
+  IconGift,
+  IconReceipt,
+  IconLogout
 } from '@tabler/icons-react';
 
 export type Icon = React.ComponentType<IconProps>;
 
 export const Icons = {
+  // Navigation principale
   dashboard: IconLayoutDashboard,
   logo: IconCommand,
   login: IconLogin,
+  logout: IconLogout,
   close: IconX,
   product: IconBox,
   spinner: IconLoader2,
@@ -70,6 +82,7 @@ export const Icons = {
   moon: IconMoon,
   laptop: IconDeviceLaptop,
   github: IconBrandGithub,
+  google: IconBrandGoogle,
   twitter: IconBrandTwitter,
   check: IconCheck,
   workspace: IconFolder,
@@ -77,5 +90,14 @@ export const Icons = {
   pro: IconCrown,
   exclusive: IconStar,
   account: IconUserCircle,
-  profile: IconUser
+  profile: IconUser,
+  bell: IconBell,
+
+  // Icônes spécifiques RendR Cashback
+  transactions: IconArrowsExchange, // Échanges / Trades
+  brokers: IconBuildingBank, // Institutions financières
+  withdrawals: IconWallet, // Portefeuille / Retraits
+  referral: IconGift, // Cadeau / Parrainage
+  updates: IconSparkles, // Nouveautés
+  receipt: IconReceipt // Historique
 };

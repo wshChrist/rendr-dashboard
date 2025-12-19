@@ -7,9 +7,9 @@ export default function OverviewError({ error }: { error: Error }) {
   return (
     <Alert variant='destructive'>
       <IconAlertCircle className='h-4 w-4' />
-      <AlertTitle>Error</AlertTitle>
+      <AlertTitle>Erreur</AlertTitle>
       <AlertDescription>
-        Failed to load statistics: {error.message}
+        Impossible de charger les statistiques : {error.message}
       </AlertDescription>
     </Alert>
   );
