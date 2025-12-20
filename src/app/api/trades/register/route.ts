@@ -85,26 +85,48 @@ export async function POST(request: NextRequest) {
 
     const supabase = await createClient();
 
+    // Normaliser les valeurs pour la recherche
+    const normalizedLogin = account_number.toString().trim();
+    const normalizedServer = server.trim();
+    const normalizedPlatform = platform.trim().toUpperCase();
+
+    console.log('Recherche du compte avec:', {
+      login: normalizedLogin,
+      server: normalizedServer,
+      platform: normalizedPlatform
+    });
+
     // Chercher le compte de trading correspondant
+    // D'abord, récupérer tous les comptes pour debug si nécessaire
+    const { data: allAccounts } = await supabase
+      .from('trading_accounts')
+      .select('login, server, platform')
+      .limit(100);
+
+    console.log('Comptes existants dans la DB:', allAccounts);
+
     const { data: account, error: fetchError } = await supabase
       .from('trading_accounts')
       .select('*')
-      .eq('login', account_number.toString())
-      .eq('server', server)
-      .eq('platform', platform)
+      .eq('login', normalizedLogin)
+      .eq('server', normalizedServer)
+      .eq('platform', normalizedPlatform)
       .single();
 
     if (fetchError || !account) {
       console.error('Compte non trouvé:', {
-        account_number,
-        server,
-        platform,
-        error: fetchError
+        recherché: {
+          login: normalizedLogin,
+          server: normalizedServer,
+          platform: normalizedPlatform
+        },
+        erreur: fetchError,
+        comptes_disponibles: allAccounts
       });
       return NextResponse.json(
         {
           error: 'Compte non trouvé',
-          message: `Aucun compte trouvé avec login=${account_number}, server=${server}, platform=${platform}. Veuillez créer le compte via le dashboard d'abord.`
+          message: `Aucun compte trouvé avec login=${normalizedLogin}, server=${normalizedServer}, platform=${normalizedPlatform}. Veuillez créer le compte via le dashboard d'abord.`
         },
         {
           status: 404,
