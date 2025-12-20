@@ -241,6 +241,7 @@ export function MyBrokers() {
         trade_id: trade.ticket,
         pair: trade.symbol,
         volume: parseFloat(trade.lots || '0'),
+        profit: parseFloat(trade.profit || '0'), // Profit réel du trade
         cashback_amount: calculateCashbackForTrade(
           ub.broker.name,
           parseFloat(trade.lots || '0'),
@@ -607,8 +608,14 @@ export function MyBrokers() {
                           })}
                         </span>
                       </div>
-                      <span className='text-sm font-semibold text-[#c5d13f]'>
-                        +{trade.cashback_amount.toFixed(2)}€
+                      <span
+                        className={cn(
+                          'text-sm font-semibold',
+                          trade.profit >= 0 ? 'text-green-400' : 'text-red-400'
+                        )}
+                      >
+                        {trade.profit >= 0 ? '+' : ''}
+                        {trade.profit.toFixed(2)}€
                       </span>
                     </div>
                   ))}
