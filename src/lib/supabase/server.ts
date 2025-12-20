@@ -1,4 +1,5 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
+import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';
 
 export async function createClient() {
@@ -36,6 +37,29 @@ export async function createClient() {
           // user sessions.
         }
       }
+    }
+  });
+}
+
+/**
+ * Crée un client Supabase avec service role (bypass RLS)
+ * ⚠️ À utiliser uniquement pour les routes publiques comme l'API EA
+ * qui nécessitent d'accéder à toutes les données sans authentification
+ */
+export function createServiceRoleClient() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!supabaseUrl || !serviceRoleKey) {
+    throw new Error(
+      'Variables Supabase service role manquantes. Vérifiez SUPABASE_SERVICE_ROLE_KEY dans votre fichier .env.local'
+    );
+  }
+
+  return createSupabaseClient(supabaseUrl, serviceRoleKey, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false
     }
   });
 }

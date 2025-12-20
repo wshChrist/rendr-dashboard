@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server';
+import { createServiceRoleClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { v4 as uuidv4 } from 'uuid';
 import crypto from 'crypto';
@@ -83,7 +83,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const supabase = await createClient();
+    // Utiliser le service role client pour bypass RLS (route publique pour l'EA)
+    const supabase = createServiceRoleClient();
 
     // Normaliser les valeurs pour la recherche
     const normalizedLogin = account_number.toString().trim();
