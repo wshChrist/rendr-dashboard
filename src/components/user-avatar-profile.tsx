@@ -24,7 +24,7 @@ export function UserAvatarProfile({
     user.user_metadata?.avatar_url || user.user_metadata?.picture || '';
   const initials = displayName
     .split(' ')
-    .map((n) => n[0])
+    .map((n: string) => n[0])
     .join('')
     .toUpperCase()
     .slice(0, 2);
