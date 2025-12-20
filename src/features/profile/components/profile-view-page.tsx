@@ -854,7 +854,7 @@ export default function ProfileViewPage() {
                 <Label>Email de connexion</Label>
                 <div className='flex gap-2'>
                   <Input
-                    value={user?.primaryEmailAddress?.emailAddress || ''}
+                    value={user?.email || ''}
                     disabled
                     className='flex-1 border-white/10 bg-white/5'
                   />
@@ -862,11 +862,7 @@ export default function ProfileViewPage() {
                     variant='outline'
                     size='icon'
                     className='border-white/10 bg-white/5 hover:bg-white/10'
-                    onClick={() =>
-                      copyToClipboard(
-                        user?.primaryEmailAddress?.emailAddress || ''
-                      )
-                    }
+                    onClick={() => copyToClipboard(user?.email || '')}
                   >
                     <IconCopy className='h-4 w-4' />
                   </Button>
