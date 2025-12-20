@@ -80,6 +80,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Type assertion pour garantir que account a le champ status
+    const accountWithStatus = account as { id: string; status: string };
+
     // Vérifier la signature HMAC (si fournie)
     // Note: Pour l'instant, on accepte les trades sans vérification stricte
     // En production, implémenter la vérification HMAC complète
@@ -141,11 +144,11 @@ export async function POST(request: NextRequest) {
 
     // Mettre à jour le statut du compte à "connected" s'il est encore en "pending_vps_setup"
     // Car l'enregistrement d'un trade prouve que le compte est actif
-    if (account.status === 'pending_vps_setup') {
+    if (accountWithStatus.status === 'pending_vps_setup') {
       const { error: updateStatusError } = await supabase
         .from('trading_accounts')
         .update({ status: 'connected' })
-        .eq('id', account.id);
+        .eq('id', accountWithStatus.id);
 
       if (updateStatusError) {
         console.error(
