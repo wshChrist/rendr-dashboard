@@ -17,7 +17,7 @@ import { useRouter } from 'next/navigation';
 const formSchema = z.object({
   broker: z.string().min(1, 'Le broker est requis'),
   platform: z.enum(['MT4', 'MT5'], {
-    required_error: 'La plateforme est requise'
+    message: 'La plateforme est requise'
   }),
   server: z.string().min(1, 'Le serveur est requis'),
   login: z.string().min(1, 'Le numéro de compte est requis'),
