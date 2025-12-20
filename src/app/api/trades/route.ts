@@ -60,10 +60,10 @@ export async function POST(request: NextRequest) {
     // Utiliser le service role client pour bypass RLS (route publique pour l'EA)
     const supabase = createServiceRoleClient();
 
-    // Trouver le compte de trading
+    // Trouver le compte de trading (inclure le statut pour la vérification)
     const { data: account, error: accountError } = await supabase
       .from('trading_accounts')
-      .select('id')
+      .select('id, status')
       .eq('external_account_id', external_account_id)
       .single();
 
