@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
     // Trouver le compte de trading
     const { data: account, error: accountError } = await supabase
       .from('trading_accounts')
-      .select('id, api_secret')
+      .select('id')
       .eq('external_account_id', external_account_id)
       .single();
 
