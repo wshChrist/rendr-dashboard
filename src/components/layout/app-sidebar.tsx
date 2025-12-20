@@ -32,8 +32,10 @@ import {
 import { UserAvatarProfile } from '@/components/user-avatar-profile';
 import { navItems } from '@/config/nav-config';
 import { useMediaQuery } from '@/hooks/use-media-query';
-import { useClerk, useOrganization, useUser } from '@clerk/nextjs';
 import { useFilteredNavItems } from '@/hooks/use-nav';
+import { createSupabaseClient } from '@/lib/supabase/client';
+import { useEffect, useState } from 'react';
+import type { User } from '@supabase/supabase-js';
 import {
   IconBell,
   IconChevronRight,
@@ -51,14 +53,33 @@ import { RendRLogo } from '../rendr-logo';
 export default function AppSidebar() {
   const pathname = usePathname();
   const { isOpen } = useMediaQuery();
-  const { user } = useUser();
-  const { organization } = useOrganization();
-  const { signOut } = useClerk();
+  const [user, setUser] = useState<User | null>(null);
+  const supabase = createSupabaseClient();
   const router = useRouter();
 
+  useEffect(() => {
+    const getUser = async () => {
+      const {
+        data: { user }
+      } = await supabase.auth.getUser();
+      setUser(user);
+    };
+
+    getUser();
+
+    const {
+      data: { subscription }
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [supabase]);
+
   const handleSignOut = async () => {
-    await signOut();
+    await supabase.auth.signOut();
     router.push('/auth/sign-in');
+    router.refresh();
   };
   const filteredItems = useFilteredNavItems(navItems);
   const { state: sidebarState } = useSidebar();

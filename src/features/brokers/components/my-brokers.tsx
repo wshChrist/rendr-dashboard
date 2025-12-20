@@ -1,7 +1,18 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { userBrokersData, transactionsData } from '@/constants/cashback-data';
 import { Button } from '@/components/ui/button';
+import { CreateTradingAccountForm } from '@/features/trading-accounts/components/create-trading-account-form';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from '@/components/ui/dialog';
+import { backendClient } from '@/lib/api/backend-client';
+import { createSupabaseClient } from '@/lib/supabase/client';
 import {
   IconExternalLink,
   IconRefresh,
@@ -46,21 +57,102 @@ const getStatusBadge = (status: string) => {
 };
 
 export function MyBrokers() {
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [accounts, setAccounts] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const supabase = createSupabaseClient();
+
+  // Charger les comptes depuis le backend
+  const loadAccounts = async () => {
+    try {
+      setIsLoading(true);
+      const {
+        data: { session },
+        error: sessionError
+      } = await supabase.auth.getSession();
+
+      if (sessionError) {
+        console.error('Erreur de session:', sessionError);
+        setIsLoading(false);
+        return;
+      }
+
+      if (session?.access_token) {
+        const data = await backendClient.getTradingAccounts(
+          session.access_token
+        );
+        console.log('Comptes chargés:', data);
+        setAccounts(data);
+      }
+    } catch (error) {
+      console.error('Erreur lors du chargement des comptes:', error);
+      toast.error('Erreur lors du chargement des comptes', {
+        description:
+          error instanceof Error ? error.message : 'Une erreur est survenue'
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadAccounts();
+  }, []);
+
+  // Transformer les comptes Supabase au format attendu
+  const transformedAccounts = useMemo(() => {
+    return accounts.map((account) => {
+      // Trouver le broker correspondant dans les données mockées pour les infos supplémentaires
+      const brokerInfo = userBrokersData.find(
+        (ub) => ub.broker.name === account.broker
+      )?.broker;
+
+      return {
+        id: account.id,
+        account_id: account.external_account_id,
+        broker: brokerInfo || {
+          id: `broker-${account.broker}`,
+          name: account.broker,
+          logo_url: '',
+          category: 'forex' as const,
+          cashback_rate: 0.15, // Valeur par défaut
+          min_withdrawal: 50,
+          description: `Compte ${account.broker}`,
+          website_url: '',
+          supported_pairs: [],
+          created_at: account.created_at
+        },
+        status:
+          account.status === 'connected'
+            ? 'active'
+            : account.status === 'pending_vps_setup'
+              ? 'pending'
+              : 'inactive',
+        total_cashback: 0, // Sera calculé depuis les trades
+        total_volume: 0, // Sera calculé depuis les trades
+        linked_at: account.created_at,
+        platform: account.platform,
+        server: account.server,
+        login: account.login
+      };
+    });
+  }, [accounts]);
+
   // Calcul des stats globales
   const globalStats = useMemo(() => {
-    const totalCashback = userBrokersData.reduce(
+    const totalCashback = transformedAccounts.reduce(
       (acc, ub) => acc + ub.total_cashback,
       0
     );
-    const totalVolume = userBrokersData.reduce(
+    const totalVolume = transformedAccounts.reduce(
       (acc, ub) => acc + ub.total_volume,
       0
     );
-    const activeBrokers = userBrokersData.filter(
+    const activeBrokers = transformedAccounts.filter(
       (ub) => ub.status === 'active'
     ).length;
     const totalTrades = transactionsData.filter((t) =>
-      userBrokersData.some((ub) => ub.id === t.user_broker_id)
+      transformedAccounts.some((ub) => ub.id === t.user_broker_id)
     ).length;
 
     return {
@@ -68,14 +160,20 @@ export function MyBrokers() {
       totalVolume,
       activeBrokers,
       totalTrades,
-      avgCashbackPerBroker: totalCashback / userBrokersData.length,
-      avgVolumePerBroker: totalVolume / userBrokersData.length
+      avgCashbackPerBroker:
+        transformedAccounts.length > 0
+          ? totalCashback / transformedAccounts.length
+          : 0,
+      avgVolumePerBroker:
+        transformedAccounts.length > 0
+          ? totalVolume / transformedAccounts.length
+          : 0
     };
-  }, []);
+  }, [transformedAccounts]);
 
   // Stats par broker
   const brokerStats = useMemo(() => {
-    return userBrokersData.map((ub) => {
+    return transformedAccounts.map((ub) => {
       const brokerTrades = transactionsData.filter(
         (t) => t.user_broker_id === ub.id
       );
@@ -106,34 +204,59 @@ export function MyBrokers() {
         lastActivity
       };
     });
-  }, []);
+  }, [transformedAccounts]);
 
-  if (userBrokersData.length === 0) {
+  if (isLoading) {
     return (
-      <div
-        className={cn(
-          'rounded-2xl p-8 md:p-12',
-          'bg-zinc-900/40 backdrop-blur-sm',
-          'border border-white/5',
-          'animate-fade-in-up opacity-0'
-        )}
-        style={{ animationFillMode: 'forwards' }}
-      >
-        <div className='flex flex-col items-center justify-center'>
-          <div className='animate-pulse-subtle mb-4 rounded-2xl border border-white/5 bg-white/5 p-4'>
-            <IconChartBar className='text-muted-foreground h-8 w-8' />
+      <div className='flex items-center justify-center p-8'>
+        <p className='text-muted-foreground'>Chargement...</p>
+      </div>
+    );
+  }
+
+  if (accounts.length === 0) {
+    return (
+      <div className='space-y-6'>
+        <div
+          className={cn(
+            'rounded-2xl p-8 md:p-12',
+            'bg-zinc-900/40 backdrop-blur-sm',
+            'border border-white/5',
+            'animate-fade-in-up opacity-0'
+          )}
+          style={{ animationFillMode: 'forwards' }}
+        >
+          <div className='flex flex-col items-center justify-center'>
+            <div className='animate-pulse-subtle mb-4 rounded-2xl border border-white/5 bg-white/5 p-4'>
+              <IconChartBar className='text-muted-foreground h-8 w-8' />
+            </div>
+            <h3 className='mb-2 text-lg font-semibold'>
+              Aucun broker connecté
+            </h3>
+            <p className='text-muted-foreground mb-4 max-w-md text-center'>
+              Connectez votre premier compte de trading pour commencer à
+              recevoir du cashback
+            </p>
+            <Dialog open={showCreateForm} onOpenChange={setShowCreateForm}>
+              <DialogTrigger asChild>
+                <Button>
+                  <IconPlus className='mr-2 h-4 w-4' />
+                  Ajouter un compte
+                </Button>
+              </DialogTrigger>
+              <DialogContent className='max-w-2xl'>
+                <DialogHeader>
+                  <DialogTitle>Ajouter un compte de trading</DialogTitle>
+                </DialogHeader>
+                <CreateTradingAccountForm
+                  onSuccess={() => {
+                    setShowCreateForm(false);
+                    loadAccounts(); // Recharger les comptes après création
+                  }}
+                />
+              </DialogContent>
+            </Dialog>
           </div>
-          <h3 className='mb-2 text-lg font-semibold'>Aucun broker connecté</h3>
-          <p className='text-muted-foreground mb-4 max-w-md text-center'>
-            Connectez votre premier compte de trading pour commencer à recevoir
-            du cashback
-          </p>
-          <Button asChild>
-            <Link href='/dashboard/brokers/available'>
-              <IconPlus className='mr-2 h-4 w-4' />
-              Découvrir nos brokers partenaires
-            </Link>
-          </Button>
         </div>
       </div>
     );
@@ -458,44 +581,57 @@ export function MyBrokers() {
         ))}
 
         {/* Card pour ajouter un nouveau broker */}
-        <Link href='/dashboard/brokers/available' className='group'>
-          <div
-            className={cn(
-              'h-full rounded-2xl p-6',
-              'bg-zinc-900/20 backdrop-blur-sm',
-              'border border-dashed border-white/10',
-              'transition-all duration-300',
-              'hover:border-white/20 hover:bg-zinc-900/40',
-              'hover:-translate-y-1',
-              'animate-fade-in-up opacity-0'
-            )}
-            style={{
-              animationDelay: `${200 + brokerStats.length * 100}ms`,
-              animationFillMode: 'forwards'
-            }}
-          >
-            <div className='flex h-full flex-col items-center justify-center py-12'>
-              <div className='mb-4 rounded-2xl border border-white/5 bg-white/5 p-4 transition-all duration-300 group-hover:scale-110 group-hover:bg-white/10'>
-                <IconPlus className='text-muted-foreground group-hover:text-foreground h-8 w-8 transition-colors' />
+        <Dialog open={showCreateForm} onOpenChange={setShowCreateForm}>
+          <DialogTrigger asChild>
+            <div
+              className={cn(
+                'h-full cursor-pointer rounded-2xl p-6',
+                'bg-zinc-900/20 backdrop-blur-sm',
+                'border border-dashed border-white/10',
+                'transition-all duration-300',
+                'hover:border-white/20 hover:bg-zinc-900/40',
+                'hover:-translate-y-1',
+                'animate-fade-in-up group opacity-0'
+              )}
+              style={{
+                animationDelay: `${200 + brokerStats.length * 100}ms`,
+                animationFillMode: 'forwards'
+              }}
+            >
+              <div className='flex h-full flex-col items-center justify-center py-12'>
+                <div className='mb-4 rounded-2xl border border-white/5 bg-white/5 p-4 transition-all duration-300 group-hover:scale-110 group-hover:bg-white/10'>
+                  <IconPlus className='text-muted-foreground group-hover:text-foreground h-8 w-8 transition-colors' />
+                </div>
+                <h3 className='group-hover:text-foreground mb-2 text-lg font-semibold transition-colors'>
+                  Ajouter un compte
+                </h3>
+                <p className='text-muted-foreground mb-6 max-w-xs text-center text-sm transition-colors'>
+                  Connectez un nouveau compte de trading MT4/MT5 pour commencer
+                  à recevoir du cashback
+                </p>
+                <Button
+                  variant='outline'
+                  className='group-hover:border-white/20'
+                >
+                  <IconPlus className='mr-2 h-4 w-4' />
+                  Ajouter un compte
+                  <IconArrowRight className='ml-2 h-4 w-4' />
+                </Button>
               </div>
-              <h3 className='group-hover:text-foreground mb-2 text-lg font-semibold transition-colors'>
-                Ajouter un broker
-              </h3>
-              <p className='text-muted-foreground mb-6 max-w-xs text-center text-sm transition-colors'>
-                Découvrez nos brokers partenaires et connectez un nouveau compte
-                pour maximiser vos gains
-              </p>
-              <Button
-                variant='outline'
-                className='pointer-events-none group-hover:border-white/20'
-              >
-                <IconPlus className='mr-2 h-4 w-4' />
-                Voir les brokers
-                <IconArrowRight className='ml-2 h-4 w-4' />
-              </Button>
             </div>
-          </div>
-        </Link>
+          </DialogTrigger>
+          <DialogContent className='max-h-[90vh] max-w-2xl overflow-y-auto'>
+            <DialogHeader>
+              <DialogTitle>Ajouter un compte de trading</DialogTitle>
+            </DialogHeader>
+            <CreateTradingAccountForm
+              onSuccess={() => {
+                setShowCreateForm(false);
+                loadAccounts(); // Recharger les comptes après création
+              }}
+            />
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );

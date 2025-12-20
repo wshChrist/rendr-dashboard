@@ -21,6 +21,15 @@ interface FormInputProps<
   step?: string | number;
   min?: string | number;
   max?: string | number;
+  inputMode?:
+    | 'text'
+    | 'tel'
+    | 'url'
+    | 'email'
+    | 'numeric'
+    | 'decimal'
+    | 'search'
+    | 'none';
 }
 
 function FormInput<
@@ -38,7 +47,8 @@ function FormInput<
   min,
   max,
   disabled,
-  className
+  className,
+  inputMode
 }: FormInputProps<TFieldValues, TName>) {
   return (
     <FormField
@@ -60,6 +70,7 @@ function FormInput<
               min={min}
               max={max}
               disabled={disabled}
+              inputMode={inputMode}
               {...field}
               onChange={(e) => {
                 if (type === 'number') {

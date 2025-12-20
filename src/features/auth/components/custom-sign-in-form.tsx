@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { useSignIn } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
+import { createSupabaseClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -25,8 +25,6 @@ import {
   IconEyeOff
 } from '@tabler/icons-react';
 import Link from 'next/link';
-import GoogleSignInButton from './google-auth-button';
-import GithubSignInButton from './github-auth-button';
 
 const signInSchema = z.object({
   email: z.string().email('Adresse email invalide'),
@@ -38,11 +36,10 @@ const signInSchema = z.object({
 type SignInFormValues = z.infer<typeof signInSchema>;
 
 export function CustomSignInForm() {
-  const { isLoaded, signIn, setActive } = useSignIn();
   const router = useRouter();
+  const supabase = createSupabaseClient();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [pendingVerification, setPendingVerification] = useState(false);
 
   const form = useForm<SignInFormValues>({
     resolver: zodResolver(signInSchema),
@@ -53,48 +50,50 @@ export function CustomSignInForm() {
   });
 
   const onSubmit = async (data: SignInFormValues) => {
-    if (!isLoaded) return;
-
     setIsLoading(true);
 
     try {
-      const result = await signIn.create({
-        identifier: data.email,
+      const { data: authData, error } = await supabase.auth.signInWithPassword({
+        email: data.email,
         password: data.password
       });
 
-      if (result.status === 'complete') {
-        await setActive({ session: result.createdSessionId });
+      if (error) {
+        throw error;
+      }
+
+      if (authData.user && authData.session) {
         toast.success('Connexion réussie !');
+        // Attendre un court instant pour que les cookies soient sauvegardés
+        await new Promise((resolve) => setTimeout(resolve, 200));
+        // Rafraîchir le routeur pour que le middleware détecte la session
+        router.refresh();
+        // Rediriger vers le dashboard
         router.push('/dashboard/overview');
-      } else {
-        // Gérer les cas où une vérification est nécessaire
-        setPendingVerification(true);
-        toast.info('Vérification requise');
+      } else if (authData.user) {
+        // Si pas de session immédiatement, attendre un peu
+        toast.success('Connexion réussie !');
+        setTimeout(async () => {
+          const {
+            data: { session }
+          } = await supabase.auth.getSession();
+          if (session) {
+            router.refresh();
+            router.push('/dashboard/overview');
+          } else {
+            toast.error('Erreur de session. Veuillez réessayer.');
+          }
+        }, 500);
       }
     } catch (err: any) {
       const errorMessage =
-        err.errors?.[0]?.message ||
-        'Une erreur est survenue lors de la connexion';
+        err.message || 'Une erreur est survenue lors de la connexion';
       toast.error(errorMessage);
       form.setError('root', { message: errorMessage });
     } finally {
       setIsLoading(false);
     }
   };
-
-  if (pendingVerification) {
-    return (
-      <div className='space-y-4'>
-        <div className='text-center'>
-          <h3 className='text-lg font-semibold'>Vérification requise</h3>
-          <p className='text-muted-foreground mt-2 text-sm'>
-            Veuillez vérifier votre email pour continuer
-          </p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <Form
@@ -109,7 +108,7 @@ export function CustomSignInForm() {
           <FormItem>
             <FormLabel>Email</FormLabel>
             <FormControl>
-              <div className='relative'>
+              <div className='relative' suppressHydrationWarning>
                 <IconMail className='text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2' />
                 <Input
                   {...field}
@@ -141,7 +140,7 @@ export function CustomSignInForm() {
               </Link>
             </div>
             <FormControl>
-              <div className='relative'>
+              <div className='relative' suppressHydrationWarning>
                 <IconLock className='text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2' />
                 <Input
                   {...field}
@@ -156,6 +155,7 @@ export function CustomSignInForm() {
                   onClick={() => setShowPassword(!showPassword)}
                   className='text-muted-foreground hover:text-foreground absolute top-1/2 right-3 -translate-y-1/2 transition-colors'
                   tabIndex={-1}
+                  suppressHydrationWarning
                 >
                   {showPassword ? (
                     <IconEyeOff className='h-4 w-4' />
@@ -178,12 +178,7 @@ export function CustomSignInForm() {
         </div>
       )}
 
-      <Button
-        type='submit'
-        className='w-full'
-        size='lg'
-        disabled={isLoading || !isLoaded}
-      >
+      <Button type='submit' className='w-full' size='lg' disabled={isLoading}>
         {isLoading ? (
           <>
             <IconLoader2 className='mr-2 h-4 w-4 animate-spin' />
@@ -193,22 +188,6 @@ export function CustomSignInForm() {
           'Se connecter'
         )}
       </Button>
-
-      <div className='relative'>
-        <div className='absolute inset-0 flex items-center'>
-          <span className='w-full border-t' />
-        </div>
-        <div className='relative flex justify-center text-xs uppercase'>
-          <span className='bg-card text-muted-foreground px-2'>
-            Ou continuer avec
-          </span>
-        </div>
-      </div>
-
-      <div className='grid grid-cols-2 gap-3'>
-        <GoogleSignInButton />
-        <GithubSignInButton />
-      </div>
 
       <div className='text-center text-sm'>
         <span className='text-muted-foreground'>Pas encore de compte ? </span>

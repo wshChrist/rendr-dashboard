@@ -1,0 +1,15 @@
+[api]
+url = https://api.rendr.app
+api_key = YOUR_VPS_API_KEY_HERE
+polling_interval = 30
+
+[mt4]
+path = C:\Program Files\MetaTrader 4
+ea_path = C:\RendR\EA\RendR.mq4
+
+[mt5]
+path = C:\Program Files\MetaTrader 5
+ea_path = C:\RendR\EA\RendR.mq5
+
+[paths]
+terminals_base = C:\MT_Terminals

@@ -1,33 +1,37 @@
 'use client';
 
-import { useSignUp } from '@clerk/nextjs';
 import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Icons } from '@/components/icons';
 import { useState } from 'react';
 import { IconLoader2 } from '@tabler/icons-react';
 import { toast } from 'sonner';
+import { createSupabaseClient } from '@/lib/supabase/client';
 
 export default function GithubSignUpButton() {
-  const { isLoaded, signUp } = useSignUp();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl') || '/dashboard/overview';
   const [isLoading, setIsLoading] = useState(false);
+  const supabase = createSupabaseClient();
 
   const handleGithubSignUp = async () => {
-    if (!isLoaded || !signUp) return;
-
     setIsLoading(true);
     try {
-      await signUp.authenticateWithRedirect({
-        strategy: 'oauth_github',
-        redirectUrl: '/auth/sign-up/sso-callback',
-        redirectUrlComplete: callbackUrl
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'github',
+        options: {
+          redirectTo: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/auth/sign-up/sso-callback?redirect=${encodeURIComponent(callbackUrl)}`
+        }
       });
+
+      if (error) {
+        throw error;
+      }
+      // La redirection se fait automatiquement
     } catch (error: any) {
       console.error("Erreur lors de l'inscription GitHub:", error);
       const errorMessage =
-        error?.errors?.[0]?.message ||
+        error?.message ||
         "Une erreur est survenue lors de l'inscription avec GitHub";
       toast.error(errorMessage);
       setIsLoading(false);
@@ -40,7 +44,7 @@ export default function GithubSignUpButton() {
       variant='outline'
       type='button'
       onClick={handleGithubSignUp}
-      disabled={!isLoaded || isLoading}
+      disabled={isLoading}
     >
       {isLoading ? (
         <>

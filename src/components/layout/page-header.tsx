@@ -1,8 +1,10 @@
 'use client';
 
-import { useUser } from '@clerk/nextjs';
+import { useEffect, useState } from 'react';
+import { createSupabaseClient } from '@/lib/supabase/client';
 import { cn } from '@/lib/utils';
 import { RendRAsterisk } from '@/components/ui/rendr-decorations';
+import type { User } from '@supabase/supabase-js';
 
 interface PageHeaderProps {
   title: string;
@@ -19,8 +21,31 @@ export function PageHeader({
   children,
   className
 }: PageHeaderProps) {
-  const { user } = useUser();
-  const firstName = user?.firstName;
+  const [user, setUser] = useState<User | null>(null);
+  const supabase = createSupabaseClient();
+
+  useEffect(() => {
+    const getUser = async () => {
+      const {
+        data: { user }
+      } = await supabase.auth.getUser();
+      setUser(user);
+    };
+
+    getUser();
+
+    const {
+      data: { subscription }
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [supabase]);
+
+  // Extract first name from user metadata
+  const firstName =
+    user?.user_metadata?.first_name || user?.user_metadata?.name?.split(' ')[0];
 
   // Créer un titre personnalisé si demandé
   const displayTitle =

@@ -1,9 +1,11 @@
 'use client';
 
-import { useUser } from '@clerk/nextjs';
+import { useEffect, useState } from 'react';
+import { createSupabaseClient } from '@/lib/supabase/client';
 import { RendRBadge } from '@/components/ui/rendr-badge';
 import { RendRAsterisk } from '@/components/ui/rendr-decorations';
 import { userStatsData } from '@/constants/cashback-data';
+import type { User } from '@supabase/supabase-js';
 
 function getGreeting(): string {
   const hour = new Date().getHours();
@@ -42,14 +44,32 @@ function getMotivationalMessage(cashback: number): string {
 }
 
 export function WelcomeHeader() {
-  const { user, isLoaded } = useUser();
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  const supabase = createSupabaseClient();
   const stats = userStatsData;
 
+  useEffect(() => {
+    const getUser = async () => {
+      const {
+        data: { user }
+      } = await supabase.auth.getUser();
+      setUser(user);
+      setLoading(false);
+    };
+
+    getUser();
+  }, [supabase]);
+
   const greeting = getGreeting();
-  const firstName = user?.firstName || 'Trader';
+  const firstName =
+    user?.user_metadata?.first_name ||
+    user?.user_metadata?.name?.split(' ')[0] ||
+    user?.email?.split('@')[0] ||
+    'Trader';
   const motivationalMessage = getMotivationalMessage(stats.pending_cashback);
 
-  if (!isLoaded) {
+  if (loading) {
     return (
       <div
         className='animate-fade-in-up space-y-2 opacity-0'

@@ -1,27 +1,17 @@
 'use client';
 
-import { useAuth, useOrganizationList } from '@clerk/nextjs';
-import { Check, ChevronsUpDown, GalleryVerticalEnd, Plus } from 'lucide-react';
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+// Note: Supabase doesn't have built-in organizations like Clerk
+// This component is kept for compatibility but returns null
+// You can implement custom organization logic if needed
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu';
-import {
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  useSidebar
-} from '@/components/ui/sidebar';
-import { useEffect } from 'react';
+export function OrgSwitcher() {
+  // Return null since Supabase doesn't have organizations
+  // You can extend this later if you implement custom organization support
+  return null;
+}
 
+// Old Clerk-based implementation (kept for reference)
+/*
 export function OrgSwitcher() {
   const { isMobile, state } = useSidebar();
   const router = useRouter();
@@ -240,3 +230,4 @@ export function OrgSwitcher() {
     </SidebarMenu>
   );
 }
+*/

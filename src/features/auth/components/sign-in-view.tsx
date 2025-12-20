@@ -88,7 +88,10 @@ export default function SignInViewPage({ stars }: { stars: number }) {
                 <div className='space-y-4'>
                   <div className='group border-border/50 bg-card/50 hover:border-primary/30 hover:bg-card/70 relative rounded-xl border p-5 backdrop-blur-sm transition-all duration-300 hover:shadow-lg'>
                     <div className='flex items-start gap-4'>
-                      <div className='from-primary/20 to-primary/10 border-primary/20 mt-0.5 flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border bg-gradient-to-br shadow-sm transition-transform duration-300 group-hover:scale-110'>
+                      <div
+                        className='from-primary/20 to-primary/10 border-primary/20 mt-0.5 flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border bg-gradient-to-br shadow-sm transition-transform duration-300 group-hover:scale-110'
+                        suppressHydrationWarning
+                      >
                         <IconTrendingUp className='text-primary h-6 w-6' />
                       </div>
                       <div className='flex-1 space-y-1'>
@@ -105,7 +108,10 @@ export default function SignInViewPage({ stars }: { stars: number }) {
 
                   <div className='group border-border/50 bg-card/50 hover:border-primary/30 hover:bg-card/70 relative rounded-xl border p-5 backdrop-blur-sm transition-all duration-300 hover:shadow-lg'>
                     <div className='flex items-start gap-4'>
-                      <div className='from-primary/20 to-primary/10 border-primary/20 mt-0.5 flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border bg-gradient-to-br shadow-sm transition-transform duration-300 group-hover:scale-110'>
+                      <div
+                        className='from-primary/20 to-primary/10 border-primary/20 mt-0.5 flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border bg-gradient-to-br shadow-sm transition-transform duration-300 group-hover:scale-110'
+                        suppressHydrationWarning
+                      >
                         <IconChartLine className='text-primary h-6 w-6' />
                       </div>
                       <div className='flex-1 space-y-1'>
@@ -122,7 +128,10 @@ export default function SignInViewPage({ stars }: { stars: number }) {
 
                   <div className='group border-border/50 bg-card/50 hover:border-primary/30 hover:bg-card/70 relative rounded-xl border p-5 backdrop-blur-sm transition-all duration-300 hover:shadow-lg'>
                     <div className='flex items-start gap-4'>
-                      <div className='from-primary/20 to-primary/10 border-primary/20 mt-0.5 flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border bg-gradient-to-br shadow-sm transition-transform duration-300 group-hover:scale-110'>
+                      <div
+                        className='from-primary/20 to-primary/10 border-primary/20 mt-0.5 flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border bg-gradient-to-br shadow-sm transition-transform duration-300 group-hover:scale-110'
+                        suppressHydrationWarning
+                      >
                         <IconShield className='text-primary h-6 w-6' />
                       </div>
                       <div className='flex-1 space-y-1'>

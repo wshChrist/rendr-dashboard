@@ -1,0 +1,221 @@
+'use client';
+
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { FormInput } from '@/components/forms/form-input';
+import { FormSelect } from '@/components/forms/form-select';
+import { Form } from '@/components/ui/form';
+import { toast } from 'sonner';
+import { useState } from 'react';
+import { backendClient } from '@/lib/api/backend-client';
+import { createSupabaseClient } from '@/lib/supabase/client';
+import { useRouter } from 'next/navigation';
+
+const formSchema = z.object({
+  broker: z.string().min(1, 'Le broker est requis'),
+  platform: z.enum(['MT4', 'MT5'], {
+    required_error: 'La plateforme est requise'
+  }),
+  server: z.string().min(1, 'Le serveur est requis'),
+  login: z.string().min(1, 'Le numéro de compte est requis'),
+  investor_password: z
+    .string()
+    .min(1, 'Le mot de passe investisseur est requis')
+});
+
+type FormValues = z.infer<typeof formSchema>;
+
+const BROKERS = [
+  { value: 'IC Markets', label: 'IC Markets' },
+  { value: 'Pepperstone', label: 'Pepperstone' },
+  { value: 'XM', label: 'XM' },
+  { value: 'Exness', label: 'Exness' },
+  { value: 'RoboForex', label: 'RoboForex' },
+  { value: 'Vantage', label: 'Vantage' }
+];
+
+const PLATFORMS = [
+  { value: 'MT4', label: 'MetaTrader 4' },
+  { value: 'MT5', label: 'MetaTrader 5' }
+];
+
+interface CreateTradingAccountFormProps {
+  onSuccess?: () => void;
+}
+
+export function CreateTradingAccountForm({
+  onSuccess
+}: CreateTradingAccountFormProps) {
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+  const supabase = createSupabaseClient();
+
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      broker: '',
+      platform: 'MT4',
+      server: '',
+      login: '',
+      investor_password: ''
+    }
+  });
+
+  const onSubmit = async (values: FormValues) => {
+    setIsLoading(true);
+
+    try {
+      console.log('Début de la création du compte:', values);
+
+      // Récupérer le token Supabase
+      const {
+        data: { session },
+        error: sessionError
+      } = await supabase.auth.getSession();
+
+      if (sessionError) {
+        console.error('Erreur de session Supabase:', sessionError);
+        toast.error('Erreur de session', {
+          description:
+            sessionError.message || 'Impossible de récupérer la session'
+        });
+        setIsLoading(false);
+        return;
+      }
+
+      if (!session?.access_token) {
+        console.error("Pas de token d'accès");
+        toast.error('Vous devez être connecté', {
+          description: 'Veuillez vous connecter avec Supabase Auth'
+        });
+        setIsLoading(false);
+        return;
+      }
+
+      console.log("Token récupéré, appel de l'API backend...");
+      console.log(
+        'URL API:',
+        process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
+      );
+
+      // Créer le compte via le backend
+      const account = await backendClient.createTradingAccount(
+        {
+          broker: values.broker,
+          platform: values.platform,
+          server: values.server,
+          login: values.login,
+          investor_password: values.investor_password
+        },
+        session.access_token
+      );
+
+      console.log('Compte créé avec succès:', account);
+
+      toast.success('Compte créé avec succès !', {
+        description: `Le compte ${account.external_account_id} sera configuré automatiquement sur le VPS.`
+      });
+
+      form.reset();
+      onSuccess?.();
+      router.refresh();
+    } catch (error: any) {
+      console.error('Erreur lors de la création du compte:', error);
+      console.error("Détails de l'erreur:", {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      });
+
+      const errorMessage = error.message || 'Une erreur est survenue';
+      toast.error('Erreur lors de la création du compte', {
+        description: errorMessage,
+        duration: 5000
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Ajouter un compte de trading</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Form
+          form={form}
+          onSubmit={form.handleSubmit(onSubmit)}
+          className='space-y-6'
+        >
+          <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
+            <FormSelect
+              control={form.control}
+              name='broker'
+              label='Broker'
+              placeholder='Sélectionner un broker'
+              options={BROKERS}
+              required
+            />
+
+            <FormSelect
+              control={form.control}
+              name='platform'
+              label='Plateforme'
+              placeholder='Sélectionner une plateforme'
+              options={PLATFORMS}
+              required
+            />
+          </div>
+
+          <FormInput
+            control={form.control}
+            name='server'
+            label='Serveur'
+            placeholder='Ex: ICMarkets-Demo'
+            description='Nom exact du serveur MT4/MT5'
+            required
+          />
+
+          <FormInput
+            control={form.control}
+            name='login'
+            label='Numéro de compte'
+            placeholder='Ex: 12345678'
+            description='Le numéro de compte (login) de votre terminal MT4/MT5'
+            required
+            type='text'
+            inputMode='numeric'
+          />
+
+          <FormInput
+            control={form.control}
+            name='investor_password'
+            label='Mot de passe investisseur'
+            placeholder='••••••••'
+            description='Mot de passe investisseur (lecture seule) - Ne sera jamais affiché'
+            required
+            type='password'
+          />
+
+          <div className='flex justify-end gap-2'>
+            <Button
+              type='button'
+              variant='outline'
+              onClick={() => form.reset()}
+              disabled={isLoading}
+            >
+              Annuler
+            </Button>
+            <Button type='submit' disabled={isLoading}>
+              {isLoading ? 'Création...' : 'Créer le compte'}
+            </Button>
+          </div>
+        </Form>
+      </CardContent>
+    </Card>
+  );
+}

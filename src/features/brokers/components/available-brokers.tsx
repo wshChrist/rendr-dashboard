@@ -37,6 +37,8 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import { toast } from 'sonner';
+import { backendClient } from '@/lib/api/backend-client';
+import { createSupabaseClient } from '@/lib/supabase/client';
 
 interface ConnectBrokerDialogProps {
   broker: (typeof brokersData)[0];
@@ -52,25 +54,48 @@ function ConnectBrokerDialog({
   const [accountId, setAccountId] = useState('');
   const [password, setPassword] = useState('');
   const [server, setServer] = useState('');
+  const [platform, setPlatform] = useState<'MT4' | 'MT5'>('MT4');
   const [isLoading, setIsLoading] = useState(false);
+  const supabase = createSupabaseClient();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!accountId || !password) {
+    if (!accountId || !password || !server) {
       toast.error('Veuillez remplir tous les champs obligatoires');
       return;
     }
 
     setIsLoading(true);
 
-    // Simuler une requête API
-    setTimeout(() => {
+    try {
+      // Récupérer le token Supabase
+      const {
+        data: { session }
+      } = await supabase.auth.getSession();
+
+      if (!session?.access_token) {
+        toast.error('Vous devez être connecté');
+        return;
+      }
+
+      // Créer le compte via le backend
+      const account = await backendClient.createTradingAccount(
+        {
+          broker: broker.name,
+          platform: platform,
+          server: server,
+          login: accountId,
+          investor_password: password
+        },
+        session.access_token
+      );
+
       setIsLoading(false);
       onOpenChange(false);
 
       toast.success(`Compte ${broker.name} connecté avec succès !`, {
-        description: `Votre compte ${accountId} a été lié et sera synchronisé dans quelques instants.`,
+        description: `Votre compte ${accountId} a été lié et sera configuré automatiquement sur le VPS.`,
         duration: 5000
       });
 
@@ -78,7 +103,17 @@ function ConnectBrokerDialog({
       setAccountId('');
       setPassword('');
       setServer('');
-    }, 1500);
+
+      // Recharger la page pour afficher le nouveau compte
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    } catch (error: any) {
+      setIsLoading(false);
+      toast.error('Erreur lors de la connexion du compte', {
+        description: error.message || 'Une erreur est survenue'
+      });
+    }
   };
 
   return (
@@ -140,25 +175,46 @@ function ConnectBrokerDialog({
               </p>
             </div>
 
-            {/* Server (optionnel selon le broker) */}
+            {/* Platform */}
             <div className='space-y-2'>
-              <Label htmlFor='server' className='flex items-center gap-2'>
+              <Label htmlFor='platform' className='flex items-center gap-2'>
                 <IconServer className='h-4 w-4' />
-                Serveur
+                Plateforme *
               </Label>
-              <Select value={server} onValueChange={setServer}>
+              <Select
+                value={platform}
+                onValueChange={(value) => setPlatform(value as 'MT4' | 'MT5')}
+              >
                 <SelectTrigger className='border-white/10 bg-white/5'>
-                  <SelectValue placeholder='Sélectionner un serveur (optionnel)' />
+                  <SelectValue placeholder='Sélectionner une plateforme' />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value='demo'>Compte Démo</SelectItem>
-                  <SelectItem value='real'>Compte Réel</SelectItem>
-                  <SelectItem value='real-ecn'>Compte Réel ECN</SelectItem>
-                  <SelectItem value='real-std'>Compte Réel Standard</SelectItem>
+                  <SelectItem value='MT4'>MetaTrader 4</SelectItem>
+                  <SelectItem value='MT5'>MetaTrader 5</SelectItem>
                 </SelectContent>
               </Select>
               <p className='text-muted-foreground text-xs'>
-                Type de serveur/compte (laisser vide si non applicable)
+                Plateforme de trading utilisée
+              </p>
+            </div>
+
+            {/* Server */}
+            <div className='space-y-2'>
+              <Label htmlFor='server' className='flex items-center gap-2'>
+                <IconServer className='h-4 w-4' />
+                Serveur *
+              </Label>
+              <Input
+                id='server'
+                type='text'
+                placeholder='Ex: ICMarkets-Demo'
+                value={server}
+                onChange={(e) => setServer(e.target.value)}
+                className='border-white/10 bg-white/5'
+                required
+              />
+              <p className='text-muted-foreground text-xs'>
+                Nom exact du serveur MT4/MT5 (visible dans votre terminal)
               </p>
             </div>
 

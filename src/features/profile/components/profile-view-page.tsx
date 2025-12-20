@@ -1,6 +1,7 @@
 'use client';
 
-import { useUser } from '@clerk/nextjs';
+import { createSupabaseClient } from '@/lib/supabase/client';
+import type { User } from '@supabase/supabase-js';
 import { RendRBadge } from '@/components/ui/rendr-badge';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
@@ -90,12 +91,34 @@ const passwordFormSchema = z
 type PasswordFormValues = z.infer<typeof passwordFormSchema>;
 
 export default function ProfileViewPage() {
-  const { user, isLoaded } = useUser();
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const supabase = createSupabaseClient();
   const router = useRouter();
   const stats = userStatsData;
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [tradingAlerts, setTradingAlerts] = useState(true);
   const [weeklyReport, setWeeklyReport] = useState(false);
+
+  useEffect(() => {
+    const getUser = async () => {
+      const {
+        data: { user }
+      } = await supabase.auth.getUser();
+      setUser(user);
+      setIsLoaded(true);
+    };
+
+    getUser();
+
+    const {
+      data: { subscription }
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [supabase]);
 
   // États pour les dialogues
   const [editProfileDialogOpen, setEditProfileDialogOpen] = useState(false);
@@ -118,10 +141,10 @@ export default function ProfileViewPage() {
   const profileForm = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
     defaultValues: {
-      firstName: user?.firstName || '',
-      lastName: user?.lastName || '',
-      email: user?.primaryEmailAddress?.emailAddress || '',
-      avatar: user?.imageUrl || ''
+      firstName: user?.user_metadata?.first_name || '',
+      lastName: user?.user_metadata?.last_name || '',
+      email: user?.email || '',
+      avatar: user?.user_metadata?.avatar_url || ''
     }
   });
 
@@ -138,12 +161,12 @@ export default function ProfileViewPage() {
   useEffect(() => {
     if (user && editProfileDialogOpen) {
       profileForm.reset({
-        firstName: user.firstName || '',
-        lastName: user.lastName || '',
-        email: user.primaryEmailAddress?.emailAddress || '',
-        avatar: user.imageUrl || ''
+        firstName: user.user_metadata?.first_name || '',
+        lastName: user.user_metadata?.last_name || '',
+        email: user.email || '',
+        avatar: user.user_metadata?.avatar_url || ''
       });
-      setAvatarPreview(user.imageUrl || null);
+      setAvatarPreview(user.user_metadata?.avatar_url || null);
     }
   }, [user, editProfileDialogOpen, profileForm]);
 
@@ -155,13 +178,15 @@ export default function ProfileViewPage() {
     );
   }
 
+  const firstName = user?.user_metadata?.first_name || '';
+  const lastName = user?.user_metadata?.last_name || '';
   const initials =
-    user?.firstName && user?.lastName
-      ? `${user.firstName[0]}${user.lastName[0]}`.toUpperCase()
-      : user?.firstName?.[0]?.toUpperCase() || 'U';
+    firstName && lastName
+      ? `${firstName[0]}${lastName[0]}`.toUpperCase()
+      : firstName?.[0]?.toUpperCase() || 'U';
 
-  const memberSince = user?.createdAt
-    ? format(new Date(user.createdAt), 'MMMM yyyy', { locale: fr })
+  const memberSince = user?.created_at
+    ? format(new Date(user.created_at), 'MMMM yyyy', { locale: fr })
     : 'Récemment';
 
   const copyToClipboard = (text: string) => {
@@ -172,12 +197,12 @@ export default function ProfileViewPage() {
   const handleEditProfile = () => {
     if (user) {
       profileForm.reset({
-        firstName: user.firstName || '',
-        lastName: user.lastName || '',
-        email: user.primaryEmailAddress?.emailAddress || '',
-        avatar: user.imageUrl || ''
+        firstName: user.user_metadata?.first_name || '',
+        lastName: user.user_metadata?.last_name || '',
+        email: user.email || '',
+        avatar: user.user_metadata?.avatar_url || ''
       });
-      setAvatarPreview(user.imageUrl || null);
+      setAvatarPreview(user.user_metadata?.avatar_url || null);
       setEditProfileDialogOpen(true);
     }
   };
@@ -190,7 +215,10 @@ export default function ProfileViewPage() {
       setEditProfileDialogOpen(false);
       // Recharger les données utilisateur si nécessaire
       if (user) {
-        await user.reload();
+        const {
+          data: { user: updatedUser }
+        } = await supabase.auth.getUser();
+        setUser(updatedUser);
       }
     } catch (error) {
       toast.error('Erreur lors de la mise à jour du profil');
@@ -324,8 +352,8 @@ export default function ProfileViewPage() {
             <div className='relative'>
               <Avatar className='h-24 w-24 border-2 border-white/10'>
                 <AvatarImage
-                  src={user?.imageUrl}
-                  alt={user?.fullName || 'Avatar'}
+                  src={user?.user_metadata?.avatar_url}
+                  alt={user?.user_metadata?.name || 'Avatar'}
                 />
                 <AvatarFallback className='text-foreground bg-white/10 text-2xl font-bold'>
                   {initials}
@@ -338,7 +366,7 @@ export default function ProfileViewPage() {
             <div className='space-y-3'>
               <div className='flex items-center gap-3'>
                 <h1 className='text-2xl font-bold tracking-tight md:text-3xl'>
-                  {user?.fullName || 'Trader'}
+                  {user?.user_metadata?.name || 'Trader'}
                 </h1>
                 <RendRBadge variant='success' dot dotColor='green'>
                   Vérifié
@@ -347,9 +375,7 @@ export default function ProfileViewPage() {
               <div className='text-muted-foreground flex flex-wrap items-center gap-4'>
                 <span className='flex items-center gap-2'>
                   <IconMail className='h-4 w-4' />
-                  <span className='text-sm'>
-                    {user?.primaryEmailAddress?.emailAddress}
-                  </span>
+                  <span className='text-sm'>{user?.email}</span>
                 </span>
                 <span className='flex items-center gap-2'>
                   <IconCalendar className='h-4 w-4' />
@@ -1001,7 +1027,9 @@ export default function ProfileViewPage() {
                 <div className='relative'>
                   <Avatar className='h-24 w-24 border-2 border-white/10'>
                     <AvatarImage
-                      src={avatarPreview || user?.imageUrl || ''}
+                      src={
+                        avatarPreview || user?.user_metadata?.avatar_url || ''
+                      }
                       alt='Avatar'
                     />
                     <AvatarFallback className='text-foreground bg-white/10 text-2xl font-bold'>

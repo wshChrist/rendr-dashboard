@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { useSignUp } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
+import { createSupabaseClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -25,8 +25,6 @@ import {
   IconEyeOff
 } from '@tabler/icons-react';
 import Link from 'next/link';
-import GoogleSignUpButton from './google-sign-up-button';
-import GithubSignUpButton from './github-sign-up-button';
 
 const signUpSchema = z.object({
   email: z.string().email('Adresse email invalide'),
@@ -40,11 +38,10 @@ const signUpSchema = z.object({
 type SignUpFormValues = z.infer<typeof signUpSchema>;
 
 export function CustomSignUpForm() {
-  const { isLoaded, signUp, setActive } = useSignUp();
   const router = useRouter();
+  const supabase = createSupabaseClient();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [pendingVerification, setPendingVerification] = useState(false);
 
   const form = useForm<SignUpFormValues>({
     resolver: zodResolver(signUpSchema),
@@ -57,46 +54,58 @@ export function CustomSignUpForm() {
   });
 
   const onSubmit = async (data: SignUpFormValues) => {
-    if (!isLoaded) return;
-
     setIsLoading(true);
 
     try {
-      const result = await signUp.create({
-        emailAddress: data.email,
+      const { data: authData, error } = await supabase.auth.signUp({
+        email: data.email,
         password: data.password,
-        firstName: data.firstName,
-        lastName: data.lastName
+        options: {
+          data: {
+            name: `${data.firstName} ${data.lastName}`,
+            first_name: data.firstName,
+            last_name: data.lastName
+          }
+        }
       });
 
-      // Envoyer l'email de vérification
-      await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
+      if (error) {
+        throw error;
+      }
 
-      setPendingVerification(true);
-      toast.info('Vérifiez votre email pour continuer');
+      if (authData.user && authData.session) {
+        // Confirmation d'email désactivée, connexion directe
+        toast.success('Compte créé avec succès !');
+        // Attendre un court instant pour que les cookies soient sauvegardés
+        await new Promise((resolve) => setTimeout(resolve, 200));
+        // Rafraîchir le routeur pour que le middleware détecte la session
+        router.refresh();
+        // Rediriger vers le dashboard
+        router.push('/dashboard/overview');
+      } else if (authData.user) {
+        // Si pas de session immédiatement, attendre un peu
+        toast.success('Compte créé avec succès !');
+        setTimeout(async () => {
+          const {
+            data: { session }
+          } = await supabase.auth.getSession();
+          if (session) {
+            router.refresh();
+            router.push('/dashboard/overview');
+          } else {
+            toast.error('Erreur de session. Veuillez réessayer.');
+          }
+        }, 500);
+      }
     } catch (err: any) {
       const errorMessage =
-        err.errors?.[0]?.message ||
-        'Une erreur est survenue lors de la création du compte';
+        err.message || 'Une erreur est survenue lors de la création du compte';
       toast.error(errorMessage);
       form.setError('root', { message: errorMessage });
     } finally {
       setIsLoading(false);
     }
   };
-
-  if (pendingVerification) {
-    return (
-      <div className='space-y-4'>
-        <div className='text-center'>
-          <h3 className='text-lg font-semibold'>Vérification requise</h3>
-          <p className='text-muted-foreground mt-2 text-sm'>
-            Veuillez vérifier votre email pour continuer
-          </p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <Form
@@ -151,7 +160,7 @@ export function CustomSignUpForm() {
           <FormItem>
             <FormLabel>Email</FormLabel>
             <FormControl>
-              <div className='relative'>
+              <div className='relative' suppressHydrationWarning>
                 <IconMail className='text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2' />
                 <Input
                   {...field}
@@ -175,7 +184,7 @@ export function CustomSignUpForm() {
           <FormItem>
             <FormLabel>Mot de passe</FormLabel>
             <FormControl>
-              <div className='relative'>
+              <div className='relative' suppressHydrationWarning>
                 <IconLock className='text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2' />
                 <Input
                   {...field}
@@ -190,6 +199,7 @@ export function CustomSignUpForm() {
                   onClick={() => setShowPassword(!showPassword)}
                   className='text-muted-foreground hover:text-foreground absolute top-1/2 right-3 -translate-y-1/2 transition-colors'
                   tabIndex={-1}
+                  suppressHydrationWarning
                 >
                   {showPassword ? (
                     <IconEyeOff className='h-4 w-4' />
@@ -212,12 +222,7 @@ export function CustomSignUpForm() {
         </div>
       )}
 
-      <Button
-        type='submit'
-        className='w-full'
-        size='lg'
-        disabled={isLoading || !isLoaded}
-      >
+      <Button type='submit' className='w-full' size='lg' disabled={isLoading}>
         {isLoading ? (
           <>
             <IconLoader2 className='mr-2 h-4 w-4 animate-spin' />
@@ -227,22 +232,6 @@ export function CustomSignUpForm() {
           'Créer mon compte'
         )}
       </Button>
-
-      <div className='relative'>
-        <div className='absolute inset-0 flex items-center'>
-          <span className='w-full border-t' />
-        </div>
-        <div className='relative flex justify-center text-xs uppercase'>
-          <span className='bg-card text-muted-foreground px-2'>
-            Ou continuer avec
-          </span>
-        </div>
-      </div>
-
-      <div className='grid grid-cols-2 gap-3'>
-        <GoogleSignUpButton />
-        <GithubSignUpButton />
-      </div>
 
       <div className='text-center text-sm'>
         <span className='text-muted-foreground'>Déjà un compte ? </span>

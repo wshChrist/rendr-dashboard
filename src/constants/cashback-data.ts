@@ -82,6 +82,27 @@ export const brokersData: Broker[] = [
     website_url: 'https://roboforex.com',
     supported_pairs: ['EUR/USD', 'GBP/USD', 'USD/JPY', 'AUD/NZD', 'EUR/AUD'],
     created_at: '2024-01-01T00:00:00Z'
+  },
+  {
+    id: 'broker-7',
+    name: 'Vantage',
+    logo_url: '/brokers/vantage.png',
+    category: 'forex',
+    cashback_rate: 0.2, // 20% du spread
+    min_withdrawal: 50,
+    description:
+      'Broker forex régulé avec spreads compétitifs et exécution rapide',
+    website_url: 'https://www.vantagemarkets.com',
+    supported_pairs: [
+      'EUR/USD',
+      'GBP/USD',
+      'USD/JPY',
+      'AUD/USD',
+      'XAU/USD',
+      'EUR/GBP',
+      'USD/CHF'
+    ],
+    created_at: '2024-01-01T00:00:00Z'
   }
 ];
 

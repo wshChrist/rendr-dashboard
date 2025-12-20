@@ -8,35 +8,20 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
-import { useOrganization } from '@clerk/nextjs';
-import { PricingTable } from '@clerk/nextjs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Info } from 'lucide-react';
 
 export default function BillingPage() {
-  const { organization, isLoaded } = useOrganization();
+  // Note: Supabase doesn't have built-in organizations or billing
+  // This page is simplified to work without Clerk
 
   return (
-    <PageContainer
-      isloading={!isLoaded}
-      access={!!organization}
-      accessFallback={
-        <div className='flex min-h-[400px] items-center justify-center'>
-          <div className='space-y-2 text-center'>
-            <h2 className='text-2xl font-semibold'>No Organization Selected</h2>
-            <p className='text-muted-foreground'>
-              Please select or create an organization to view billing
-              information.
-            </p>
-          </div>
-        </div>
-      }
-    >
+    <PageContainer>
       <div className='space-y-6'>
         <div>
           <h1 className='text-3xl font-bold tracking-tight'>Billing & Plans</h1>
           <p className='text-muted-foreground'>
-            Manage your subscription and usage limits for {organization?.name}
+            Manage your subscription and usage limits
           </p>
         </div>
 
@@ -44,22 +29,24 @@ export default function BillingPage() {
         <Alert>
           <Info className='h-4 w-4' />
           <AlertDescription>
-            Plans and subscriptions are managed through Clerk Billing. Subscribe
-            to a plan to unlock features and higher limits.
+            Billing functionality will be implemented here. You can integrate
+            with Stripe, Paddle, or another payment provider.
           </AlertDescription>
         </Alert>
 
-        {/* Clerk Pricing Table */}
+        {/* Placeholder for billing */}
         <Card>
           <CardHeader>
             <CardTitle>Available Plans</CardTitle>
             <CardDescription>
-              Choose a plan that fits your organization's needs
+              Choose a plan that fits your needs
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className='mx-auto max-w-4xl'>
-              <PricingTable for='organization' />
+              <p className='text-muted-foreground text-center'>
+                Billing integration coming soon
+              </p>
             </div>
           </CardContent>
         </Card>
