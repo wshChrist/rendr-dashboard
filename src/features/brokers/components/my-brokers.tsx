@@ -1,7 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { userBrokersData, transactionsData } from '@/constants/cashback-data';
+import {
+  userBrokersData,
+  transactionsData,
+  brokersData
+} from '@/constants/cashback-data';
+import { calculateCashbackForTrade } from '@/lib/utils/broker-cashback';
 import { Button } from '@/components/ui/button';
 import { CreateTradingAccountForm } from '@/features/trading-accounts/components/create-trading-account-form';
 import {
@@ -59,6 +64,9 @@ const getStatusBadge = (status: string) => {
 export function MyBrokers() {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [accounts, setAccounts] = useState<any[]>([]);
+  const [tradesByAccount, setTradesByAccount] = useState<Record<string, any[]>>(
+    {}
+  );
   const [isLoading, setIsLoading] = useState(true);
   const supabase = createSupabaseClient();
 
@@ -83,6 +91,9 @@ export function MyBrokers() {
         );
         console.log('Comptes chargés:', data);
         setAccounts(data);
+
+        // Charger les trades pour chaque compte
+        await loadTradesForAccounts(data);
       }
     } catch (error) {
       console.error('Erreur lors du chargement des comptes:', error);
@@ -95,17 +106,63 @@ export function MyBrokers() {
     }
   };
 
+  // Charger les trades pour tous les comptes
+  const loadTradesForAccounts = async (accountsList: any[]) => {
+    try {
+      const tradesMap: Record<string, any[]> = {};
+
+      for (const account of accountsList) {
+        const { data: trades, error } = await supabase
+          .from('trades')
+          .select('*')
+          .eq('trading_account_id', account.id)
+          .order('close_time', { ascending: false });
+
+        if (!error && trades) {
+          tradesMap[account.id] = trades;
+        }
+      }
+
+      setTradesByAccount(tradesMap);
+    } catch (error) {
+      console.error('Erreur lors du chargement des trades:', error);
+    }
+  };
+
   useEffect(() => {
     loadAccounts();
   }, []);
 
-  // Transformer les comptes Supabase au format attendu
+  // Transformer les comptes Supabase au format attendu avec stats calculées depuis les trades
   const transformedAccounts = useMemo(() => {
     return accounts.map((account) => {
-      // Trouver le broker correspondant dans les données mockées pour les infos supplémentaires
-      const brokerInfo = userBrokersData.find(
-        (ub) => ub.broker.name === account.broker
-      )?.broker;
+      // Trouver le broker correspondant dans les données
+      const brokerInfo =
+        brokersData.find((b) => b.name === account.broker) ||
+        userBrokersData.find((ub) => ub.broker.name === account.broker)?.broker;
+
+      // Récupérer les trades pour ce compte
+      const accountTrades = tradesByAccount[account.id] || [];
+
+      // Calculer le volume total (somme des lots)
+      const totalVolume = accountTrades.reduce((sum, trade) => {
+        return sum + parseFloat(trade.lots || '0');
+      }, 0);
+
+      // Calculer le cashback total
+      const totalCashback = accountTrades.reduce((sum, trade) => {
+        const lots = parseFloat(trade.lots || '0');
+        const commission = parseFloat(trade.commission || '0');
+        const cashback = calculateCashbackForTrade(
+          account.broker,
+          lots,
+          commission > 0 ? commission : undefined
+        );
+        return sum + cashback;
+      }, 0);
+
+      // Nombre de trades
+      const tradeCount = accountTrades.length;
 
       return {
         id: account.id,
@@ -128,17 +185,18 @@ export function MyBrokers() {
             : account.status === 'pending_vps_setup'
               ? 'pending'
               : 'inactive',
-        total_cashback: 0, // Sera calculé depuis les trades
-        total_volume: 0, // Sera calculé depuis les trades
+        total_cashback: totalCashback,
+        total_volume: totalVolume,
+        trade_count: tradeCount,
         linked_at: account.created_at,
         platform: account.platform,
         server: account.server,
         login: account.login
       };
     });
-  }, [accounts]);
+  }, [accounts, tradesByAccount]);
 
-  // Calcul des stats globales
+  // Calcul des stats globales depuis les données réelles
   const globalStats = useMemo(() => {
     const totalCashback = transformedAccounts.reduce(
       (acc, ub) => acc + ub.total_cashback,
@@ -151,9 +209,11 @@ export function MyBrokers() {
     const activeBrokers = transformedAccounts.filter(
       (ub) => ub.status === 'active'
     ).length;
-    const totalTrades = transactionsData.filter((t) =>
-      transformedAccounts.some((ub) => ub.id === t.user_broker_id)
-    ).length;
+    // Calculer le total de trades depuis les comptes (utilise trade_count)
+    const totalTrades = transformedAccounts.reduce(
+      (acc, ub) => acc + (ub.trade_count || 0),
+      0
+    );
 
     return {
       totalCashback,
@@ -171,32 +231,42 @@ export function MyBrokers() {
     };
   }, [transformedAccounts]);
 
-  // Stats par broker
+  // Stats par broker (utilise maintenant les données réelles)
   const brokerStats = useMemo(() => {
     return transformedAccounts.map((ub) => {
-      const brokerTrades = transactionsData.filter(
-        (t) => t.user_broker_id === ub.id
-      );
-      const recentTrades = brokerTrades
-        .sort(
-          (a, b) =>
-            new Date(b.trade_date).getTime() - new Date(a.trade_date).getTime()
-        )
-        .slice(0, 3);
+      // Utiliser les trades réels depuis Supabase
+      const accountTrades = tradesByAccount[ub.id] || [];
+      const recentTrades = accountTrades.slice(0, 3).map((trade: any) => ({
+        id: trade.id,
+        trade_id: trade.ticket,
+        pair: trade.symbol,
+        volume: parseFloat(trade.lots || '0'),
+        cashback_amount: calculateCashbackForTrade(
+          ub.broker.name,
+          parseFloat(trade.lots || '0'),
+          parseFloat(trade.commission || '0') > 0
+            ? parseFloat(trade.commission || '0')
+            : undefined
+        ),
+        status: 'confirmed' as const,
+        trade_date: trade.close_time,
+        created_at: trade.created_at
+      }));
 
+      const tradeCount = ub.trade_count || accountTrades.length;
       const avgCashbackPerTrade =
-        brokerTrades.length > 0 ? ub.total_cashback / brokerTrades.length : 0;
+        tradeCount > 0 ? ub.total_cashback / tradeCount : 0;
       const avgVolumePerTrade =
-        brokerTrades.length > 0 ? ub.total_volume / brokerTrades.length : 0;
+        tradeCount > 0 ? ub.total_volume / tradeCount : 0;
       const cashbackPerLot =
         ub.total_volume > 0 ? ub.total_cashback / ub.total_volume : 0;
 
       const lastActivity =
-        brokerTrades.length > 0 ? brokerTrades[0].trade_date : ub.linked_at;
+        accountTrades.length > 0 ? accountTrades[0].close_time : ub.linked_at;
 
       return {
         ...ub,
-        tradeCount: brokerTrades.length,
+        tradeCount,
         recentTrades,
         avgCashbackPerTrade,
         avgVolumePerTrade,
@@ -204,7 +274,7 @@ export function MyBrokers() {
         lastActivity
       };
     });
-  }, [transformedAccounts]);
+  }, [transformedAccounts, tradesByAccount]);
 
   if (isLoading) {
     return (

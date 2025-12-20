@@ -139,6 +139,27 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Mettre à jour le statut du compte à "connected" s'il est encore en "pending_vps_setup"
+    // Car l'enregistrement d'un trade prouve que le compte est actif
+    if (account.status === 'pending_vps_setup') {
+      const { error: updateStatusError } = await supabase
+        .from('trading_accounts')
+        .update({ status: 'connected' })
+        .eq('id', account.id);
+
+      if (updateStatusError) {
+        console.error(
+          'Erreur lors de la mise à jour du statut du compte:',
+          updateStatusError
+        );
+        // Ne pas faire échouer la requête si la mise à jour du statut échoue
+      } else {
+        console.log(
+          `Statut du compte ${account.id} mis à jour de 'pending_vps_setup' à 'connected'`
+        );
+      }
+    }
+
     return NextResponse.json(
       { message: 'Trade enregistré avec succès', trade_id: trade.id },
       {
