@@ -143,16 +143,8 @@ export function CashbackStatsGraph() {
           >
             <defs>
               <linearGradient id='fillCashback' x1='0' y1='0' x2='0' y2='1'>
-                <stop
-                  offset='5%'
-                  stopColor='oklch(0.85 0 0)'
-                  stopOpacity={0.6}
-                />
-                <stop
-                  offset='95%'
-                  stopColor='oklch(0.85 0 0)'
-                  stopOpacity={0.05}
-                />
+                <stop offset='5%' stopColor='#c5d13f' stopOpacity={0.6} />
+                <stop offset='95%' stopColor='#c5d13f' stopOpacity={0.05} />
               </linearGradient>
             </defs>
             <CartesianGrid
@@ -178,7 +170,7 @@ export function CashbackStatsGraph() {
             />
             <ChartTooltip
               cursor={{
-                stroke: '#c5d13f',
+                stroke: 'oklch(0.85 0 0)',
                 strokeWidth: 1,
                 strokeDasharray: '4 4'
               }}
@@ -198,7 +190,7 @@ export function CashbackStatsGraph() {
               dataKey='cashback'
               type='monotone'
               fill='url(#fillCashback)'
-              stroke='oklch(0.85 0 0)'
+              stroke='#c5d13f'
               strokeWidth={2}
               animationDuration={1500}
               animationEasing='ease-out'
