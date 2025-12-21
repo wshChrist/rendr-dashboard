@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { createSupabaseClient } from '@/lib/supabase/client';
 import { RendRBadge } from '@/components/ui/rendr-badge';
 import { RendRAsterisk } from '@/components/ui/rendr-decorations';
-import { userStatsData } from '@/constants/cashback-data';
+import { useTradingData } from '@/hooks/use-trading-data';
 import type { User } from '@supabase/supabase-js';
 
 function getGreeting(): string {
@@ -47,7 +47,16 @@ export function WelcomeHeader() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const supabase = createSupabaseClient();
-  const stats = userStatsData;
+  const { transactions, isLoading: isLoadingTradingData } = useTradingData();
+
+  // Calculer le cashback total depuis les transactions réelles
+  const totalCashback = useMemo(
+    () => transactions.reduce((acc, t) => acc + t.cashback_amount, 0),
+    [transactions]
+  );
+
+  // Pour l'instant, pas de cashback en attente (pas de table withdrawals)
+  const pendingCashback = 0;
 
   useEffect(() => {
     const getUser = async () => {
@@ -67,9 +76,9 @@ export function WelcomeHeader() {
     user?.user_metadata?.name?.split(' ')[0] ||
     user?.email?.split('@')[0] ||
     'Trader';
-  const motivationalMessage = getMotivationalMessage(stats.pending_cashback);
+  const motivationalMessage = getMotivationalMessage(totalCashback);
 
-  if (loading) {
+  if (loading || isLoadingTradingData) {
     return (
       <div
         className='animate-fade-in-up space-y-2 opacity-0'

@@ -122,11 +122,11 @@ export function StatsCards() {
       (a) => a.status === 'connected'
     ).length;
 
-    // Pour l'instant, on utilise des valeurs par défaut pour les stats non disponibles
+    // Pour l'instant, tout le cashback est disponible (pas de table withdrawals encore)
     // TODO: Calculer depuis les retraits réels quand cette fonctionnalité sera disponible
-    const availableBalance = totalCashback * 0.8; // 80% disponible, 20% en attente
-    const pendingCashback = totalCashback * 0.2;
     const totalWithdrawn = 0; // À calculer depuis la table withdrawals
+    const pendingCashback = 0; // Pas de cashback en attente pour l'instant
+    const availableBalance = totalCashback - totalWithdrawn;
 
     return {
       available_balance: availableBalance,
