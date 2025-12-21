@@ -301,6 +301,11 @@ function BrokerCard({
         <div className='min-w-0 flex-1'>
           <div className='mb-1 flex items-center gap-2'>
             <h3 className='text-sm font-semibold'>{broker.name}</h3>
+            {broker.name !== 'Vantage' && (
+              <RendRBadge variant='muted' size='sm'>
+                Bientôt disponible
+              </RendRBadge>
+            )}
           </div>
           <p className='text-muted-foreground mb-2 line-clamp-1 text-xs'>
             {broker.description}
@@ -342,13 +347,23 @@ function BrokerCard({
 
         {/* Actions */}
         <div className='flex shrink-0 items-center gap-2'>
-          <Button
-            size='sm'
-            onClick={() => onConnect(broker)}
-            className='text-xs'
-          >
-            Connecter
-          </Button>
+          {broker.name === 'Vantage' ? (
+            <Button
+              size='sm'
+              onClick={() => onConnect(broker)}
+              className='text-xs'
+            >
+              Connecter
+            </Button>
+          ) : (
+            <Button
+              size='sm'
+              disabled
+              className='cursor-not-allowed text-xs opacity-50'
+            >
+              Bientôt disponible
+            </Button>
+          )}
           <Button
             variant='ghost'
             size='icon'
@@ -520,6 +535,11 @@ export function AvailableBrokers() {
                   <div className='min-w-0 flex-1'>
                     <div className='mb-1 flex items-center gap-2'>
                       <h3 className='text-sm font-semibold'>{broker.name}</h3>
+                      {broker.name !== 'Vantage' && (
+                        <RendRBadge variant='muted' size='sm'>
+                          Bientôt disponible
+                        </RendRBadge>
+                      )}
                     </div>
                     <p className='text-muted-foreground mb-2 line-clamp-1 text-xs'>
                       {broker.description}
@@ -563,13 +583,23 @@ export function AvailableBrokers() {
 
                   {/* Actions */}
                   <div className='flex shrink-0 items-center gap-2'>
-                    <Button
-                      size='sm'
-                      onClick={() => handleConnectClick(broker)}
-                      className='text-xs'
-                    >
-                      Connecter
-                    </Button>
+                    {broker.name === 'Vantage' ? (
+                      <Button
+                        size='sm'
+                        onClick={() => handleConnectClick(broker)}
+                        className='text-xs'
+                      >
+                        Connecter
+                      </Button>
+                    ) : (
+                      <Button
+                        size='sm'
+                        disabled
+                        className='cursor-not-allowed text-xs opacity-50'
+                      >
+                        Bientôt disponible
+                      </Button>
+                    )}
                     <Button
                       variant='ghost'
                       size='icon'
