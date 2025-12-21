@@ -16,11 +16,11 @@ import { useMemo } from 'react';
 const chartConfig = {
   volume: {
     label: 'Volume',
-    color: 'oklch(0.85 0 0)' // Gris clair monochrome
+    color: '#c5d13f' // Jaune/vert accent RendR
   },
   trades: {
     label: 'Trades',
-    color: 'oklch(0.65 0 0)' // Gris moyen monochrome
+    color: '#c5d13f' // Jaune/vert accent RendR
   }
 } satisfies ChartConfig;
 
@@ -183,16 +183,8 @@ export function VolumeChart() {
           >
             <defs>
               <linearGradient id='fillVolume' x1='0' y1='0' x2='0' y2='1'>
-                <stop
-                  offset='0%'
-                  stopColor='oklch(0.85 0 0)'
-                  stopOpacity={0.8}
-                />
-                <stop
-                  offset='100%'
-                  stopColor='oklch(0.85 0 0)'
-                  stopOpacity={0.2}
-                />
+                <stop offset='0%' stopColor='#c5d13f' stopOpacity={0.8} />
+                <stop offset='100%' stopColor='#c5d13f' stopOpacity={0.2} />
               </linearGradient>
             </defs>
             <CartesianGrid

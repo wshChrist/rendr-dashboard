@@ -13,13 +13,13 @@ import {
 import { useTradingData } from '@/hooks/use-trading-data';
 import { cn } from '@/lib/utils';
 
-// Couleurs monochromes style RendR - nuances de gris
+// Couleurs accent jaune/vert RendR - variations de #c5d13f
 const COLORS = [
-  'oklch(0.95 0 0)', // Gris clair
-  'oklch(0.75 0 0)', // Gris moyen-clair
-  'oklch(0.55 0 0)', // Gris moyen
-  'oklch(0.40 0 0)', // Gris moyen-foncé
-  'oklch(0.25 0 0)' // Gris foncé
+  '#c5d13f', // Accent principal
+  '#d4db5a', // Plus clair
+  '#b5c032', // Plus foncé
+  '#e0e679', // Très clair
+  '#a5b028' // Très foncé
 ];
 
 export function BrokerDistribution() {
