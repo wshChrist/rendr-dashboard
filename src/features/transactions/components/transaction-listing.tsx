@@ -113,7 +113,7 @@ export function TransactionListing() {
     }
 
     return data;
-  }, [selectedBroker, selectedPeriod, selectedStatus]);
+  }, [transactions, selectedBroker, selectedPeriod, selectedStatus]);
 
   // Stats filtrées
   const filteredStats = useMemo(() => {
