@@ -13,7 +13,8 @@ import {
   AnimatedNumber,
   AnimatedInteger
 } from '@/components/ui/animated-number';
-import { userStatsData } from '@/constants/cashback-data';
+import { useTradingData } from '@/hooks/use-trading-data';
+import { useMemo } from 'react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 
@@ -107,7 +108,49 @@ function StatCardItem({
 }
 
 export function StatsCards() {
-  const stats = userStatsData;
+  const { transactions, accounts, isLoading } = useTradingData();
+
+  // Calculer les stats depuis les données réelles
+  const stats = useMemo(() => {
+    const totalCashback = transactions.reduce(
+      (acc, t) => acc + t.cashback_amount,
+      0
+    );
+    const totalVolume = transactions.reduce((acc, t) => acc + t.volume, 0);
+    const totalTrades = transactions.length;
+    const activeBrokers = accounts.filter(
+      (a) => a.status === 'connected'
+    ).length;
+
+    // Pour l'instant, on utilise des valeurs par défaut pour les stats non disponibles
+    // TODO: Calculer depuis les retraits réels quand cette fonctionnalité sera disponible
+    const availableBalance = totalCashback * 0.8; // 80% disponible, 20% en attente
+    const pendingCashback = totalCashback * 0.2;
+    const totalWithdrawn = 0; // À calculer depuis la table withdrawals
+
+    return {
+      available_balance: availableBalance,
+      pending_cashback: pendingCashback,
+      total_cashback_earned: totalCashback,
+      total_withdrawn: totalWithdrawn,
+      total_volume: totalVolume,
+      total_trades: totalTrades,
+      active_brokers: activeBrokers
+    };
+  }, [transactions, accounts]);
+
+  if (isLoading) {
+    return (
+      <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4'>
+        {[1, 2, 3, 4].map((i) => (
+          <div
+            key={i}
+            className='h-40 animate-pulse rounded-2xl bg-zinc-900/40'
+          />
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4'>

@@ -1,6 +1,6 @@
 'use client';
 
-import { transactionsData, userBrokersData } from '@/constants/cashback-data';
+import { useTradingData } from '@/hooks/use-trading-data';
 import { TransactionTable } from './transaction-tables';
 import { cn } from '@/lib/utils';
 import {
@@ -24,31 +24,46 @@ import { useState, useMemo } from 'react';
 import { RendRBadge } from '@/components/ui/rendr-badge';
 
 export function TransactionListing() {
+  const { transactions, accounts, isLoading } = useTradingData();
   const [selectedBroker, setSelectedBroker] = useState<string>('all');
   const [selectedPeriod, setSelectedPeriod] = useState<string>('all');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
 
-  // Calcul des statistiques
+  // Calcul des statistiques depuis les données réelles
   const stats = useMemo(() => {
-    const totalCashback = transactionsData.reduce(
+    if (transactions.length === 0) {
+      return {
+        totalCashback: 0,
+        totalVolume: 0,
+        totalTrades: 0,
+        confirmedTrades: 0,
+        pendingTrades: 0,
+        totalCommission: 0,
+        avgCashbackPerTrade: 0,
+        topPairs: []
+      };
+    }
+
+    const totalCashback = transactions.reduce(
       (acc, t) => acc + t.cashback_amount,
       0
     );
-    const totalVolume = transactionsData.reduce((acc, t) => acc + t.volume, 0);
-    const confirmedTrades = transactionsData.filter(
+    const totalVolume = transactions.reduce((acc, t) => acc + t.volume, 0);
+    const confirmedTrades = transactions.filter(
       (t) => t.status === 'confirmed'
     ).length;
-    const pendingTrades = transactionsData.filter(
+    const pendingTrades = transactions.filter(
       (t) => t.status === 'pending'
     ).length;
-    const totalCommission = transactionsData.reduce(
+    const totalCommission = transactions.reduce(
       (acc, t) => acc + t.commission,
       0
     );
-    const avgCashbackPerTrade = totalCashback / transactionsData.length;
+    const avgCashbackPerTrade =
+      transactions.length > 0 ? totalCashback / transactions.length : 0;
 
     // Top pairs
-    const pairCounts = transactionsData.reduce(
+    const pairCounts = transactions.reduce(
       (acc, t) => {
         acc[t.pair] = (acc[t.pair] || 0) + 1;
         return acc;
@@ -62,21 +77,21 @@ export function TransactionListing() {
     return {
       totalCashback,
       totalVolume,
-      totalTrades: transactionsData.length,
+      totalTrades: transactions.length,
       confirmedTrades,
       pendingTrades,
       totalCommission,
       avgCashbackPerTrade,
       topPairs
     };
-  }, []);
+  }, [transactions]);
 
   // Filtrage des données
   const filteredData = useMemo(() => {
-    let data = [...transactionsData];
+    let data = [...transactions];
 
     if (selectedBroker !== 'all') {
-      data = data.filter((t) => t.broker.id === selectedBroker);
+      data = data.filter((t) => t.user_broker_id === selectedBroker);
     }
 
     if (selectedStatus !== 'all') {
@@ -255,9 +270,9 @@ export function TransactionListing() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value='all'>Tous les brokers</SelectItem>
-                {userBrokersData.map((ub) => (
-                  <SelectItem key={ub.broker_id} value={ub.broker_id}>
-                    {ub.broker.name}
+                {accounts.map((account) => (
+                  <SelectItem key={account.id} value={account.id}>
+                    {account.broker}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -337,7 +352,18 @@ export function TransactionListing() {
       </div>
 
       {/* Table */}
-      <TransactionTable data={filteredData} totalItems={filteredData.length} />
+      {isLoading ? (
+        <div className='flex items-center justify-center p-8'>
+          <p className='text-muted-foreground'>
+            Chargement des transactions...
+          </p>
+        </div>
+      ) : (
+        <TransactionTable
+          data={filteredData}
+          totalItems={filteredData.length}
+        />
+      )}
     </div>
   );
 }

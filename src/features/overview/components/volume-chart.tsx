@@ -9,8 +9,9 @@ import {
   ChartTooltip,
   ChartTooltipContent
 } from '@/components/ui/chart';
-import { monthlyStatsData } from '@/constants/cashback-data';
+import { useTradingData } from '@/hooks/use-trading-data';
 import { cn } from '@/lib/utils';
+import { useMemo } from 'react';
 
 const chartConfig = {
   volume: {
@@ -24,15 +25,72 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function VolumeChart() {
+  const { trades, isLoading } = useTradingData();
   const [activeChart, setActiveChart] =
     React.useState<keyof typeof chartConfig>('volume');
 
-  const total = React.useMemo(
+  // Calculer les stats mensuelles depuis les trades réels
+  const monthlyStatsData = useMemo(() => {
+    const monthNames = [
+      'Janvier',
+      'Février',
+      'Mars',
+      'Avril',
+      'Mai',
+      'Juin',
+      'Juillet',
+      'Août',
+      'Septembre',
+      'Octobre',
+      'Novembre',
+      'Décembre'
+    ];
+
+    // Grouper les trades par mois
+    const tradesByMonth = new Map<string, { volume: number; trades: number }>();
+
+    // Obtenir les 6 derniers mois
+    const now = new Date();
+    const last6Months: string[] = [];
+    for (let i = 5; i >= 0; i--) {
+      const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+      last6Months.push(key);
+      tradesByMonth.set(key, { volume: 0, trades: 0 });
+    }
+
+    // Agréger les trades par mois
+    trades.forEach((trade) => {
+      const tradeDate = new Date(trade.close_time);
+      const monthKey = `${tradeDate.getFullYear()}-${String(tradeDate.getMonth() + 1).padStart(2, '0')}`;
+
+      if (tradesByMonth.has(monthKey)) {
+        const monthData = tradesByMonth.get(monthKey)!;
+        monthData.volume += parseFloat(trade.lots || '0');
+        monthData.trades += 1;
+      }
+    });
+
+    // Convertir en format attendu par le graphique
+    return last6Months.map((monthKey) => {
+      const [year, month] = monthKey.split('-');
+      const monthIndex = parseInt(month) - 1;
+      const monthData = tradesByMonth.get(monthKey) || { volume: 0, trades: 0 };
+
+      return {
+        month: monthNames[monthIndex],
+        volume: monthData.volume,
+        trades: monthData.trades
+      };
+    });
+  }, [trades]);
+
+  const total = useMemo(
     () => ({
       volume: monthlyStatsData.reduce((acc, curr) => acc + curr.volume, 0),
       trades: monthlyStatsData.reduce((acc, curr) => acc + curr.trades, 0)
     }),
-    []
+    [monthlyStatsData]
   );
 
   const [isClient, setIsClient] = React.useState(false);
@@ -43,6 +101,19 @@ export function VolumeChart() {
 
   if (!isClient) {
     return null;
+  }
+
+  if (isLoading) {
+    return (
+      <div
+        className={cn(
+          '@container/card rounded-2xl',
+          'bg-zinc-900/40 backdrop-blur-sm',
+          'border border-white/5',
+          'h-[400px] animate-pulse'
+        )}
+      />
+    );
   }
 
   return (
