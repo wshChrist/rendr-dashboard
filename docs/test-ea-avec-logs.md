@@ -24,3 +24,5 @@ uvicorn main:app --host 0.0.0.0 --port 8001
 
 - **Log principal** : `d:\Travail\Travaux\RendR Dashboard\next-shadcn-dashboard-starter\.cursor\debug.log`
 - **Log alternatif** : `MQL4/Files/RendR_debug.log` (dans le dossier MetaTrader)
+
+

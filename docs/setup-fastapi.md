@@ -92,3 +92,5 @@ Supabase
 - Vérifier que FastAPI est démarré
 - Vérifier la liste blanche MetaTrader
 - Vérifier que MetaTrader est lancé en administrateur
+
+

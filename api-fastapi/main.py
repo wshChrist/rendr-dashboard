@@ -337,3 +337,5 @@ if __name__ == "__main__":
     port = int(sys.argv[1]) if len(sys.argv) > 1 else 8001
     # Écouter sur toutes les interfaces pour permettre les connexions depuis l'IP locale
     uvicorn.run(app, host="0.0.0.0", port=port, log_level="info")
+
+

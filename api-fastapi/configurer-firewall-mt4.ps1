@@ -123,3 +123,5 @@ Write-Host "Prochaines étapes:" -ForegroundColor Yellow
 Write-Host "1. Redémarrer MetaTrader en tant qu'administrateur" -ForegroundColor White
 Write-Host "2. Vérifier que l'URL est dans la liste blanche MetaTrader" -ForegroundColor White
 Write-Host "3. Tester l'EA" -ForegroundColor White
+
+

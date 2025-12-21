@@ -26,3 +26,5 @@ if ($finalCheck) {
 } else {
     Write-Host "✅ Le port 8002 est libre !" -ForegroundColor Green
 }
+
+

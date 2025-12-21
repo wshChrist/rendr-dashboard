@@ -51,6 +51,17 @@ export class VpsService {
           account.investor_password
         );
 
+        // Log de débogage pour vérifier les valeurs
+        console.log(`[DEBUG] Compte ${account.external_account_id}:`);
+        console.log(`  - Login: ${account.login}`);
+        console.log(`  - Server: ${account.server}`);
+        console.log(
+          `  - Password déchiffré (longueur): ${decryptedPassword.length} caractères`
+        );
+        console.log(
+          `  - Password déchiffré (premiers 10): ${decryptedPassword.substring(0, 10)}...`
+        );
+
         accounts.push({
           external_account_id: account.external_account_id,
           broker: account.broker,

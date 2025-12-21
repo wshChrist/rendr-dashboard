@@ -40,3 +40,5 @@ if ($portCheck) {
 } else {
     Write-Host "✅ Le port 8000 est libre !" -ForegroundColor Green
 }
+
+

@@ -76,3 +76,5 @@ Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled True
 - Vérifier que l'URL est dans la liste blanche MetaTrader
 - Vérifier que MetaTrader est lancé en administrateur
 - Vérifier que FastAPI est démarré et écoute sur 0.0.0.0:8001
+
+

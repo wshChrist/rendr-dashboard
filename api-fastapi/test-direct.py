@@ -18,3 +18,5 @@ try:
     print(f"Réponse : {response.json()}")
 except Exception as e:
     print(f"❌ Next.js ne répond pas : {e}")
+
+

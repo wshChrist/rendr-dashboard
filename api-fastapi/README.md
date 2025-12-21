@@ -73,3 +73,5 @@ NEXTJS_URL = "http://127.0.0.1:3000"
 ```
 
 Modifiez cette valeur si Next.js tourne sur un autre port.
+
+

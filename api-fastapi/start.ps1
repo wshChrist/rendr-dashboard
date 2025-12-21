@@ -30,3 +30,5 @@ Write-Host "Testez dans votre navigateur: http://127.0.0.1:8000/api/test" -Foreg
 Write-Host "Appuyez sur Ctrl+C pour arrêter`n" -ForegroundColor Gray
 
 uvicorn main:app --reload --host 0.0.0.0 --port 8000
+
+

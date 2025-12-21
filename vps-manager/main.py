@@ -46,7 +46,7 @@ class VPSManager:
                 logger.debug("Aucun compte en attente")
                 return
 
-            logger.info(f"📋 {len(pending_accounts)} compte(s) en attente de configuration")
+            logger.info(f"{len(pending_accounts)} compte(s) en attente de configuration")
             logger.info("=" * 60)
 
             for account in pending_accounts:
@@ -72,7 +72,7 @@ class VPSManager:
                             'connected',
                             None
                         )
-                        logger.info(f"✅ Compte {external_account_id} configuré et terminal lancé avec succès")
+                        logger.info(f"Compte {external_account_id} configuré et terminal lancé avec succès")
                         logger.info(f"   L'EA va maintenant tenter de se connecter et enregistrer le compte")
                     else:
                         # Mettre à jour le statut à 'error'
@@ -88,7 +88,7 @@ class VPSManager:
                     import traceback
                     error_msg = f"Erreur lors du traitement: {str(e)}"
                     logger.error("=" * 60)
-                    logger.error(f"❌ Erreur lors du traitement de {external_account_id}")
+                    logger.error(f"Erreur lors du traitement de {external_account_id}")
                     logger.error(f"   Message: {error_msg}")
                     logger.error(f"   Type: {type(e).__name__}")
                     logger.error(f"   Traceback:\n{traceback.format_exc()}")
@@ -124,17 +124,17 @@ class VPSManager:
                 time.sleep(self.config.POLLING_INTERVAL)
             except KeyboardInterrupt:
                 logger.info("=" * 60)
-                logger.info("🛑 Arrêt du VPS Manager demandé par l'utilisateur")
+                logger.info("Arret du VPS Manager demande par l'utilisateur")
                 logger.info("=" * 60)
                 break
             except Exception as e:
                 import traceback
                 logger.error("=" * 60)
-                logger.error(f"❌ Erreur dans la boucle principale: {str(e)}")
+                logger.error(f"Erreur dans la boucle principale: {str(e)}")
                 logger.error(f"   Type: {type(e).__name__}")
                 logger.error(f"   Traceback:\n{traceback.format_exc()}")
                 logger.error("=" * 60)
-                logger.info(f"⏳ Attente de {self.config.POLLING_INTERVAL} secondes avant la prochaine tentative...")
+                logger.info(f"Attente de {self.config.POLLING_INTERVAL} secondes avant la prochaine tentative...")
                 time.sleep(self.config.POLLING_INTERVAL)
 
 

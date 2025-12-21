@@ -54,3 +54,4 @@ class Config:
         if 'paths' in config:
             self.TERMINALS_BASE_PATH = config['paths'].get('terminals_base', self.TERMINALS_BASE_PATH)
 
+

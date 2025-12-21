@@ -28,6 +28,21 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { broker, platform, server, login, investor_password } = body;
 
+    // Log de débogage pour voir ce qui est reçu
+    console.log('[DEBUG] Données reçues dans API route:');
+    console.log('  - broker:', broker);
+    console.log('  - platform:', platform);
+    console.log('  - server:', server);
+    console.log('  - login:', login);
+    console.log(
+      '  - investor_password (longueur):',
+      investor_password?.length || 0
+    );
+    console.log(
+      '  - investor_password (premiers 10):',
+      investor_password?.substring(0, 10) || 'vide'
+    );
+
     // Validation
     if (!broker || !platform || !server || !login || !investor_password) {
       return NextResponse.json(
@@ -52,7 +67,13 @@ export async function POST(request: NextRequest) {
     // Chiffrer le mot de passe
     let encryptedPassword: string;
     try {
+      console.log('[DEBUG] Avant chiffrement:');
+      console.log('  - investor_password à chiffrer:', investor_password);
       encryptedPassword = encrypt(investor_password);
+      console.log(
+        '  - encryptedPassword (longueur):',
+        encryptedPassword.length
+      );
     } catch (error: any) {
       console.error('Erreur lors du chiffrement:', error);
       return NextResponse.json(
@@ -66,6 +87,16 @@ export async function POST(request: NextRequest) {
     }
 
     // Insérer dans Supabase
+    console.log('[DEBUG] Données à insérer dans Supabase:');
+    console.log('  - broker:', broker);
+    console.log('  - platform:', platform);
+    console.log('  - server:', server);
+    console.log('  - login:', login);
+    console.log(
+      '  - investor_password (chiffré, longueur):',
+      encryptedPassword.length
+    );
+
     const { data: account, error: insertError } = await supabase
       .from('trading_accounts')
       .insert({

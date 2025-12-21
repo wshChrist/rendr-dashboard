@@ -32,3 +32,5 @@ Vous devriez voir une ligne avec `0.0.0.0:8002` ou `192.168.1.142:8002`.
 Ouvrir : `http://192.168.1.142:8002/api/test`
 
 Vous devriez voir : `{"status":"ok",...}`
+
+

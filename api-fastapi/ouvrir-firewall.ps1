@@ -21,3 +21,5 @@ New-NetFirewallRule -DisplayName "FastAPI Port 8000" `
 
 Write-Host "✅ Règle de firewall créée avec succès !" -ForegroundColor Green
 Write-Host "Le port 8000 est maintenant ouvert pour les connexions entrantes." -ForegroundColor Green
+
+

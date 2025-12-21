@@ -16,3 +16,5 @@ Créer une nouvelle EA propre pour RendR qui :
 - MetaTrader 4 ou 5
 - URL de l'API à configurer dans l'EA
 - Liste blanche MetaTrader configurée
+
+
