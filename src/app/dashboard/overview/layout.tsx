@@ -1,9 +1,17 @@
 import PageContainer from '@/components/layout/page-container';
 import React from 'react';
-import { StatsCards } from '@/features/overview/components/stats-cards';
+import dynamic from 'next/dynamic';
 import { PlatformUpdates } from '@/features/overview/components/platform-updates';
 import { WelcomeHeader } from '@/features/overview/components/welcome-header';
 import { SectionHeading } from '@/components/ui/section-heading';
+
+const StatsCards = dynamic(
+  () =>
+    import('@/features/overview/components/stats-cards').then((mod) => ({
+      default: mod.StatsCards
+    })),
+  { ssr: false }
+);
 
 export default function OverViewLayout({
   sales,
