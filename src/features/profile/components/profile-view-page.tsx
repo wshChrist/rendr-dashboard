@@ -69,7 +69,7 @@ const profileFormSchema = z.object({
   firstName: z.string().min(2, 'Le prénom doit contenir au moins 2 caractères'),
   lastName: z.string().min(2, 'Le nom doit contenir au moins 2 caractères'),
   email: z.string().email('Adresse email invalide'),
-  avatar: z.string().url('URL invalide').optional().or(z.literal(''))
+  avatar: z.string().optional() // Accepte une URL (pas de validation stricte pour permettre les URLs de Storage)
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
@@ -136,6 +136,10 @@ export default function ProfileViewPage() {
   const [cryptoAddress, setCryptoAddress] = useState('');
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+  const [uploadedAvatarUrl, setUploadedAvatarUrl] = useState<string | null>(
+    null
+  );
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Formulaires react-hook-form
@@ -168,6 +172,8 @@ export default function ProfileViewPage() {
         avatar: user.user_metadata?.avatar_url || ''
       });
       setAvatarPreview(user.user_metadata?.avatar_url || null);
+      setAvatarFile(null);
+      setUploadedAvatarUrl(null);
     }
   }, [user, editProfileDialogOpen, profileForm]);
 
@@ -217,7 +223,7 @@ export default function ProfileViewPage() {
       setAvatarPreview(user.user_metadata?.avatar_url || null);
       setEditProfileDialogOpen(true);
       setAvatarFile(null);
-      setAvatarPreview(user.user_metadata?.avatar_url || null);
+      setUploadedAvatarUrl(null);
     }
   };
 
@@ -228,44 +234,12 @@ export default function ProfileViewPage() {
         return;
       }
 
-      let avatarUrl = data.avatar || user.user_metadata?.avatar_url || '';
-
-      // Si un nouveau fichier avatar a été sélectionné, l'uploader vers Supabase Storage
-      if (avatarFile) {
-        try {
-          // Créer un nom de fichier unique
-          const fileExt = avatarFile.name.split('.').pop();
-          const fileName = `${user.id}/${Date.now()}.${fileExt}`;
-          const filePath = fileName; // Le bucket 'avatars' est déjà spécifié dans .from()
-
-          // Uploader vers Supabase Storage
-          const { data: uploadData, error: uploadError } =
-            await supabase.storage
-              .from('avatars')
-              .upload(filePath, avatarFile, {
-                cacheControl: '3600',
-                upsert: true
-              });
-
-          if (uploadError) {
-            // Si le bucket n'existe pas, utiliser l'URL base64 temporairement
-            console.warn(
-              'Erreur upload avatar (bucket peut-être inexistant):',
-              uploadError
-            );
-            // On continue avec l'URL base64 pour l'instant
-          } else {
-            // Récupérer l'URL publique de l'image
-            const {
-              data: { publicUrl }
-            } = supabase.storage.from('avatars').getPublicUrl(filePath);
-            avatarUrl = publicUrl;
-          }
-        } catch (uploadErr) {
-          console.error("Erreur lors de l'upload de l'avatar:", uploadErr);
-          // Continuer avec l'URL base64 si l'upload échoue
-        }
-      }
+      // Utiliser l'URL uploadée si disponible, sinon utiliser celle du formulaire ou celle existante
+      let avatarUrl =
+        uploadedAvatarUrl ||
+        data.avatar ||
+        user.user_metadata?.avatar_url ||
+        '';
 
       // Construire le nom complet
       const fullName = `${data.firstName} ${data.lastName}`.trim();
@@ -290,6 +264,7 @@ export default function ProfileViewPage() {
       setUser(updatedUserData.user);
       setAvatarFile(null);
       setAvatarPreview(null);
+      setUploadedAvatarUrl(null);
 
       toast.success('Profil mis à jour avec succès');
       setEditProfileDialogOpen(false);
@@ -302,26 +277,73 @@ export default function ProfileViewPage() {
     }
   };
 
-  const handleAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        toast.error("L'image ne doit pas dépasser 5MB");
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("L'image ne doit pas dépasser 5MB");
+      return;
+    }
+
+    if (!file.type.startsWith('image/')) {
+      toast.error('Le fichier doit être une image');
+      return;
+    }
+
+    setAvatarFile(file);
+    setIsUploadingAvatar(true);
+
+    try {
+      if (!user) {
+        toast.error('Utilisateur non connecté');
         return;
       }
-      // Vérifier le type de fichier
-      if (!file.type.startsWith('image/')) {
-        toast.error('Le fichier doit être une image');
-        return;
+
+      // Créer un nom de fichier unique
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user.id}/${Date.now()}.${fileExt}`;
+
+      // Uploader directement vers Supabase Storage
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(fileName, file, {
+          cacheControl: '3600',
+          upsert: true
+        });
+
+      if (uploadError) {
+        // Si le bucket n'existe pas, utiliser une URL object pour prévisualiser
+        console.warn(
+          'Erreur upload avatar (bucket peut-être inexistant):',
+          uploadError
+        );
+        // Créer une URL temporaire pour la prévisualisation
+        const tempUrl = URL.createObjectURL(file);
+        setAvatarPreview(tempUrl);
+        profileForm.setValue('avatar', tempUrl);
+        toast.warning(
+          'Le bucket "avatars" n\'existe pas encore. Créez-le dans Supabase Storage pour sauvegarder l\'image.'
+        );
+      } else {
+        // Récupérer l'URL publique de l'image
+        const {
+          data: { publicUrl }
+        } = supabase.storage.from('avatars').getPublicUrl(fileName);
+
+        setUploadedAvatarUrl(publicUrl);
+        setAvatarPreview(publicUrl);
+        profileForm.setValue('avatar', publicUrl);
+        toast.success('Image uploadée avec succès');
       }
-      setAvatarFile(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const result = reader.result as string;
-        setAvatarPreview(result);
-        profileForm.setValue('avatar', result);
-      };
-      reader.readAsDataURL(file);
+    } catch (error: any) {
+      console.error("Erreur lors de l'upload de l'avatar:", error);
+      toast.error("Erreur lors de l'upload de l'image");
+      // Créer une URL temporaire pour la prévisualisation en cas d'erreur
+      const tempUrl = URL.createObjectURL(file);
+      setAvatarPreview(tempUrl);
+    } finally {
+      setIsUploadingAvatar(false);
     }
   };
 
@@ -1124,8 +1146,13 @@ export default function ProfileViewPage() {
                     size='icon'
                     className='absolute -right-1 -bottom-1 h-8 w-8 rounded-full border-white/10 bg-zinc-800'
                     onClick={() => fileInputRef.current?.click()}
+                    disabled={isUploadingAvatar}
                   >
-                    <IconUpload className='h-4 w-4' />
+                    {isUploadingAvatar ? (
+                      <div className='h-4 w-4 animate-spin rounded-full border-2 border-white/20 border-t-white' />
+                    ) : (
+                      <IconUpload className='h-4 w-4' />
+                    )}
                   </Button>
                   <input
                     ref={fileInputRef}
