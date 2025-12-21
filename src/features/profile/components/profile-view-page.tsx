@@ -135,6 +135,7 @@ export default function ProfileViewPage() {
   const [paypalEmail, setPaypalEmail] = useState('');
   const [cryptoAddress, setCryptoAddress] = useState('');
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Formulaires react-hook-form
@@ -180,10 +181,21 @@ export default function ProfileViewPage() {
 
   const firstName = user?.user_metadata?.first_name || '';
   const lastName = user?.user_metadata?.last_name || '';
+  const fullNameFromMetadata =
+    user?.user_metadata?.name || user?.user_metadata?.full_name || '';
   const initials =
     firstName && lastName
       ? `${firstName[0]}${lastName[0]}`.toUpperCase()
-      : firstName?.[0]?.toUpperCase() || 'U';
+      : fullNameFromMetadata
+        ? fullNameFromMetadata
+            .split(' ')
+            .map((n: string) => n[0])
+            .join('')
+            .toUpperCase()
+            .slice(0, 2)
+        : firstName?.[0]?.toUpperCase() ||
+          user?.email?.[0]?.toUpperCase() ||
+          'U';
 
   const memberSince = user?.created_at
     ? format(new Date(user.created_at), 'MMMM yyyy', { locale: fr })
@@ -204,25 +216,89 @@ export default function ProfileViewPage() {
       });
       setAvatarPreview(user.user_metadata?.avatar_url || null);
       setEditProfileDialogOpen(true);
+      setAvatarFile(null);
+      setAvatarPreview(user.user_metadata?.avatar_url || null);
     }
   };
 
   const handleSaveProfile = async (data: ProfileFormValues) => {
     try {
-      // Ici vous pouvez ajouter la logique pour sauvegarder via votre API
-      // Exemple: await fetch('/api/profile', { method: 'PUT', body: JSON.stringify(data) });
+      if (!user) {
+        toast.error('Utilisateur non connecté');
+        return;
+      }
+
+      let avatarUrl = data.avatar || user.user_metadata?.avatar_url || '';
+
+      // Si un nouveau fichier avatar a été sélectionné, l'uploader vers Supabase Storage
+      if (avatarFile) {
+        try {
+          // Créer un nom de fichier unique
+          const fileExt = avatarFile.name.split('.').pop();
+          const fileName = `${user.id}/${Date.now()}.${fileExt}`;
+          const filePath = `avatars/${fileName}`;
+
+          // Uploader vers Supabase Storage
+          const { data: uploadData, error: uploadError } =
+            await supabase.storage
+              .from('avatars')
+              .upload(filePath, avatarFile, {
+                cacheControl: '3600',
+                upsert: true
+              });
+
+          if (uploadError) {
+            // Si le bucket n'existe pas, utiliser l'URL base64 temporairement
+            console.warn(
+              'Erreur upload avatar (bucket peut-être inexistant):',
+              uploadError
+            );
+            // On continue avec l'URL base64 pour l'instant
+          } else {
+            // Récupérer l'URL publique de l'image
+            const {
+              data: { publicUrl }
+            } = supabase.storage.from('avatars').getPublicUrl(filePath);
+            avatarUrl = publicUrl;
+          }
+        } catch (uploadErr) {
+          console.error("Erreur lors de l'upload de l'avatar:", uploadErr);
+          // Continuer avec l'URL base64 si l'upload échoue
+        }
+      }
+
+      // Construire le nom complet
+      const fullName = `${data.firstName} ${data.lastName}`.trim();
+
+      // Mettre à jour les métadonnées utilisateur
+      const { data: updatedUserData, error: updateError } =
+        await supabase.auth.updateUser({
+          data: {
+            first_name: data.firstName,
+            last_name: data.lastName,
+            name: fullName,
+            full_name: fullName,
+            avatar_url: avatarUrl || undefined
+          }
+        });
+
+      if (updateError) {
+        throw updateError;
+      }
+
+      // Mettre à jour l'état local
+      setUser(updatedUserData.user);
+      setAvatarFile(null);
+      setAvatarPreview(null);
+
       toast.success('Profil mis à jour avec succès');
       setEditProfileDialogOpen(false);
-      // Recharger les données utilisateur si nécessaire
-      if (user) {
-        const {
-          data: { user: updatedUser }
-        } = await supabase.auth.getUser();
-        setUser(updatedUser);
-      }
-    } catch (error) {
-      toast.error('Erreur lors de la mise à jour du profil');
-      console.error(error);
+
+      // Recharger la page pour s'assurer que tous les composants sont à jour
+      router.refresh();
+    } catch (error: any) {
+      console.error('Erreur lors de la mise à jour du profil:', error);
+      toast.error(error.message || 'Erreur lors de la mise à jour du profil');
     }
   };
 
@@ -233,6 +309,12 @@ export default function ProfileViewPage() {
         toast.error("L'image ne doit pas dépasser 5MB");
         return;
       }
+      // Vérifier le type de fichier
+      if (!file.type.startsWith('image/')) {
+        toast.error('Le fichier doit être une image');
+        return;
+      }
+      setAvatarFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
         const result = reader.result as string;
@@ -366,7 +448,10 @@ export default function ProfileViewPage() {
             <div className='space-y-3'>
               <div className='flex items-center gap-3'>
                 <h1 className='text-2xl font-bold tracking-tight md:text-3xl'>
-                  {user?.user_metadata?.name || 'Trader'}
+                  {user?.user_metadata?.name ||
+                    user?.user_metadata?.full_name ||
+                    `${user?.user_metadata?.first_name || ''} ${user?.user_metadata?.last_name || ''}`.trim() ||
+                    'Trader'}
                 </h1>
                 <RendRBadge variant='success' dot dotColor='green'>
                   Vérifié

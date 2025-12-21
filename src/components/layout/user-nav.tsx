@@ -61,6 +61,7 @@ export function UserNav() {
     const displayName =
       user.user_metadata?.name ||
       user.user_metadata?.full_name ||
+      `${user.user_metadata?.first_name || ''} ${user.user_metadata?.last_name || ''}`.trim() ||
       user.email?.split('@')[0] ||
       'User';
     const email = user.email || '';
