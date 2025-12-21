@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { v4 as uuidv4 } from 'uuid';
+import { encrypt } from '@/lib/utils/encryption.util';
 
 /**
  * Route API pour créer un compte de trading
@@ -48,6 +49,22 @@ export async function POST(request: NextRequest) {
     // Générer un external_account_id unique
     const externalAccountId = uuidv4();
 
+    // Chiffrer le mot de passe
+    let encryptedPassword: string;
+    try {
+      encryptedPassword = encrypt(investor_password);
+    } catch (error: any) {
+      console.error('Erreur lors du chiffrement:', error);
+      return NextResponse.json(
+        {
+          error: 'Erreur de chiffrement',
+          message:
+            'Impossible de chiffrer le mot de passe. Vérifiez la configuration ENCRYPTION_KEY.'
+        },
+        { status: 500 }
+      );
+    }
+
     // Insérer dans Supabase
     const { data: account, error: insertError } = await supabase
       .from('trading_accounts')
@@ -57,7 +74,7 @@ export async function POST(request: NextRequest) {
         platform,
         server,
         login,
-        investor_password, // Note: En production, ceci devrait être chiffré côté backend
+        investor_password: encryptedPassword,
         external_account_id: externalAccountId,
         status: 'pending_vps_setup'
       })
