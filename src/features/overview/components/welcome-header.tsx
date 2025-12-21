@@ -106,7 +106,7 @@ export function WelcomeHeader() {
         <h1 className='text-3xl font-bold tracking-tight md:text-4xl'>
           {greeting}, <span className='text-foreground'>{firstName}</span>
         </h1>
-        {stats.pending_cashback > 0 && (
+        {pendingCashback > 0 && (
           <RendRBadge
             variant='accent'
             size='lg'
@@ -114,7 +114,7 @@ export function WelcomeHeader() {
             dotColor='green'
             className='animate-pulse-subtle w-fit'
           >
-            +{stats.pending_cashback.toFixed(2)}€ en attente
+            +{pendingCashback.toFixed(2)}€ en attente
           </RendRBadge>
         )}
       </div>
