@@ -36,7 +36,14 @@ class SupabaseClient:
                 return []
 
         except requests.exceptions.RequestException as e:
-            logger.error(f"Erreur de connexion à l'API: {str(e)}")
+            import traceback
+            logger.error("=" * 60)
+            logger.error(f"❌ Erreur de connexion à l'API lors de la récupération des comptes")
+            logger.error(f"   URL: {url}")
+            logger.error(f"   Message: {str(e)}")
+            logger.error(f"   Type: {type(e).__name__}")
+            logger.error(f"   Traceback:\n{traceback.format_exc()}")
+            logger.error("=" * 60)
             return []
 
     def update_account_status(
@@ -73,5 +80,15 @@ class SupabaseClient:
                 return False
 
         except requests.exceptions.RequestException as e:
-            logger.error(f"Erreur de connexion à l'API: {str(e)}")
+            import traceback
+            logger.error("=" * 60)
+            logger.error(f"❌ Erreur de connexion à l'API lors de la mise à jour du statut")
+            logger.error(f"   URL: {url}")
+            logger.error(f"   Compte: {external_account_id}")
+            logger.error(f"   Statut: {status}")
+            logger.error(f"   Message: {str(e)}")
+            logger.error(f"   Type: {type(e).__name__}")
+            logger.error(f"   Traceback:\n{traceback.format_exc()}")
+            logger.error("=" * 60)
             return False
+

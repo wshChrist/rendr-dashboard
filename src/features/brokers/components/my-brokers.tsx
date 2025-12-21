@@ -40,22 +40,31 @@ import { cn } from '@/lib/utils';
 import { useMemo } from 'react';
 import { toast } from 'sonner';
 
-const getStatusBadge = (status: string) => {
+const getStatusBadge = (status: string, errorMessage?: string) => {
   switch (status) {
     case 'active':
+    case 'connected':
       return (
         <RendRBadge variant='success' dot dotColor='green'>
-          Actif
+          Connecté
         </RendRBadge>
       );
     case 'pending':
+    case 'pending_vps_setup':
       return (
         <RendRBadge variant='accent' dot dotColor='yellow'>
-          En attente
+          Configuration en cours
+        </RendRBadge>
+      );
+    case 'error':
+      return (
+        <RendRBadge variant='destructive' dot dotColor='red'>
+          Erreur
         </RendRBadge>
       );
     case 'inactive':
-      return <RendRBadge variant='muted'>Inactif</RendRBadge>;
+    case 'disconnected':
+      return <RendRBadge variant='muted'>Déconnecté</RendRBadge>;
     default:
       return <RendRBadge variant='outline'>Inconnu</RendRBadge>;
   }
@@ -131,7 +140,19 @@ export function MyBrokers() {
 
   useEffect(() => {
     loadAccounts();
-  }, []);
+
+    // Rafraîchir automatiquement toutes les 30 secondes pour les comptes en attente
+    const interval = setInterval(() => {
+      const hasPendingAccounts = accounts.some(
+        (acc) => acc.status === 'pending_vps_setup'
+      );
+      if (hasPendingAccounts) {
+        loadAccounts();
+      }
+    }, 30000); // 30 secondes
+
+    return () => clearInterval(interval);
+  }, [accounts]);
 
   // Transformer les comptes Supabase au format attendu avec stats calculées depuis les trades
   const transformedAccounts = useMemo(() => {
@@ -179,19 +200,16 @@ export function MyBrokers() {
           supported_pairs: [],
           created_at: account.created_at
         },
-        status:
-          account.status === 'connected'
-            ? 'active'
-            : account.status === 'pending_vps_setup'
-              ? 'pending'
-              : 'inactive',
+        status: account.status || 'pending',
+        error_message: account.error_message,
         total_cashback: totalCashback,
         total_volume: totalVolume,
         trade_count: tradeCount,
         linked_at: account.created_at,
         platform: account.platform,
         server: account.server,
-        login: account.login
+        login: account.login,
+        updated_at: account.updated_at
       };
     });
   }, [accounts, tradesByAccount]);
@@ -623,6 +641,35 @@ export function MyBrokers() {
               </div>
             )}
 
+            {/* Message d'erreur si présent */}
+            {broker.status === 'error' && broker.error_message && (
+              <div className='mb-4 rounded-lg border border-red-500/20 bg-red-500/10 p-3'>
+                <p className='text-sm font-medium text-red-400'>
+                  Erreur de connexion
+                </p>
+                <p className='mt-1 text-xs text-red-300/80'>
+                  {broker.error_message}
+                </p>
+                <p className='mt-2 text-xs text-red-300/60'>
+                  Le VPS va réessayer automatiquement. Si le problème persiste,
+                  vérifiez vos identifiants.
+                </p>
+              </div>
+            )}
+
+            {/* Message d'attente si en cours de configuration */}
+            {broker.status === 'pending_vps_setup' && (
+              <div className='mb-4 rounded-lg border border-yellow-500/20 bg-yellow-500/10 p-3'>
+                <p className='text-sm font-medium text-yellow-400'>
+                  Configuration en cours
+                </p>
+                <p className='mt-1 text-xs text-yellow-300/80'>
+                  Le VPS est en train de configurer votre terminal MT4/MT5. Cela
+                  peut prendre quelques minutes.
+                </p>
+              </div>
+            )}
+
             {/* Actions */}
             <div className='flex gap-2 border-t border-white/5 pt-4'>
               <Button
@@ -630,18 +677,16 @@ export function MyBrokers() {
                 size='sm'
                 className='flex-1'
                 onClick={() => {
-                  toast.info(
-                    `Synchronisation de ${broker.broker.name} ajoutée à la file d'attente`,
-                    {
-                      description:
-                        'Votre compte sera synchronisé dans quelques instants.',
-                      duration: 4000
-                    }
-                  );
+                  loadAccounts();
+                  toast.info(`Actualisation de ${broker.broker.name}`, {
+                    description:
+                      'Les informations du compte ont été mises à jour.',
+                    duration: 3000
+                  });
                 }}
               >
                 <IconRefresh className='mr-2 h-4 w-4' />
-                Synchroniser
+                Actualiser
               </Button>
               <Button variant='ghost' size='sm' className='hover:bg-white/5'>
                 <IconExternalLink className='h-4 w-4' />

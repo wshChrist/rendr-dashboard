@@ -50,7 +50,7 @@ export class TradingAccountsService {
     const { data, error } = await supabase
       .from('trading_accounts')
       .select(
-        'id, external_account_id, broker, platform, server, status, created_at, updated_at'
+        'id, external_account_id, broker, platform, server, login, status, error_message, created_at, updated_at'
       )
       .eq('user_id', userId)
       .order('created_at', { ascending: false });

@@ -109,9 +109,15 @@ class MTManager:
         config_file = terminal_dir / "rendr_ea_config.ini"
         config = configparser.ConfigParser()
 
+        # URL pour l'enregistrement du compte (l'EA doit d'abord s'enregistrer)
+        register_url = f"{self.config.API_URL}/api/trades/register"
+        # URL pour l'envoi des trades (après enregistrement)
+        trades_url = f"{self.config.API_URL}/api/trades"
+
         config['EA'] = {
             'external_account_id': external_account_id,
-            'api_url': f"{self.config.API_URL}/api/trades",
+            'register_url': register_url,
+            'trades_url': trades_url,
             'api_secret': external_account_id  # Utiliser external_account_id comme secret pour l'instant
         }
 
@@ -119,6 +125,8 @@ class MTManager:
             config.write(f)
 
         logger.info(f"Fichier de config EA créé: {config_file}")
+        logger.info(f"  - Register URL: {register_url}")
+        logger.info(f"  - Trades URL: {trades_url}")
 
     def _launch_terminal(
         self,
@@ -157,14 +165,32 @@ class MTManager:
             logger.info(f"Lancement du terminal: {' '.join(args)}")
 
             # Lancer en arrière-plan
-            subprocess.Popen(
+            process = subprocess.Popen(
                 args,
                 cwd=str(terminal_dir),
                 creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0
             )
 
+            # Attendre un peu pour vérifier que le processus a démarré
+            import time
+            time.sleep(2)
+            
+            # Vérifier que le processus est toujours en cours d'exécution
+            if process.poll() is not None:
+                logger.error(f"Le terminal s'est arrêté immédiatement après le lancement (code: {process.returncode})")
+                return False
+
+            logger.info(f"Terminal lancé avec succès (PID: {process.pid})")
             return True
 
         except Exception as e:
-            logger.error(f"Erreur lors du lancement du terminal: {str(e)}")
+            import traceback
+            logger.error("=" * 60)
+            logger.error(f"❌ Erreur lors du lancement du terminal {platform}")
+            logger.error(f"   Message: {str(e)}")
+            logger.error(f"   Type: {type(e).__name__}")
+            logger.error(f"   Chemin: {exe_path}")
+            logger.error(f"   Traceback:\n{traceback.format_exc()}")
+            logger.error("=" * 60)
             return False
+
