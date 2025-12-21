@@ -9,7 +9,8 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { userStatsData } from '@/constants/cashback-data';
+import { useTradingData } from '@/hooks/use-trading-data';
+import { useMemo } from 'react';
 import {
   AnimatedNumber,
   AnimatedInteger
@@ -95,7 +96,40 @@ export default function ProfileViewPage() {
   const [isLoaded, setIsLoaded] = useState(false);
   const supabase = createSupabaseClient();
   const router = useRouter();
-  const stats = userStatsData;
+  const {
+    transactions,
+    accounts,
+    isLoading: isLoadingTradingData
+  } = useTradingData();
+
+  // Calculer les stats depuis les données réelles
+  const stats = useMemo(() => {
+    const totalCashback = transactions.reduce(
+      (acc, t) => acc + t.cashback_amount,
+      0
+    );
+    const totalVolume = transactions.reduce((acc, t) => acc + t.volume, 0);
+    const totalTrades = transactions.length;
+    const activeBrokers = accounts.filter(
+      (a) => a.status === 'connected'
+    ).length;
+
+    // Calculer le solde disponible : total cashback moins retraits (0 pour l'instant)
+    // TODO: Calculer depuis la table withdrawals quand elle sera disponible
+    const totalWithdrawn = 0;
+    const availableBalance = totalCashback - totalWithdrawn;
+    const pendingCashback = 0; // Pour l'instant, on considère que tout est disponible
+
+    return {
+      total_cashback_earned: totalCashback,
+      available_balance: Math.max(0, availableBalance), // S'assurer qu'il n'est pas négatif
+      pending_cashback: pendingCashback,
+      total_withdrawn: totalWithdrawn,
+      total_volume: totalVolume,
+      total_trades: totalTrades,
+      active_brokers: activeBrokers
+    };
+  }, [transactions, accounts]);
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [tradingAlerts, setTradingAlerts] = useState(true);
   const [weeklyReport, setWeeklyReport] = useState(false);
@@ -177,7 +211,7 @@ export default function ProfileViewPage() {
     }
   }, [user, editProfileDialogOpen, profileForm]);
 
-  if (!isLoaded) {
+  if (!isLoaded || isLoadingTradingData) {
     return (
       <div className='flex h-96 items-center justify-center'>
         <div className='border-foreground h-8 w-8 animate-spin rounded-full border-2 border-t-transparent' />
@@ -775,49 +809,32 @@ export default function ProfileViewPage() {
             </div>
 
             <div className='space-y-3'>
-              <div
-                className={cn(
-                  'flex items-center justify-between',
-                  'rounded-xl p-4',
-                  'border border-white/5 bg-white/5',
-                  'transition-all duration-200',
-                  'hover:bg-white/10'
-                )}
-              >
-                <div>
-                  <p className='font-medium'>Virement bancaire</p>
-                  <p className='text-muted-foreground text-sm'>
-                    15 juillet 2024
+              {stats.total_withdrawn > 0 ? (
+                // TODO: Afficher les retraits réels quand la table withdrawals sera disponible
+                <div
+                  className={cn(
+                    'flex items-center justify-center',
+                    'rounded-xl p-8',
+                    'border border-white/5 bg-white/5'
+                  )}
+                >
+                  <p className='text-muted-foreground text-center text-sm'>
+                    Historique des retraits disponible prochainement
                   </p>
                 </div>
-                <div className='text-right'>
-                  <p className='text-lg font-semibold'>-150.00€</p>
-                  <RendRBadge variant='success' size='sm' className='mt-1'>
-                    Complété
-                  </RendRBadge>
+              ) : (
+                <div
+                  className={cn(
+                    'flex items-center justify-center',
+                    'rounded-xl p-8',
+                    'border border-white/5 bg-white/5'
+                  )}
+                >
+                  <p className='text-muted-foreground text-center text-sm'>
+                    Aucun retrait effectué pour le moment
+                  </p>
                 </div>
-              </div>
-
-              <div
-                className={cn(
-                  'flex items-center justify-between',
-                  'rounded-xl p-4',
-                  'border border-white/5 bg-white/5',
-                  'transition-all duration-200',
-                  'hover:bg-white/10'
-                )}
-              >
-                <div>
-                  <p className='font-medium'>Virement bancaire</p>
-                  <p className='text-muted-foreground text-sm'>28 juin 2024</p>
-                </div>
-                <div className='text-right'>
-                  <p className='text-lg font-semibold'>-200.00€</p>
-                  <RendRBadge variant='success' size='sm' className='mt-1'>
-                    Complété
-                  </RendRBadge>
-                </div>
-              </div>
+              )}
             </div>
           </div>
         </TabsContent>
