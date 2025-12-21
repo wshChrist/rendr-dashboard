@@ -102,7 +102,8 @@ export function PlatformUpdates() {
                   size='sm'
                   className='animate-pulse-subtle'
                 >
-                  {newUpdatesCount} new
+                  {newUpdatesCount}{' '}
+                  {newUpdatesCount === 1 ? 'nouveau' : 'nouveaux'}
                 </RendRBadge>
               )}
             </div>
