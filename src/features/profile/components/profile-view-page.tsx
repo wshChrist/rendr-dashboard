@@ -236,7 +236,7 @@ export default function ProfileViewPage() {
           // Créer un nom de fichier unique
           const fileExt = avatarFile.name.split('.').pop();
           const fileName = `${user.id}/${Date.now()}.${fileExt}`;
-          const filePath = `avatars/${fileName}`;
+          const filePath = fileName; // Le bucket 'avatars' est déjà spécifié dans .from()
 
           // Uploader vers Supabase Storage
           const { data: uploadData, error: uploadError } =
