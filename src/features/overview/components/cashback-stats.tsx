@@ -170,7 +170,7 @@ export function CashbackStatsGraph() {
             />
             <ChartTooltip
               cursor={{
-                stroke: 'oklch(0.85 0 0)',
+                stroke: '#c5d13f',
                 strokeWidth: 1,
                 strokeDasharray: '4 4'
               }}
