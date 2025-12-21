@@ -16,11 +16,11 @@ import { cn } from '@/lib/utils';
 const chartConfig = {
   cashback: {
     label: 'Cashback',
-    color: 'oklch(0.85 0 0)' // Gris clair monochrome
+    color: '#c5d13f' // Jaune/vert accent RendR
   },
   volume: {
     label: 'Volume (lots)',
-    color: 'oklch(0.65 0 0)' // Gris moyen monochrome
+    color: '#c5d13f' // Jaune/vert accent RendR
   }
 } satisfies ChartConfig;
 
@@ -178,7 +178,7 @@ export function CashbackStatsGraph() {
             />
             <ChartTooltip
               cursor={{
-                stroke: 'oklch(0.85 0 0)',
+                stroke: '#c5d13f',
                 strokeWidth: 1,
                 strokeDasharray: '4 4'
               }}
