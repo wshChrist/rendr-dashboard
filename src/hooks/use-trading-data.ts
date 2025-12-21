@@ -63,9 +63,8 @@ export function useTradingData(): UseTradingDataReturn {
         return;
       }
 
-      const accountsData = await backendClient.getTradingAccounts(
-        session.access_token
-      );
+      const accountsData: TradingAccountResponse[] =
+        await backendClient.getTradingAccounts(session.access_token);
       setAccounts(accountsData);
 
       if (accountsData.length === 0) {
