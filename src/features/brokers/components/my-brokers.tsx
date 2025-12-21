@@ -58,7 +58,7 @@ const getStatusBadge = (status: string, errorMessage?: string) => {
       );
     case 'error':
       return (
-        <RendRBadge variant='destructive' dot dotColor='red'>
+        <RendRBadge variant='warning' dot dotColor='red'>
           Erreur
         </RendRBadge>
       );
