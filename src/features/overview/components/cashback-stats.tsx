@@ -2,6 +2,7 @@
 
 import { IconTrendingUp, IconTrendingDown } from '@tabler/icons-react';
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts';
+import { useMemo } from 'react';
 
 import {
   ChartConfig,
@@ -9,7 +10,7 @@ import {
   ChartTooltip,
   ChartTooltipContent
 } from '@/components/ui/chart';
-import { monthlyStatsData } from '@/constants/cashback-data';
+import { useTradingData } from '@/hooks/use-trading-data';
 import { cn } from '@/lib/utils';
 
 const chartConfig = {
@@ -24,16 +25,90 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function CashbackStatsGraph() {
-  const totalCashback = monthlyStatsData.reduce(
-    (acc, curr) => acc + curr.cashback,
-    0
+  const { transactions, isLoading } = useTradingData();
+
+  // Calculer les stats mensuelles depuis les transactions réelles
+  const monthlyStatsData = useMemo(() => {
+    const monthNames = [
+      'Janvier',
+      'Février',
+      'Mars',
+      'Avril',
+      'Mai',
+      'Juin',
+      'Juillet',
+      'Août',
+      'Septembre',
+      'Octobre',
+      'Novembre',
+      'Décembre'
+    ];
+
+    // Grouper les transactions par mois
+    const transactionsByMonth = new Map<string, number>();
+
+    // Obtenir les 6 derniers mois
+    const now = new Date();
+    const last6Months: string[] = [];
+    for (let i = 5; i >= 0; i--) {
+      const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+      last6Months.push(key);
+      transactionsByMonth.set(key, 0);
+    }
+
+    // Agréger le cashback par mois
+    transactions.forEach((transaction) => {
+      const tradeDate = new Date(transaction.trade_date);
+      const monthKey = `${tradeDate.getFullYear()}-${String(tradeDate.getMonth() + 1).padStart(2, '0')}`;
+
+      if (transactionsByMonth.has(monthKey)) {
+        const currentCashback = transactionsByMonth.get(monthKey) || 0;
+        transactionsByMonth.set(
+          monthKey,
+          currentCashback + transaction.cashback_amount
+        );
+      }
+    });
+
+    // Convertir en format attendu par le graphique
+    return last6Months.map((monthKey) => {
+      const [year, month] = monthKey.split('-');
+      const monthIndex = parseInt(month) - 1;
+      const cashback = transactionsByMonth.get(monthKey) || 0;
+
+      return {
+        month: monthNames[monthIndex],
+        cashback: cashback
+      };
+    });
+  }, [transactions]);
+
+  const totalCashback = useMemo(
+    () => monthlyStatsData.reduce((acc, curr) => acc + curr.cashback, 0),
+    [monthlyStatsData]
   );
+
   const lastMonth = monthlyStatsData[monthlyStatsData.length - 1];
   const prevMonth = monthlyStatsData[monthlyStatsData.length - 2];
-  const growth = prevMonth
-    ? ((lastMonth.cashback - prevMonth.cashback) / prevMonth.cashback) * 100
-    : 0;
+  const growth =
+    prevMonth && prevMonth.cashback > 0
+      ? ((lastMonth.cashback - prevMonth.cashback) / prevMonth.cashback) * 100
+      : 0;
   const isPositive = growth >= 0;
+
+  if (isLoading) {
+    return (
+      <div
+        className={cn(
+          '@container/card rounded-2xl',
+          'bg-zinc-900/40 backdrop-blur-sm',
+          'border border-white/5',
+          'h-[400px] animate-pulse'
+        )}
+      />
+    );
+  }
 
   return (
     <div

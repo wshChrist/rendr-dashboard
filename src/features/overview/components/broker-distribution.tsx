@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { Pie, PieChart, Cell, ResponsiveContainer } from 'recharts';
+import { useMemo } from 'react';
 
 import {
   ChartConfig,
@@ -9,7 +10,7 @@ import {
   ChartTooltip,
   ChartTooltipContent
 } from '@/components/ui/chart';
-import { brokerStatsData } from '@/constants/cashback-data';
+import { useTradingData } from '@/hooks/use-trading-data';
 import { cn } from '@/lib/utils';
 
 // Couleurs monochromes style RendR - nuances de gris
@@ -21,26 +22,91 @@ const COLORS = [
   'oklch(0.25 0 0)' // Gris foncé
 ];
 
-const chartConfig = brokerStatsData.reduce((acc, broker, index) => {
-  acc[broker.broker_name] = {
-    label: broker.broker_name,
-    color: COLORS[index % COLORS.length]
-  };
-  return acc;
-}, {} as ChartConfig);
-
 export function BrokerDistribution() {
-  const totalCashback = brokerStatsData.reduce(
-    (acc, curr) => acc + curr.cashback,
-    0
+  const { transactions, isLoading } = useTradingData();
+
+  // Calculer les stats par broker depuis les transactions réelles
+  const brokerStats = useMemo(() => {
+    const statsByBroker = new Map<string, number>();
+
+    transactions.forEach((transaction) => {
+      const brokerName = transaction.broker.name;
+      const currentCashback = statsByBroker.get(brokerName) || 0;
+      statsByBroker.set(
+        brokerName,
+        currentCashback + transaction.cashback_amount
+      );
+    });
+
+    // Convertir en array et trier par cashback décroissant
+    return Array.from(statsByBroker.entries())
+      .map(([brokerName, cashback]) => ({
+        broker_name: brokerName,
+        cashback: cashback
+      }))
+      .sort((a, b) => b.cashback - a.cashback);
+  }, [transactions]);
+
+  const totalCashback = useMemo(
+    () => brokerStats.reduce((acc, curr) => acc + curr.cashback, 0),
+    [brokerStats]
   );
 
-  const pieData = brokerStatsData.map((broker, index) => ({
-    name: broker.broker_name,
-    value: broker.cashback,
-    percentage: ((broker.cashback / totalCashback) * 100).toFixed(1),
-    fill: COLORS[index % COLORS.length]
-  }));
+  // Créer le chartConfig dynamiquement
+  const chartConfig = useMemo(
+    () =>
+      brokerStats.reduce((acc, broker, index) => {
+        acc[broker.broker_name] = {
+          label: broker.broker_name,
+          color: COLORS[index % COLORS.length]
+        };
+        return acc;
+      }, {} as ChartConfig),
+    [brokerStats]
+  );
+
+  const pieData = useMemo(
+    () =>
+      brokerStats.map((broker, index) => ({
+        name: broker.broker_name,
+        value: broker.cashback,
+        percentage:
+          totalCashback > 0
+            ? ((broker.cashback / totalCashback) * 100).toFixed(1)
+            : '0',
+        fill: COLORS[index % COLORS.length]
+      })),
+    [brokerStats, totalCashback]
+  );
+
+  if (isLoading) {
+    return (
+      <div
+        className={cn(
+          'flex h-full flex-col rounded-2xl p-5 md:p-6',
+          'bg-zinc-900/40 backdrop-blur-sm',
+          'border border-white/5',
+          'animate-pulse'
+        )}
+      />
+    );
+  }
+
+  if (brokerStats.length === 0) {
+    return (
+      <div
+        className={cn(
+          'flex h-full flex-col items-center justify-center rounded-2xl p-5 md:p-6',
+          'bg-zinc-900/40 backdrop-blur-sm',
+          'border border-white/5'
+        )}
+      >
+        <p className='text-muted-foreground text-sm'>
+          Aucune donnée de trading disponible
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div
