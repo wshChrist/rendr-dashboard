@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   userBrokersData,
   transactionsData,
@@ -78,6 +78,8 @@ export function MyBrokers() {
   );
   const [isLoading, setIsLoading] = useState(true);
   const supabase = createSupabaseClient();
+  // Ref pour stocker les comptes et éviter les dépendances dans useEffect
+  const accountsRef = useRef<any[]>([]);
 
   // Charger les comptes depuis le backend
   const loadAccounts = async () => {
@@ -100,6 +102,8 @@ export function MyBrokers() {
         );
         console.log('Comptes chargés:', data);
         setAccounts(data);
+        // Mettre à jour la ref pour l'utiliser dans l'interval
+        accountsRef.current = data;
 
         // Charger les trades pour chaque compte
         await loadTradesForAccounts(data);
@@ -143,7 +147,8 @@ export function MyBrokers() {
 
     // Rafraîchir automatiquement toutes les 30 secondes pour les comptes en attente
     const interval = setInterval(() => {
-      const hasPendingAccounts = accounts.some(
+      // Utiliser la ref au lieu de accounts pour éviter les dépendances
+      const hasPendingAccounts = accountsRef.current.some(
         (acc) => acc.status === 'pending_vps_setup'
       );
       if (hasPendingAccounts) {
@@ -152,7 +157,8 @@ export function MyBrokers() {
     }, 30000); // 30 secondes
 
     return () => clearInterval(interval);
-  }, [accounts]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Dépendances vides - ne s'exécute qu'une fois au montage
 
   // Transformer les comptes Supabase au format attendu avec stats calculées depuis les trades
   const transformedAccounts = useMemo(() => {
