@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { RendRBadge } from '@/components/ui/rendr-badge';
 import { RendRButton } from '@/components/ui/rendr-button';
-import { platformUpdates, PlatformUpdate } from '@/constants/updates-data';
+import { PlatformUpdate } from '@/constants/updates-data';
 import { formatDistanceToNow } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import {
@@ -16,6 +16,7 @@ import {
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { ContactDialog } from './contact-dialog';
+import { useGitHubUpdates } from '@/hooks/use-github-updates';
 
 const getUpdateIcon = (type: PlatformUpdate['type']) => {
   switch (type) {
@@ -69,9 +70,24 @@ const getUpdateBadge = (type: PlatformUpdate['type']) => {
 
 export function PlatformUpdates() {
   const [contactDialogOpen, setContactDialogOpen] = useState(false);
+  const { updates: platformUpdates, isLoading } = useGitHubUpdates();
+
   // Afficher les 4 dernières mises à jour
   const recentUpdates = platformUpdates.slice(0, 4);
   const newUpdatesCount = platformUpdates.filter((u) => u.isNew).length;
+
+  if (isLoading) {
+    return (
+      <div
+        className={cn(
+          'h-full rounded-2xl p-5 md:p-6',
+          'bg-zinc-900/40 backdrop-blur-sm',
+          'border border-white/5',
+          'animate-pulse'
+        )}
+      />
+    );
+  }
 
   return (
     <>

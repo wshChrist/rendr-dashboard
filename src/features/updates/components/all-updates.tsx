@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { platformUpdates, PlatformUpdate } from '@/constants/updates-data';
+import { PlatformUpdate } from '@/constants/updates-data';
 import { format, formatDistanceToNow } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import {
@@ -21,6 +21,7 @@ import { useState, useMemo } from 'react';
 import { RendRBadge } from '@/components/ui/rendr-badge';
 import { cn } from '@/lib/utils';
 import { ContactDialog } from '@/features/overview/components/contact-dialog';
+import { useGitHubUpdates } from '@/hooks/use-github-updates';
 
 const getUpdateIcon = (type: PlatformUpdate['type']) => {
   const iconClass = 'h-5 w-5';
@@ -90,6 +91,7 @@ type FilterType = 'all' | PlatformUpdate['type'];
 export function AllUpdates() {
   const [filter, setFilter] = useState<FilterType>('all');
   const [contactDialogOpen, setContactDialogOpen] = useState(false);
+  const { updates: platformUpdates, isLoading } = useGitHubUpdates();
 
   const filteredUpdates =
     filter === 'all'
@@ -113,7 +115,25 @@ export function AllUpdates() {
       improvements,
       latestUpdate
     };
-  }, []);
+  }, [platformUpdates]);
+
+  if (isLoading) {
+    return (
+      <div className='space-y-6'>
+        {[1, 2, 3, 4].map((i) => (
+          <div
+            key={i}
+            className={cn(
+              'rounded-2xl p-6',
+              'bg-zinc-900/40 backdrop-blur-sm',
+              'border border-white/5',
+              'animate-pulse'
+            )}
+          />
+        ))}
+      </div>
+    );
+  }
 
   const filterButtons: {
     type: FilterType;
