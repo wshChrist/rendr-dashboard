@@ -1,20 +1,12 @@
 import { useState, useEffect } from 'react';
 import { createSupabaseClient } from '@/lib/supabase/client';
-import { backendClient } from '@/lib/api/backend-client';
+import {
+  backendClient,
+  TradingAccountResponse
+} from '@/lib/api/backend-client';
 import { brokersData } from '@/constants/cashback-data';
 import { calculateCashbackForTrade } from '@/lib/utils/broker-cashback';
 import { Transaction } from '@/types/cashback';
-
-interface TradingAccount {
-  id: string;
-  broker: string;
-  external_account_id: string;
-  status: string;
-  platform: string;
-  server: string;
-  login: string;
-  created_at: string;
-}
 
 interface Trade {
   id: string;
@@ -31,7 +23,7 @@ interface Trade {
 }
 
 interface UseTradingDataReturn {
-  accounts: TradingAccount[];
+  accounts: TradingAccountResponse[];
   trades: Trade[];
   transactions: Transaction[];
   isLoading: boolean;
@@ -43,7 +35,7 @@ interface UseTradingDataReturn {
  * Hook pour charger les données de trading depuis Supabase
  */
 export function useTradingData(): UseTradingDataReturn {
-  const [accounts, setAccounts] = useState<TradingAccount[]>([]);
+  const [accounts, setAccounts] = useState<TradingAccountResponse[]>([]);
   const [trades, setTrades] = useState<Trade[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);

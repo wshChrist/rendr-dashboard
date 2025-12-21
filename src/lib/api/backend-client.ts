@@ -26,6 +26,7 @@ export interface TradingAccountResponse {
   broker: string;
   platform: string;
   server: string;
+  login?: string;
   status: string;
   created_at: string;
   updated_at: string;
