@@ -17,7 +17,7 @@ function BrokerLogo({
   const [imageError, setImageError] = React.useState(false);
 
   return (
-    <div className='relative flex h-8 w-8 items-center justify-center overflow-hidden rounded-lg border border-white/5 bg-white/5'>
+    <div className='relative flex h-8 w-8 items-center justify-center overflow-hidden rounded-lg bg-white/5'>
       {!imageError && broker.logo_url ? (
         <img
           src={broker.logo_url}

@@ -282,7 +282,7 @@ function BrokerCard({
     >
       <div className='flex items-center gap-4'>
         {/* Logo */}
-        <div className='relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-white/10 bg-white/5'>
+        <div className='relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white/5'>
           {!imageError && broker.logo_url ? (
             <img
               src={broker.logo_url}
@@ -516,7 +516,7 @@ export function AvailableBrokers() {
               >
                 <div className='flex items-center gap-4'>
                   {/* Logo */}
-                  <div className='relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-white/10 bg-white/5'>
+                  <div className='relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white/5'>
                     {!imageError && broker.logo_url ? (
                       <img
                         src={broker.logo_url}
