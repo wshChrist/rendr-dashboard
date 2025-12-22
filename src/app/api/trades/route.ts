@@ -181,8 +181,8 @@ export async function POST(request: NextRequest) {
       trade.id,
       accountWithStatus.user_id,
       accountWithStatus.broker,
-      parseFloat(lots.toString()),
-      commission ? parseFloat(commission.toString()) : undefined
+      symbol,
+      parseFloat(lots.toString())
     );
 
     return NextResponse.json(

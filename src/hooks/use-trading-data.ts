@@ -137,8 +137,8 @@ export function useTradingData(): UseTradingDataReturn {
       commission: commission,
       cashback_amount: calculateCashbackForTrade(
         account?.broker || 'Unknown',
-        lots,
-        commission > 0 ? commission : undefined
+        trade.symbol,
+        lots
       ),
       status: 'confirmed' as const,
       trade_date: trade.close_time,

@@ -134,7 +134,7 @@ export async function POST(request: NextRequest) {
     const accountIds = accounts.map((a) => a.id);
     const { data: trades } = await supabase
       .from('trades')
-      .select('lots, commission, trading_account_id')
+      .select('lots, commission, trading_account_id, symbol')
       .in('trading_account_id', accountIds);
 
     // Calculer le cashback total en utilisant la même logique que dans use-trading-data
@@ -145,12 +145,8 @@ export async function POST(request: NextRequest) {
         const brokerName =
           (account as { broker?: string })?.broker || 'Unknown';
         const lots = parseFloat(trade.lots || '0');
-        const commission = parseFloat(trade.commission || '0');
-        const cashback = calculateCashbackForTrade(
-          brokerName,
-          lots,
-          commission > 0 ? commission : undefined
-        );
+        const symbol = (trade as { symbol?: string })?.symbol || 'EURUSD';
+        const cashback = calculateCashbackForTrade(brokerName, symbol, lots);
         totalCashback += cashback;
       });
     }

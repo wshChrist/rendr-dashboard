@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
       // Récupérer tous les trades
       const { data: trades } = await supabase
         .from('trades')
-        .select('lots, commission, trading_account_id')
+        .select('lots, commission, trading_account_id, symbol')
         .in('trading_account_id', accountIds);
 
       if (trades && accounts) {
@@ -50,14 +50,10 @@ export async function GET(request: NextRequest) {
           const brokerName =
             (account as { broker?: string })?.broker || 'Unknown';
           const lots = parseFloat(trade.lots || '0');
-          const commission = parseFloat(trade.commission || '0');
+          const symbol = (trade as { symbol?: string })?.symbol || 'EURUSD';
 
           totalVolume += lots;
-          const cashback = calculateCashbackForTrade(
-            brokerName,
-            lots,
-            commission > 0 ? commission : undefined
-          );
+          const cashback = calculateCashbackForTrade(brokerName, symbol, lots);
           totalCashback += cashback;
         });
       }

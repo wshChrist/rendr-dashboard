@@ -255,11 +255,11 @@ export function MyBrokers() {
       // Calculer le cashback total
       const totalCashback = accountTrades.reduce((sum, trade) => {
         const lots = parseFloat(trade.lots || '0');
-        const commission = parseFloat(trade.commission || '0');
+        const symbol = (trade as { symbol?: string })?.symbol || 'EURUSD';
         const cashback = calculateCashbackForTrade(
           account.broker,
-          lots,
-          commission > 0 ? commission : undefined
+          symbol,
+          lots
         );
         return sum + cashback;
       }, 0);
@@ -345,10 +345,8 @@ export function MyBrokers() {
         profit: parseFloat(trade.profit || '0'), // Profit réel du trade
         cashback_amount: calculateCashbackForTrade(
           ub.broker.name,
-          parseFloat(trade.lots || '0'),
-          parseFloat(trade.commission || '0') > 0
-            ? parseFloat(trade.commission || '0')
-            : undefined
+          trade.symbol || 'EURUSD',
+          parseFloat(trade.lots || '0')
         ),
         status: 'confirmed' as const,
         trade_date: trade.close_time,

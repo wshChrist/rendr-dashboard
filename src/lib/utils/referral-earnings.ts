@@ -3,22 +3,25 @@
  */
 
 import { createServiceRoleClient } from '@/lib/supabase/server';
-import { calculateCashbackForTrade } from './broker-cashback';
+import {
+  calculateCashbackForTrade,
+  calculateRendREarnings
+} from './broker-cashback';
 
 /**
  * Calcule et enregistre les gains de parrainage pour un trade
  * @param tradeId - ID du trade dans la table trades
  * @param userId - ID de l'utilisateur qui a fait le trade (filleul)
  * @param brokerName - Nom du broker
+ * @param symbol - Symbole du trade (ex: "EURUSD", "XAUUSD")
  * @param lots - Nombre de lots tradés
- * @param commission - Commission payée (optionnel)
  */
 export async function calculateAndRecordReferralEarnings(
   tradeId: string,
   userId: string,
   brokerName: string,
-  lots: number,
-  commission?: number
+  symbol: string,
+  lots: number
 ) {
   const supabase = createServiceRoleClient();
 
@@ -39,18 +42,20 @@ export async function calculateAndRecordReferralEarnings(
 
     const referrerId = referralRelationship.referrer_id;
 
-    // Calculer le cashback du filleul pour ce trade
-    const cashbackAmount = calculateCashbackForTrade(
-      brokerName,
-      lots,
-      commission
-    );
+    // Calculer le montant total que RendR gagne sur ce trade
+    const rendREarnings = calculateRendREarnings(brokerName, symbol, lots);
 
-    // Taux de commission parrain (10% par défaut)
+    // Le trader reçoit 50% de ce que RendR gagne (cashback)
+    const cashbackAmount = rendREarnings * 0.5;
+
+    // RendR garde 50% de ce qu'il gagne
+    const rendRShare = rendREarnings * 0.5;
+
+    // Taux de commission parrain : 10% de la part de RendR
+    // Le parrain reçoit 10% de ce que RendR garde (50% du total)
+    // Cela équivaut à 10% * 50% = 5% du montant total gagné par RendR
     const commissionRate = 10.0; // TODO: Rendre configurable par utilisateur
-
-    // Calculer la commission du parrain (10% du cashback du filleul)
-    const commissionAmount = (cashbackAmount * commissionRate) / 100;
+    const commissionAmount = (rendRShare * commissionRate) / 100;
 
     // Période actuelle (format: YYYY-MM)
     const period = new Date().toISOString().slice(0, 7);
