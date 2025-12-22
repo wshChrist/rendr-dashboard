@@ -28,24 +28,20 @@ export async function GET(request: NextRequest) {
       .eq('user_id', user.id)
       .single();
 
-    if (referralError) {
-      console.error(
-        'Erreur lors de la récupération du code de parrainage:',
-        referralError
-      );
-      // Si le code n'existe pas, en créer un (normalement créé automatiquement par le trigger)
-      // Pour l'instant on retourne une erreur, mais on pourrait créer le code ici
-      return NextResponse.json(
-        { error: 'Erreur de base de données', message: referralError.message },
-        { status: 500 }
-      );
+    // Si le code n'existe pas, retourner null pour indiquer qu'il doit être créé
+    let referralCode: string | null = null;
+    if (referralError || !referral) {
+      // Code non trouvé - l'utilisateur doit en créer un
+      referralCode = null;
+    } else {
+      referralCode = referral.referral_code || null;
     }
 
-    const referralCode = referral?.referral_code || '';
-
-    // Générer le lien de parrainage
+    // Générer le lien de parrainage (seulement si le code existe)
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://rendr.io';
-    const referralLink = `${baseUrl}/auth/sign-up?ref=${referralCode}`;
+    const referralLink = referralCode
+      ? `${baseUrl}/auth/sign-up?ref=${referralCode}`
+      : '';
 
     // Récupérer les statistiques de parrainage
     // Nombre total de filleuls

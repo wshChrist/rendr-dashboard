@@ -24,7 +24,7 @@ import type { ReferredUser } from './referral-table-columns';
 import { toast } from 'sonner';
 
 interface ReferralData {
-  code: string;
+  code: string | null;
   link: string;
   totalReferrals: number;
   activeReferrals: number;
@@ -36,7 +36,7 @@ interface ReferralData {
 export function ReferralView() {
   const [copied, setCopied] = useState(false);
   const [referralData, setReferralData] = useState<ReferralData>({
-    code: '',
+    code: null,
     link: '',
     totalReferrals: 0,
     activeReferrals: 0,
@@ -46,6 +46,9 @@ export function ReferralView() {
   });
   const [referredUsers, setReferredUsers] = useState<ReferredUser[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [newCode, setNewCode] = useState('');
+  const [isCreatingCode, setIsCreatingCode] = useState(false);
+  const [codeError, setCodeError] = useState('');
 
   useEffect(() => {
     loadData();
@@ -61,7 +64,11 @@ export function ReferralView() {
         const data = await referralResponse.json();
         setReferralData(data);
       } else {
-        toast.error('Erreur lors du chargement des données de parrainage');
+        const errorData = await referralResponse.json();
+        // Si c'est juste un code manquant, ce n'est pas une erreur critique
+        if (errorData.error !== 'Code de parrainage non trouvé') {
+          toast.error('Erreur lors du chargement des données de parrainage');
+        }
       }
 
       // Charger la liste des filleuls
@@ -87,9 +94,56 @@ export function ReferralView() {
     toast.success('Lien copié dans le presse-papier');
   };
 
+  const handleCreateCode = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setCodeError('');
+    setIsCreatingCode(true);
+
+    if (!newCode.trim()) {
+      setCodeError('Le code est requis');
+      setIsCreatingCode(false);
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/referral/code', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          referral_code: newCode.trim()
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setCodeError(data.message || 'Erreur lors de la création du code');
+        setIsCreatingCode(false);
+        return;
+      }
+
+      toast.success('Code de parrainage créé avec succès !');
+      setNewCode('');
+      // Recharger les données
+      await loadData();
+    } catch (error) {
+      console.error('Erreur lors de la création du code:', error);
+      setCodeError('Erreur lors de la création du code');
+    } finally {
+      setIsCreatingCode(false);
+    }
+  };
+
   const shareLink = (
     platform: 'native' | 'twitter' | 'telegram' | 'whatsapp'
   ) => {
+    if (!referralData.link) {
+      toast.error("Veuillez d'abord créer un code de parrainage");
+      return;
+    }
+
     const text = `Rejoins RendR et reçois du cashback sur tes trades ! ${referralData.link}`;
     const encodedText = encodeURIComponent(text);
     const encodedUrl = encodeURIComponent(referralData.link);
@@ -266,89 +320,152 @@ export function ReferralView() {
         )}
         style={{ animationDelay: '400ms', animationFillMode: 'forwards' }}
       >
-        <div className='mb-5 flex items-center gap-2'>
-          <span className='rounded-xl border border-white/5 bg-white/5 p-2'>
-            <IconLink className='h-4 w-4' />
-          </span>
+        {!referralData.code ? (
+          /* Formulaire de création de code */
           <div>
-            <h3 className='text-lg font-semibold'>Votre lien de parrainage</h3>
-            <p className='text-muted-foreground text-sm'>
-              Partagez ce lien pour gagner {referralData.commissionRate}% du
-              cashback de vos filleuls
-            </p>
-          </div>
-        </div>
+            <div className='mb-5 flex items-center gap-2'>
+              <span className='rounded-xl border border-white/5 bg-white/5 p-2'>
+                <IconLink className='h-4 w-4' />
+              </span>
+              <div>
+                <h3 className='text-lg font-semibold'>
+                  Créer votre code de parrainage
+                </h3>
+                <p className='text-muted-foreground text-sm'>
+                  Choisissez un code unique pour commencer à parrainer vos amis
+                </p>
+              </div>
+            </div>
 
-        <div className='space-y-4'>
-          <div className='flex gap-2'>
-            <Input
-              value={referralData.link}
-              readOnly
-              className='border-white/10 bg-white/5 font-mono'
-            />
-            <Button
-              variant='outline'
-              onClick={() => copyToClipboard(referralData.link)}
-            >
-              {copied ? (
-                <IconCheck className='h-4 w-4 text-[#c5d13f]' />
-              ) : (
-                <IconCopy className='h-4 w-4' />
-              )}
-            </Button>
+            <form onSubmit={handleCreateCode} className='space-y-4'>
+              <div>
+                <label className='text-muted-foreground mb-2 block text-sm font-medium'>
+                  Votre code de parrainage
+                </label>
+                <div className='flex gap-2'>
+                  <Input
+                    value={newCode}
+                    onChange={(e) => {
+                      setNewCode(e.target.value.toUpperCase());
+                      setCodeError('');
+                    }}
+                    placeholder='EXEMPLE-CODE'
+                    className='border-white/10 bg-white/5 font-mono'
+                    maxLength={20}
+                    disabled={isCreatingCode}
+                  />
+                  <Button
+                    type='submit'
+                    disabled={isCreatingCode || !newCode.trim()}
+                  >
+                    {isCreatingCode ? (
+                      <IconLoader2 className='h-4 w-4 animate-spin' />
+                    ) : (
+                      'Créer'
+                    )}
+                  </Button>
+                </div>
+                {codeError && (
+                  <p className='mt-2 text-sm text-red-500'>{codeError}</p>
+                )}
+                <p className='text-muted-foreground mt-2 text-xs'>
+                  Le code doit contenir entre 3 et 20 caractères (lettres
+                  majuscules, chiffres et tirets uniquement). Il doit être
+                  unique.
+                </p>
+              </div>
+            </form>
           </div>
+        ) : (
+          /* Affichage du code existant */
+          <>
+            <div className='mb-5 flex items-center gap-2'>
+              <span className='rounded-xl border border-white/5 bg-white/5 p-2'>
+                <IconLink className='h-4 w-4' />
+              </span>
+              <div>
+                <h3 className='text-lg font-semibold'>
+                  Votre lien de parrainage
+                </h3>
+                <p className='text-muted-foreground text-sm'>
+                  Partagez ce lien pour gagner {referralData.commissionRate}% du
+                  cashback de vos filleuls
+                </p>
+              </div>
+            </div>
 
-          <div className='flex items-center gap-3 rounded-xl border border-white/5 bg-white/5 p-3'>
-            <span className='text-muted-foreground text-sm'>
-              Votre code de parrainage:
-            </span>
-            <RendRBadge variant='outline' size='lg' className='font-mono'>
-              {referralData.code}
-            </RendRBadge>
-            <Button
-              variant='ghost'
-              size='sm'
-              onClick={() => copyToClipboard(referralData.code)}
-            >
-              <IconCopy className='h-4 w-4' />
-            </Button>
-          </div>
+            <div className='space-y-4'>
+              <div className='flex gap-2'>
+                <Input
+                  value={referralData.link}
+                  readOnly
+                  className='border-white/10 bg-white/5 font-mono'
+                />
+                <Button
+                  variant='outline'
+                  onClick={() => copyToClipboard(referralData.link)}
+                >
+                  {copied ? (
+                    <IconCheck className='h-4 w-4 text-[#c5d13f]' />
+                  ) : (
+                    <IconCopy className='h-4 w-4' />
+                  )}
+                </Button>
+              </div>
 
-          <div className='flex flex-wrap gap-2'>
-            <Button
-              variant='outline'
-              size='sm'
-              onClick={() => shareLink('native')}
-            >
-              <IconShare className='mr-2 h-4 w-4' />
-              Partager
-            </Button>
-            <Button
-              variant='outline'
-              size='sm'
-              onClick={() => shareLink('twitter')}
-            >
-              <IconBrandTwitter className='mr-2 h-4 w-4' />
-              Twitter
-            </Button>
-            <Button
-              variant='outline'
-              size='sm'
-              onClick={() => shareLink('telegram')}
-            >
-              <IconBrandTelegram className='mr-2 h-4 w-4' />
-              Telegram
-            </Button>
-            <Button
-              variant='outline'
-              size='sm'
-              onClick={() => shareLink('whatsapp')}
-            >
-              <IconBrandWhatsapp className='mr-2 h-4 w-4' />
-              WhatsApp
-            </Button>
-          </div>
-        </div>
+              <div className='flex items-center gap-3 rounded-xl border border-white/5 bg-white/5 p-3'>
+                <span className='text-muted-foreground text-sm'>
+                  Votre code de parrainage:
+                </span>
+                <RendRBadge variant='outline' size='lg' className='font-mono'>
+                  {referralData.code}
+                </RendRBadge>
+                <Button
+                  variant='ghost'
+                  size='sm'
+                  onClick={() => copyToClipboard(referralData.code || '')}
+                >
+                  <IconCopy className='h-4 w-4' />
+                </Button>
+              </div>
+
+              <div className='flex flex-wrap gap-2'>
+                <Button
+                  variant='outline'
+                  size='sm'
+                  onClick={() => shareLink('native')}
+                >
+                  <IconShare className='mr-2 h-4 w-4' />
+                  Partager
+                </Button>
+                <Button
+                  variant='outline'
+                  size='sm'
+                  onClick={() => shareLink('twitter')}
+                >
+                  <IconBrandTwitter className='mr-2 h-4 w-4' />
+                  Twitter
+                </Button>
+                <Button
+                  variant='outline'
+                  size='sm'
+                  onClick={() => shareLink('telegram')}
+                >
+                  <IconBrandTelegram className='mr-2 h-4 w-4' />
+                  Telegram
+                </Button>
+                <Button
+                  variant='outline'
+                  size='sm'
+                  onClick={() => shareLink('whatsapp')}
+                >
+                  <IconBrandWhatsapp className='mr-2 h-4 w-4' />
+                  WhatsApp
+                </Button>
+              </div>
+            </div>
+          </>
+        )}
       </div>
 
       {/* How it works */}
