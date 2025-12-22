@@ -287,7 +287,7 @@ function BrokerCard({
             <img
               src={broker.logo_url}
               alt={broker.name}
-              className='h-full w-full object-contain p-2'
+              className='[box-sizing:content-box] h-full w-full object-contain p-2'
               onError={() => setImageError(true)}
             />
           ) : (
@@ -521,7 +521,7 @@ export function AvailableBrokers() {
                       <img
                         src={broker.logo_url}
                         alt={broker.name}
-                        className='h-full w-full object-contain p-2'
+                        className='[box-sizing:content-box] h-full w-full object-contain p-2'
                         onError={() => setImageError(true)}
                       />
                     ) : (
