@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server';
+import { createClient, createServiceRoleClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { v4 as uuidv4 } from 'uuid';
 import { encrypt } from '@/lib/utils/encryption.util';
@@ -62,7 +62,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Vérifier si le compte (login) est déjà associé à un autre utilisateur
-    const { data: existingAccounts, error: checkError } = await supabase
+    // Utiliser le service role client pour bypasser RLS et voir tous les comptes
+    console.log('[DEBUG] Vérification du compte login:', login);
+    console.log('[DEBUG] User ID actuel:', user.id);
+
+    const supabaseAdmin = createServiceRoleClient();
+    const { data: existingAccounts, error: checkError } = await supabaseAdmin
       .from('trading_accounts')
       .select('id, user_id')
       .eq('login', login)
@@ -79,10 +84,25 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    console.log('[DEBUG] Comptes existants trouvés:', existingAccounts);
+
     // Si le compte existe et appartient à un autre utilisateur
     if (existingAccounts && existingAccounts.length > 0) {
       const existingAccount = existingAccounts[0];
-      if (existingAccount.user_id !== user.id) {
+      console.log(
+        '[DEBUG] Compte existant - User ID:',
+        existingAccount.user_id
+      );
+      console.log(
+        '[DEBUG] Comparaison:',
+        existingAccount.user_id.toString(),
+        '!==',
+        user.id.toString()
+      );
+
+      // Comparer les user_id en tant que strings pour éviter les problèmes de type UUID
+      if (existingAccount.user_id.toString() !== user.id.toString()) {
+        console.log('[DEBUG] Compte déjà associé à un autre utilisateur');
         return NextResponse.json(
           {
             error: 'Compte déjà associé',
@@ -94,6 +114,7 @@ export async function POST(request: NextRequest) {
       }
       // Si le compte appartient déjà à l'utilisateur actuel, on pourrait retourner une erreur
       // ou permettre la mise à jour. Pour l'instant, on retourne une erreur.
+      console.log('[DEBUG] Compte déjà ajouté par cet utilisateur');
       return NextResponse.json(
         {
           error: 'Compte déjà ajouté',
@@ -102,6 +123,8 @@ export async function POST(request: NextRequest) {
         { status: 409 }
       );
     }
+
+    console.log('[DEBUG] Aucun compte existant trouvé, création autorisée');
 
     // Générer un external_account_id unique
     const externalAccountId = uuidv4();

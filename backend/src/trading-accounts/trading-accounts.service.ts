@@ -35,7 +35,8 @@ export class TradingAccountsService {
     // Si le compte existe et appartient à un autre utilisateur
     if (existingAccounts && existingAccounts.length > 0) {
       const existingAccount = existingAccounts[0];
-      if (existingAccount.user_id !== userId) {
+      // Comparer les user_id en tant que strings pour éviter les problèmes de type UUID
+      if (existingAccount.user_id.toString() !== userId.toString()) {
         throw new ConflictException(
           'Ce compte de trading est déjà associé à un autre utilisateur'
         );
