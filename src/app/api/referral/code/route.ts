@@ -2,6 +2,31 @@ import { createClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 
 /**
+ * Détermine l'URL de base pour les liens de parrainage
+ */
+function getBaseUrl(request: NextRequest): string {
+  // Si NEXT_PUBLIC_APP_URL est défini et n'est pas localhost, l'utiliser
+  const envUrl = process.env.NEXT_PUBLIC_APP_URL;
+  if (envUrl && !envUrl.includes('localhost')) {
+    return envUrl;
+  }
+
+  // Sinon, construire l'URL à partir de la requête
+  const host = request.headers.get('host');
+  const protocol = request.headers.get('x-forwarded-proto') || 'https';
+
+  if (host) {
+    // En production, utiliser https (sauf si explicitement en développement)
+    const isDevelopment =
+      host.includes('localhost') || host.includes('127.0.0.1');
+    return isDevelopment ? `http://${host}` : `${protocol}://${host}`;
+  }
+
+  // Fallback
+  return envUrl || 'https://rendr.io';
+}
+
+/**
  * Route API pour créer ou mettre à jour le code de parrainage de l'utilisateur
  */
 export async function POST(request: NextRequest) {
@@ -147,7 +172,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Générer le lien de parrainage
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://rendr.io';
+    const baseUrl = getBaseUrl(request);
     const referralLink = `${baseUrl}/auth/sign-up?ref=${result.referral_code}`;
 
     return NextResponse.json(
