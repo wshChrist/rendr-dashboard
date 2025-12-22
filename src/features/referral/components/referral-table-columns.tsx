@@ -7,7 +7,7 @@ import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 
 export interface ReferredUser {
-  id: number;
+  id: string | number; // UUID string ou number pour compatibilité
   name: string;
   joined: string;
   status: 'active' | 'pending';

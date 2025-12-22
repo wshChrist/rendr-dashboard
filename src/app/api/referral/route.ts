@@ -1,0 +1,145 @@
+import { createClient } from '@/lib/supabase/server';
+import { NextRequest, NextResponse } from 'next/server';
+
+/**
+ * Route API pour récupérer les données de parrainage de l'utilisateur
+ */
+export async function GET(request: NextRequest) {
+  try {
+    const supabase = await createClient();
+
+    // Vérifier l'authentification
+    const {
+      data: { user },
+      error: authError
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return NextResponse.json(
+        { error: 'Non autorisé', message: 'Vous devez être connecté' },
+        { status: 401 }
+      );
+    }
+
+    // Récupérer le code de parrainage de l'utilisateur
+    const { data: referral, error: referralError } = await supabase
+      .from('referrals')
+      .select('referral_code')
+      .eq('user_id', user.id)
+      .single();
+
+    if (referralError) {
+      console.error(
+        'Erreur lors de la récupération du code de parrainage:',
+        referralError
+      );
+      // Si le code n'existe pas, en créer un (normalement créé automatiquement par le trigger)
+      // Pour l'instant on retourne une erreur, mais on pourrait créer le code ici
+      return NextResponse.json(
+        { error: 'Erreur de base de données', message: referralError.message },
+        { status: 500 }
+      );
+    }
+
+    const referralCode = referral?.referral_code || '';
+
+    // Générer le lien de parrainage
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://rendr.io';
+    const referralLink = `${baseUrl}/auth/sign-up?ref=${referralCode}`;
+
+    // Récupérer les statistiques de parrainage
+    // Nombre total de filleuls
+    const { count: totalReferralsCount, error: totalError } = await supabase
+      .from('referral_relationships')
+      .select('*', { count: 'exact', head: true })
+      .eq('referrer_id', user.id);
+
+    if (totalError) {
+      console.error('Erreur lors du comptage des filleuls:', totalError);
+    }
+
+    // Récupérer tous les filleuls
+    const { data: allReferrals, error: activeError } = await supabase
+      .from('referral_relationships')
+      .select('referred_id')
+      .eq('referrer_id', user.id);
+
+    if (activeError) {
+      console.error(
+        'Erreur lors de la récupération des filleuls:',
+        activeError
+      );
+    }
+
+    // Compter les filleuls actifs (ceux qui ont au moins un compte de trading connecté)
+    const activeReferralIds = allReferrals?.map((r) => r.referred_id) || [];
+
+    let activeCount = 0;
+    if (activeReferralIds.length > 0) {
+      // Récupérer les utilisateurs qui ont au moins un compte connecté
+      const { data: accounts } = await supabase
+        .from('trading_accounts')
+        .select('user_id')
+        .in('user_id', activeReferralIds)
+        .eq('status', 'connected');
+
+      // Compter les IDs uniques
+      if (accounts && accounts.length > 0) {
+        const uniqueUserIds = new Set(accounts.map((a) => a.user_id));
+        activeCount = uniqueUserIds.size;
+      }
+    }
+
+    // Calculer les gains totaux de parrainage
+    const { data: earnings, error: earningsError } = await supabase
+      .from('referral_earnings')
+      .select('commission_amount, status')
+      .eq('referrer_id', user.id);
+
+    if (earningsError) {
+      console.error('Erreur lors de la récupération des gains:', earningsError);
+    }
+
+    const totalEarnings =
+      earnings?.reduce(
+        (sum, e) => sum + parseFloat(e.commission_amount.toString()),
+        0
+      ) || 0;
+
+    const pendingEarnings =
+      earnings
+        ?.filter((e) => e.status === 'pending')
+        .reduce(
+          (sum, e) => sum + parseFloat(e.commission_amount.toString()),
+          0
+        ) || 0;
+
+    // Taux de commission (par défaut 10%, peut être configuré par utilisateur)
+    const commissionRate = 10; // TODO: Rendre ce taux configurable
+
+    return NextResponse.json(
+      {
+        code: referralCode,
+        link: referralLink,
+        totalReferrals: totalReferralsCount || 0,
+        activeReferrals: activeCount,
+        totalEarnings: parseFloat(totalEarnings.toFixed(2)),
+        pendingEarnings: parseFloat(pendingEarnings.toFixed(2)),
+        commissionRate
+      },
+      { status: 200 }
+    );
+  } catch (error: any) {
+    console.error(
+      'Erreur lors de la récupération des données de parrainage:',
+      error
+    );
+    return NextResponse.json(
+      {
+        error: 'Erreur serveur',
+        message: error.message || 'Une erreur est survenue'
+      },
+      { status: 500 }
+    );
+  }
+}

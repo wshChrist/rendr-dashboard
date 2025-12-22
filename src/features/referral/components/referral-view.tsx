@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -14,70 +14,127 @@ import {
   IconBrandWhatsapp,
   IconPercentage,
   IconChartBar,
-  IconLink
+  IconLink,
+  IconLoader2
 } from '@tabler/icons-react';
 import { RendRBadge } from '@/components/ui/rendr-badge';
 import { cn } from '@/lib/utils';
 import { ReferralTable } from './referral-table';
 import type { ReferredUser } from './referral-table-columns';
+import { toast } from 'sonner';
 
-// Mock data pour le parrainage
-const referralData = {
-  code: 'RENDR-ABC123',
-  link: 'https://rendr.io/ref/ABC123',
-  totalReferrals: 5,
-  activeReferrals: 3,
-  totalEarnings: 125.5,
-  pendingEarnings: 15.0,
-  commissionRate: 10 // 10% du cashback des filleuls
-};
-
-const referredUsers: ReferredUser[] = [
-  {
-    id: 1,
-    name: 'Jean D.',
-    joined: '2024-11-15T10:30:00',
-    status: 'active',
-    earnings: 45.0
-  },
-  {
-    id: 2,
-    name: 'Marie L.',
-    joined: '2024-10-20T14:15:00',
-    status: 'active',
-    earnings: 62.5
-  },
-  {
-    id: 3,
-    name: 'Pierre M.',
-    joined: '2024-12-01T09:45:00',
-    status: 'active',
-    earnings: 18.0
-  },
-  {
-    id: 4,
-    name: 'Sophie B.',
-    joined: '2024-12-10T16:20:00',
-    status: 'pending',
-    earnings: 0
-  },
-  {
-    id: 5,
-    name: 'Lucas R.',
-    joined: '2024-12-12T11:00:00',
-    status: 'pending',
-    earnings: 0
-  }
-];
+interface ReferralData {
+  code: string;
+  link: string;
+  totalReferrals: number;
+  activeReferrals: number;
+  totalEarnings: number;
+  pendingEarnings: number;
+  commissionRate: number;
+}
 
 export function ReferralView() {
   const [copied, setCopied] = useState(false);
+  const [referralData, setReferralData] = useState<ReferralData>({
+    code: '',
+    link: '',
+    totalReferrals: 0,
+    activeReferrals: 0,
+    totalEarnings: 0,
+    pendingEarnings: 0,
+    commissionRate: 10
+  });
+  const [referredUsers, setReferredUsers] = useState<ReferredUser[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = async () => {
+    try {
+      setIsLoading(true);
+
+      // Charger les données de parrainage
+      const referralResponse = await fetch('/api/referral');
+      if (referralResponse.ok) {
+        const data = await referralResponse.json();
+        setReferralData(data);
+      } else {
+        toast.error('Erreur lors du chargement des données de parrainage');
+      }
+
+      // Charger la liste des filleuls
+      const usersResponse = await fetch('/api/referral/users');
+      if (usersResponse.ok) {
+        const users = await usersResponse.json();
+        setReferredUsers(users);
+      } else {
+        toast.error('Erreur lors du chargement des filleuls');
+      }
+    } catch (error) {
+      console.error('Erreur lors du chargement des données:', error);
+      toast.error('Erreur lors du chargement des données');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+    toast.success('Lien copié dans le presse-papier');
   };
+
+  const shareLink = (
+    platform: 'native' | 'twitter' | 'telegram' | 'whatsapp'
+  ) => {
+    const text = `Rejoins RendR et reçois du cashback sur tes trades ! ${referralData.link}`;
+    const encodedText = encodeURIComponent(text);
+    const encodedUrl = encodeURIComponent(referralData.link);
+
+    switch (platform) {
+      case 'native':
+        if (navigator.share) {
+          navigator
+            .share({
+              title: 'Rejoins RendR',
+              text: text,
+              url: referralData.link
+            })
+            .catch(() => {
+              // L'utilisateur a annulé le partage
+            });
+        } else {
+          copyToClipboard(referralData.link);
+        }
+        break;
+      case 'twitter':
+        window.open(
+          `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}`,
+          '_blank'
+        );
+        break;
+      case 'telegram':
+        window.open(
+          `https://t.me/share/url?url=${encodedUrl}&text=${encodedText}`,
+          '_blank'
+        );
+        break;
+      case 'whatsapp':
+        window.open(`https://wa.me/?text=${encodedText}`, '_blank');
+        break;
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className='flex h-64 items-center justify-center'>
+        <IconLoader2 className='text-muted-foreground h-8 w-8 animate-spin' />
+      </div>
+    );
+  }
 
   return (
     <div className='space-y-6'>
@@ -104,10 +161,10 @@ export function ReferralView() {
             </span>
           </div>
           <p className='stat-number text-3xl font-bold'>
-            {referralData.totalReferrals}
+            {referralData.totalReferrals || 0}
           </p>
           <p className='text-muted-foreground mt-1 text-sm'>
-            {referralData.activeReferrals} actifs
+            {referralData.activeReferrals || 0} actifs
           </p>
         </div>
 
@@ -130,10 +187,10 @@ export function ReferralView() {
             <span className='text-muted-foreground text-sm'>Gains Totaux</span>
           </div>
           <p className='text-foreground stat-number text-3xl font-bold'>
-            {referralData.totalEarnings.toFixed(2)}€
+            {referralData.totalEarnings?.toFixed(2) || '0.00'}€
           </p>
           <p className='mt-1 text-sm text-[#c5d13f]'>
-            +{referralData.pendingEarnings.toFixed(2)}€ en attente
+            +{referralData.pendingEarnings?.toFixed(2) || '0.00'}€ en attente
           </p>
         </div>
 
@@ -184,7 +241,7 @@ export function ReferralView() {
             <span className='text-muted-foreground text-sm'>Gain Moyen</span>
           </div>
           <p className='stat-number text-3xl font-bold'>
-            {referralData.activeReferrals > 0
+            {referralData.activeReferrals > 0 && referralData.totalEarnings > 0
               ? (
                   referralData.totalEarnings / referralData.activeReferrals
                 ).toFixed(2)
@@ -258,19 +315,35 @@ export function ReferralView() {
           </div>
 
           <div className='flex flex-wrap gap-2'>
-            <Button variant='outline' size='sm'>
+            <Button
+              variant='outline'
+              size='sm'
+              onClick={() => shareLink('native')}
+            >
               <IconShare className='mr-2 h-4 w-4' />
               Partager
             </Button>
-            <Button variant='outline' size='sm'>
+            <Button
+              variant='outline'
+              size='sm'
+              onClick={() => shareLink('twitter')}
+            >
               <IconBrandTwitter className='mr-2 h-4 w-4' />
               Twitter
             </Button>
-            <Button variant='outline' size='sm'>
+            <Button
+              variant='outline'
+              size='sm'
+              onClick={() => shareLink('telegram')}
+            >
               <IconBrandTelegram className='mr-2 h-4 w-4' />
               Telegram
             </Button>
-            <Button variant='outline' size='sm'>
+            <Button
+              variant='outline'
+              size='sm'
+              onClick={() => shareLink('whatsapp')}
+            >
               <IconBrandWhatsapp className='mr-2 h-4 w-4' />
               WhatsApp
             </Button>

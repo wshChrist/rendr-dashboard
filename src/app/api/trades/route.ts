@@ -1,6 +1,10 @@
 import { createServiceRoleClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
+import {
+  calculateAndRecordReferralEarnings,
+  activateReferralRelationships
+} from '@/lib/utils/referral-earnings';
 
 /**
  * Route API pour recevoir les trades de l'EA
@@ -60,10 +64,10 @@ export async function POST(request: NextRequest) {
     // Utiliser le service role client pour bypass RLS (route publique pour l'EA)
     const supabase = createServiceRoleClient();
 
-    // Trouver le compte de trading (inclure le statut pour la vérification)
+    // Trouver le compte de trading (inclure le statut et user_id pour la vérification)
     const { data: account, error: accountError } = await supabase
       .from('trading_accounts')
-      .select('id, status')
+      .select('id, user_id, broker, status')
       .eq('external_account_id', external_account_id)
       .single();
 
@@ -80,8 +84,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Type assertion pour garantir que account a le champ status
-    const accountWithStatus = account as { id: string; status: string };
+    // Type assertion pour garantir que account a les champs nécessaires
+    const accountWithStatus = account as {
+      id: string;
+      user_id: string;
+      broker: string;
+      status: string;
+    };
 
     // Vérifier la signature HMAC (si fournie)
     // Note: Pour l'instant, on accepte les trades sans vérification stricte
@@ -144,7 +153,8 @@ export async function POST(request: NextRequest) {
 
     // Mettre à jour le statut du compte à "connected" s'il est encore en "pending_vps_setup"
     // Car l'enregistrement d'un trade prouve que le compte est actif
-    if (accountWithStatus.status === 'pending_vps_setup') {
+    const wasPending = accountWithStatus.status === 'pending_vps_setup';
+    if (wasPending) {
       const { error: updateStatusError } = await supabase
         .from('trading_accounts')
         .update({ status: 'connected' })
@@ -160,8 +170,20 @@ export async function POST(request: NextRequest) {
         console.log(
           `Statut du compte ${account.id} mis à jour de 'pending_vps_setup' à 'connected'`
         );
+
+        // Activer les relations de parrainage pour cet utilisateur
+        await activateReferralRelationships(accountWithStatus.user_id);
       }
     }
+
+    // Calculer et enregistrer les gains de parrainage
+    await calculateAndRecordReferralEarnings(
+      trade.id,
+      accountWithStatus.user_id,
+      accountWithStatus.broker,
+      parseFloat(lots.toString()),
+      commission ? parseFloat(commission.toString()) : undefined
+    );
 
     return NextResponse.json(
       { message: 'Trade enregistré avec succès', trade_id: trade.id },
