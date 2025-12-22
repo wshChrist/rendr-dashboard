@@ -199,3 +199,95 @@ export async function GET(request: NextRequest) {
     );
   }
 }
+
+/**
+ * Route API pour supprimer un compte de trading
+ */
+export async function DELETE(request: NextRequest) {
+  try {
+    const supabase = await createClient();
+
+    // Vérifier l'authentification
+    const {
+      data: { user },
+      error: authError
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return NextResponse.json(
+        { error: 'Non autorisé', message: 'Vous devez être connecté' },
+        { status: 401 }
+      );
+    }
+
+    // Récupérer l'ID du compte depuis les paramètres de requête
+    const searchParams = request.nextUrl.searchParams;
+    const accountId = searchParams.get('id');
+
+    if (!accountId) {
+      return NextResponse.json(
+        { error: 'ID manquant', message: "L'ID du compte est requis" },
+        { status: 400 }
+      );
+    }
+
+    // Vérifier que le compte appartient à l'utilisateur
+    const { data: account, error: fetchError } = await supabase
+      .from('trading_accounts')
+      .select('id, user_id')
+      .eq('id', accountId)
+      .single();
+
+    if (fetchError || !account) {
+      return NextResponse.json(
+        { error: 'Compte non trouvé', message: "Le compte n'existe pas" },
+        { status: 404 }
+      );
+    }
+
+    if (account.user_id !== user.id) {
+      return NextResponse.json(
+        {
+          error: 'Non autorisé',
+          message: "Vous n'êtes pas autorisé à supprimer ce compte"
+        },
+        { status: 403 }
+      );
+    }
+
+    // Supprimer le compte
+    const { error: deleteError } = await supabase
+      .from('trading_accounts')
+      .delete()
+      .eq('id', accountId)
+      .eq('user_id', user.id);
+
+    if (deleteError) {
+      console.error('Erreur Supabase lors de la suppression:', deleteError);
+      return NextResponse.json(
+        {
+          error: 'Erreur de base de données',
+          message: deleteError.message
+        },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json(
+      {
+        success: true,
+        message: 'Compte supprimé avec succès'
+      },
+      { status: 200 }
+    );
+  } catch (error: any) {
+    console.error('Erreur lors de la suppression du compte:', error);
+    return NextResponse.json(
+      {
+        error: 'Erreur serveur',
+        message: error.message || 'Une erreur est survenue'
+      },
+      { status: 500 }
+    );
+  }
+}

@@ -16,6 +16,16 @@ import {
   DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle
+} from '@/components/ui/alert-dialog';
 import { backendClient } from '@/lib/api/backend-client';
 import { createSupabaseClient } from '@/lib/supabase/client';
 import {
@@ -77,6 +87,8 @@ export function MyBrokers() {
     {}
   );
   const [isLoading, setIsLoading] = useState(true);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [accountToDelete, setAccountToDelete] = useState<string | null>(null);
   const supabase = createSupabaseClient();
   // Ref pour stocker les comptes et éviter les dépendances dans useEffect
   const accountsRef = useRef<any[]>([]);
@@ -139,6 +151,37 @@ export function MyBrokers() {
       setTradesByAccount(tradesMap);
     } catch (error) {
       console.error('Erreur lors du chargement des trades:', error);
+    }
+  };
+
+  const handleDeleteAccount = async (accountId: string) => {
+    try {
+      const loadingToast = toast.loading('Suppression du compte en cours...');
+
+      const response = await fetch(`/api/trading-accounts?id=${accountId}`, {
+        method: 'DELETE'
+      });
+
+      const data = await response.json();
+
+      toast.dismiss(loadingToast);
+
+      if (!response.ok) {
+        toast.error(data.message || 'Erreur lors de la suppression du compte');
+        return;
+      }
+
+      toast.success('Compte supprimé avec succès');
+      setDeleteDialogOpen(false);
+      setAccountToDelete(null);
+
+      // Recharger les comptes
+      loadAccounts();
+    } catch (error) {
+      toast.error('Erreur lors de la suppression du compte');
+      console.error(error);
+      setDeleteDialogOpen(false);
+      setAccountToDelete(null);
     }
   };
 
@@ -701,6 +744,10 @@ export function MyBrokers() {
                 variant='ghost'
                 size='sm'
                 className='text-red-400 hover:bg-red-500/10 hover:text-red-300'
+                onClick={() => {
+                  setAccountToDelete(broker.id);
+                  setDeleteDialogOpen(true);
+                }}
               >
                 <IconTrash className='h-4 w-4' />
               </Button>
@@ -760,6 +807,42 @@ export function MyBrokers() {
             />
           </DialogContent>
         </Dialog>
+
+        {/* Dialogue de confirmation pour supprimer un compte */}
+        <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>
+                Supprimer le compte de trading
+              </AlertDialogTitle>
+              <AlertDialogDescription>
+                Êtes-vous sûr de vouloir supprimer ce compte de trading ? Cette
+                action est irréversible et toutes les données associées (trades,
+                historique) seront également supprimées.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel
+                onClick={() => {
+                  setDeleteDialogOpen(false);
+                  setAccountToDelete(null);
+                }}
+              >
+                Annuler
+              </AlertDialogCancel>
+              <AlertDialogAction
+                onClick={() => {
+                  if (accountToDelete) {
+                    handleDeleteAccount(accountToDelete);
+                  }
+                }}
+                className='bg-red-500 hover:bg-red-600 focus:ring-red-500'
+              >
+                Supprimer définitivement
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </div>
   );
