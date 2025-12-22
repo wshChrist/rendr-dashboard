@@ -50,6 +50,39 @@ import { cn } from '@/lib/utils';
 import { useMemo } from 'react';
 import { toast } from 'sonner';
 
+// Composant pour afficher le logo du broker avec fallback
+function BrokerLogoDisplay({
+  broker
+}: {
+  broker: { name: string; logo_url?: string };
+}) {
+  const [imageError, setImageError] = useState(false);
+
+  return (
+    <div
+      className={cn(
+        'relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl',
+        'border border-white/5 bg-white/5',
+        'transition-transform duration-300',
+        'hover:scale-105'
+      )}
+    >
+      {!imageError && broker.logo_url ? (
+        <img
+          src={broker.logo_url}
+          alt={broker.name}
+          className='[box-sizing:content-box] h-full w-full object-contain'
+          onError={() => setImageError(true)}
+        />
+      ) : (
+        <span className='text-xl font-bold'>
+          {broker.name.slice(0, 2).toUpperCase()}
+        </span>
+      )}
+    </div>
+  );
+}
+
 const getStatusBadge = (status: string, errorMessage?: string) => {
   switch (status) {
     case 'active':
@@ -240,7 +273,8 @@ export function MyBrokers() {
         broker: brokerInfo || {
           id: `broker-${account.broker}`,
           name: account.broker,
-          logo_url: '',
+          logo_url:
+            brokersData.find((b) => b.name === account.broker)?.logo_url || '',
           category: 'forex' as const,
           cashback_rate: 0.15, // Valeur par défaut
           min_withdrawal: 50,
@@ -538,16 +572,7 @@ export function MyBrokers() {
             {/* Header avec badge */}
             <div className='mb-6 flex items-start justify-between'>
               <div className='flex items-center gap-4'>
-                <div
-                  className={cn(
-                    'flex h-14 w-14 items-center justify-center rounded-xl',
-                    'border border-white/5 bg-white/5',
-                    'text-xl font-bold transition-transform duration-300',
-                    'hover:scale-105'
-                  )}
-                >
-                  {broker.broker.name.slice(0, 2).toUpperCase()}
-                </div>
+                <BrokerLogoDisplay broker={broker.broker} />
                 <div>
                   <h3 className='mb-1 text-xl font-semibold'>
                     {broker.broker.name}
