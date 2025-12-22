@@ -17,6 +17,7 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import { BaseFormFieldProps, FormOption } from '@/types/base-form';
+import { RendRBadge } from '@/components/ui/rendr-badge';
 
 interface FormSelectProps<
   TFieldValues extends FieldValues = FieldValues,
@@ -69,8 +70,20 @@ function FormSelect<
                   key={option.value}
                   value={option.value}
                   disabled={option.disabled}
+                  className={option.disabled ? 'opacity-60' : ''}
                 >
-                  {option.label}
+                  <div className='flex w-full items-center justify-between gap-2'>
+                    <span className='flex-1'>{option.label}</span>
+                    {option.disabled && (
+                      <RendRBadge
+                        variant='muted'
+                        size='sm'
+                        className='shrink-0 text-[10px]'
+                      >
+                        Bientôt disponible
+                      </RendRBadge>
+                    )}
+                  </div>
                 </SelectItem>
               ))}
             </SelectContent>

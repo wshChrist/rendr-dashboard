@@ -13,6 +13,8 @@ import { useState } from 'react';
 import { backendClient } from '@/lib/api/backend-client';
 import { createSupabaseClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
+import { brokersData } from '@/constants/cashback-data';
+import { RendRBadge } from '@/components/ui/rendr-badge';
 
 const formSchema = z.object({
   broker: z.string().min(1, 'Le broker est requis'),
@@ -28,14 +30,16 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-const BROKERS = [
-  { value: 'IC Markets', label: 'IC Markets' },
-  { value: 'Pepperstone', label: 'Pepperstone' },
-  { value: 'XM', label: 'XM' },
-  { value: 'Exness', label: 'Exness' },
-  { value: 'RoboForex', label: 'RoboForex' },
-  { value: 'Vantage', label: 'Vantage' }
-];
+// Générer la liste des brokers depuis brokersData avec indication de disponibilité
+const BROKERS = brokersData.map((broker) => {
+  const isAvailable = broker.name === 'Vantage'; // Seul Vantage est disponible pour l'instant
+  return {
+    value: broker.name,
+    label: broker.name,
+    disabled: !isAvailable,
+    available: isAvailable
+  };
+});
 
 const PLATFORMS = [
   { value: 'MT4', label: 'MetaTrader 4' },
