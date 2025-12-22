@@ -61,6 +61,48 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Vérifier si le compte (login) est déjà associé à un autre utilisateur
+    const { data: existingAccounts, error: checkError } = await supabase
+      .from('trading_accounts')
+      .select('id, user_id')
+      .eq('login', login)
+      .limit(1);
+
+    if (checkError) {
+      console.error('Erreur lors de la vérification du compte:', checkError);
+      return NextResponse.json(
+        {
+          error: 'Erreur de vérification',
+          message: 'Erreur lors de la vérification du compte'
+        },
+        { status: 500 }
+      );
+    }
+
+    // Si le compte existe et appartient à un autre utilisateur
+    if (existingAccounts && existingAccounts.length > 0) {
+      const existingAccount = existingAccounts[0];
+      if (existingAccount.user_id !== user.id) {
+        return NextResponse.json(
+          {
+            error: 'Compte déjà associé',
+            message:
+              'Ce compte de trading est déjà associé à un autre utilisateur'
+          },
+          { status: 409 }
+        );
+      }
+      // Si le compte appartient déjà à l'utilisateur actuel, on pourrait retourner une erreur
+      // ou permettre la mise à jour. Pour l'instant, on retourne une erreur.
+      return NextResponse.json(
+        {
+          error: 'Compte déjà ajouté',
+          message: 'Ce compte de trading est déjà dans votre liste'
+        },
+        { status: 409 }
+      );
+    }
+
     // Générer un external_account_id unique
     const externalAccountId = uuidv4();
 

@@ -1,4 +1,8 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  ConflictException
+} from '@nestjs/common';
 import { SupabaseService } from '../config/supabase.service';
 import { EncryptionUtil } from '../common/utils/encryption.util';
 import { v4 as uuidv4 } from 'uuid';
@@ -14,6 +18,34 @@ export class TradingAccountsService {
     dto: CreateTradingAccountDto
   ): Promise<TradingAccountResponseDto> {
     const supabase = this.supabaseService.getServiceRoleClient();
+
+    // Vérifier si le compte (login) est déjà associé à un autre utilisateur
+    const { data: existingAccounts, error: checkError } = await supabase
+      .from('trading_accounts')
+      .select('id, user_id')
+      .eq('login', dto.login)
+      .limit(1);
+
+    if (checkError) {
+      throw new BadRequestException(
+        `Erreur lors de la vérification du compte: ${checkError.message}`
+      );
+    }
+
+    // Si le compte existe et appartient à un autre utilisateur
+    if (existingAccounts && existingAccounts.length > 0) {
+      const existingAccount = existingAccounts[0];
+      if (existingAccount.user_id !== userId) {
+        throw new ConflictException(
+          'Ce compte de trading est déjà associé à un autre utilisateur'
+        );
+      }
+      // Si le compte appartient déjà à l'utilisateur actuel
+      throw new ConflictException(
+        'Ce compte de trading est déjà dans votre liste'
+      );
+    }
+
     const externalAccountId = uuidv4();
 
     // Chiffrer le mot de passe
