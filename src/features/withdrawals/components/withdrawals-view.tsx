@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
-import { userStatsData, withdrawalsData } from '@/constants/cashback-data';
+import { useState, useEffect } from 'react';
+import { createSupabaseClient } from '@/lib/supabase/client';
+import type { Withdrawal } from '@/types/cashback';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -33,16 +34,118 @@ import {
 } from '@tabler/icons-react';
 import { cn } from '@/lib/utils';
 import { WithdrawalsTable } from './withdrawals-table';
+import { toast } from 'sonner';
 
 export function WithdrawalsView() {
   const [amount, setAmount] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('');
-  const stats = userStatsData;
+  const [paymentDetails, setPaymentDetails] = useState('');
+  const [withdrawals, setWithdrawals] = useState<Withdrawal[]>([]);
+  const [stats, setStats] = useState({
+    available_balance: 0,
+    total_withdrawn: 0,
+    pending_withdrawals_count: 0,
+    pending_withdrawals_amount: 0,
+    completed_withdrawals_count: 0
+  });
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const supabase = createSupabaseClient();
 
-  const pendingWithdrawals = withdrawalsData.filter(
+  // Charger les données
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = async () => {
+    try {
+      setIsLoading(true);
+
+      // Charger les retraits
+      const withdrawalsResponse = await fetch('/api/withdrawals');
+      if (withdrawalsResponse.ok) {
+        const withdrawalsData = await withdrawalsResponse.json();
+        setWithdrawals(withdrawalsData);
+      }
+
+      // Charger les stats
+      const statsResponse = await fetch('/api/withdrawals/stats');
+      if (statsResponse.ok) {
+        const statsData = await statsResponse.json();
+        setStats({
+          available_balance: statsData.available_balance || 0,
+          total_withdrawn: statsData.total_withdrawn || 0,
+          pending_withdrawals_count: statsData.pending_withdrawals_count || 0,
+          pending_withdrawals_amount: statsData.pending_withdrawals_amount || 0,
+          completed_withdrawals_count:
+            statsData.completed_withdrawals_count || 0
+        });
+      }
+    } catch (error) {
+      console.error('Erreur lors du chargement des données:', error);
+      toast.error('Erreur lors du chargement des données');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleWithdrawal = async () => {
+    if (!amount || !paymentMethod || !paymentDetails) {
+      toast.error('Veuillez remplir tous les champs');
+      return;
+    }
+
+    const amountNum = parseFloat(amount);
+    if (amountNum < 20 || amountNum > stats.available_balance) {
+      toast.error(
+        `Le montant doit être entre 20€ et ${stats.available_balance.toFixed(2)}€`
+      );
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch('/api/withdrawals', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          amount: amountNum,
+          payment_method: paymentMethod,
+          payment_details: paymentDetails
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        toast.error(data.message || 'Erreur lors de la création du retrait');
+        return;
+      }
+
+      toast.success('Demande de retrait créée avec succès');
+      setAmount('');
+      setPaymentMethod('');
+      setPaymentDetails('');
+      setDialogOpen(false);
+
+      // Recharger les données
+      await loadData();
+    } catch (error) {
+      toast.error('Erreur lors de la création du retrait');
+      console.error(error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const pendingWithdrawals = withdrawals.filter(
     (w) => w.status === 'processing' || w.status === 'pending'
   );
-  const completedWithdrawals = withdrawalsData.filter(
+  const completedWithdrawals = withdrawals.filter(
     (w) => w.status === 'completed'
   );
 
@@ -71,9 +174,9 @@ export function WithdrawalsView() {
             </span>
           </div>
           <p className='text-foreground stat-number mb-4 text-3xl font-bold'>
-            {stats.available_balance.toFixed(2)}€
+            {isLoading ? '...' : stats.available_balance.toFixed(2)}€
           </p>
-          <Dialog>
+          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DialogTrigger asChild>
               <Button className='w-full'>
                 <IconArrowDown className='mr-2 h-4 w-4' />
@@ -88,7 +191,7 @@ export function WithdrawalsView() {
                 <DialogDescription className='text-muted-foreground'>
                   Solde disponible:{' '}
                   <span className='font-semibold text-[#c5d13f]'>
-                    {stats.available_balance.toFixed(2)}€
+                    {isLoading ? '...' : stats.available_balance.toFixed(2)}€
                   </span>
                 </DialogDescription>
               </DialogHeader>
@@ -106,8 +209,8 @@ export function WithdrawalsView() {
                     className='border-white/10 bg-white/5 focus:border-white/20'
                   />
                   <p className='text-muted-foreground text-xs'>
-                    Minimum: 20€ | Maximum: {stats.available_balance.toFixed(2)}
-                    €
+                    Minimum: 20€ | Maximum:{' '}
+                    {isLoading ? '...' : stats.available_balance.toFixed(2)}€
                   </p>
                 </div>
                 <div className='space-y-2'>
@@ -146,16 +249,56 @@ export function WithdrawalsView() {
                     </SelectContent>
                   </Select>
                 </div>
+                {paymentMethod && (
+                  <div className='space-y-2'>
+                    <Label
+                      htmlFor='payment-details'
+                      className='text-sm font-medium'
+                    >
+                      {paymentMethod === 'bank_transfer'
+                        ? 'IBAN'
+                        : paymentMethod === 'paypal'
+                          ? 'Email PayPal'
+                          : 'Adresse crypto (USDT)'}
+                    </Label>
+                    <Input
+                      id='payment-details'
+                      type='text'
+                      placeholder={
+                        paymentMethod === 'bank_transfer'
+                          ? 'FR76 1234 5678 9012 3456 7890 123'
+                          : paymentMethod === 'paypal'
+                            ? 'votre@email.com'
+                            : '0x...'
+                      }
+                      value={paymentDetails}
+                      onChange={(e) => setPaymentDetails(e.target.value)}
+                      className='border-white/10 bg-white/5 focus:border-white/20'
+                    />
+                  </div>
+                )}
               </div>
               <DialogFooter className='gap-2'>
                 <Button
                   variant='outline'
                   className='border-white/10 bg-white/5 hover:bg-white/10'
+                  onClick={() => {
+                    setAmount('');
+                    setPaymentMethod('');
+                    setPaymentDetails('');
+                    setDialogOpen(false);
+                  }}
                 >
                   Annuler
                 </Button>
-                <Button className='bg-[#c5d13f] text-black hover:bg-[#c5d13f]/90'>
-                  Confirmer le retrait
+                <Button
+                  className='bg-[#c5d13f] text-black hover:bg-[#c5d13f]/90'
+                  onClick={handleWithdrawal}
+                  disabled={
+                    isSubmitting || !amount || !paymentMethod || !paymentDetails
+                  }
+                >
+                  {isSubmitting ? 'Traitement...' : 'Confirmer le retrait'}
                 </Button>
               </DialogFooter>
             </DialogContent>
@@ -181,13 +324,11 @@ export function WithdrawalsView() {
             <span className='text-muted-foreground text-sm'>En attente</span>
           </div>
           <p className='text-muted-foreground mb-2 text-2xl font-bold'>
-            {pendingWithdrawals
-              .reduce((acc, w) => acc + w.amount, 0)
-              .toFixed(2)}
-            €
+            {isLoading ? '...' : stats.pending_withdrawals_amount.toFixed(2)}€
           </p>
           <p className='text-muted-foreground text-sm'>
-            {pendingWithdrawals.length} retrait(s) en cours
+            {isLoading ? '...' : stats.pending_withdrawals_count} retrait(s) en
+            cours
           </p>
         </div>
 
@@ -210,10 +351,11 @@ export function WithdrawalsView() {
             <span className='text-muted-foreground text-sm'>Total retiré</span>
           </div>
           <p className='text-foreground stat-number mb-2 text-2xl font-bold'>
-            {stats.total_withdrawn.toFixed(2)}€
+            {isLoading ? '...' : stats.total_withdrawn.toFixed(2)}€
           </p>
           <p className='text-muted-foreground text-sm'>
-            {completedWithdrawals.length} retrait(s) complété(s)
+            {isLoading ? '...' : stats.completed_withdrawals_count} retrait(s)
+            complété(s)
           </p>
         </div>
       </div>
@@ -242,7 +384,7 @@ export function WithdrawalsView() {
           </div>
         </div>
 
-        <WithdrawalsTable data={withdrawalsData} />
+        <WithdrawalsTable data={withdrawals} />
       </div>
     </div>
   );
