@@ -453,19 +453,40 @@ export default function ProfileViewPage() {
 
   const handleDeleteAccount = async () => {
     try {
-      // Note: Pour supprimer un compte Clerk, vous devrez généralement utiliser une route API
-      // ou appeler Clerk directement. Cette fonction est un placeholder.
-      if (user) {
-        // Exemple: await fetch('/api/user/delete', { method: 'DELETE' });
-        toast.success(
-          'Demande de suppression du compte en cours de traitement'
-        );
+      if (!user) {
+        toast.error('Aucun utilisateur connecté');
         setDeleteAccountDialogOpen(false);
-        // Redirection après un court délai pour simuler le processus
-        setTimeout(() => {
-          router.push('/auth/sign-in');
-        }, 1000);
+        return;
       }
+
+      // Afficher un toast de chargement
+      const loadingToast = toast.loading('Suppression du compte en cours...');
+
+      // Appeler l'API pour supprimer le compte
+      const response = await fetch('/api/user/delete', {
+        method: 'DELETE'
+      });
+
+      const data = await response.json();
+
+      // Fermer le toast de chargement
+      toast.dismiss(loadingToast);
+
+      if (!response.ok) {
+        toast.error(data.message || 'Erreur lors de la suppression du compte');
+        setDeleteAccountDialogOpen(false);
+        return;
+      }
+
+      // Succès
+      toast.success('Compte supprimé avec succès');
+      setDeleteAccountDialogOpen(false);
+
+      // Rediriger vers la page de connexion
+      setTimeout(() => {
+        router.push('/auth/sign-in');
+        router.refresh();
+      }, 1000);
     } catch (error) {
       toast.error('Erreur lors de la suppression du compte');
       console.error(error);
