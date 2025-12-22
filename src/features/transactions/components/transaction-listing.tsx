@@ -22,6 +22,9 @@ import {
 } from '@/components/ui/select';
 import { useState, useMemo } from 'react';
 import { RendRBadge } from '@/components/ui/rendr-badge';
+import { format } from 'date-fns';
+import { fr } from 'date-fns/locale';
+import { Transaction } from '@/types/cashback';
 
 export function TransactionListing() {
   const { transactions, accounts, isLoading } = useTradingData();
@@ -124,6 +127,73 @@ export function TransactionListing() {
     const totalVolume = filteredData.reduce((acc, t) => acc + t.volume, 0);
     return { totalCashback, totalVolume, count: filteredData.length };
   }, [filteredData]);
+
+  // Fonction d'export CSV
+  const exportToCSV = () => {
+    if (filteredData.length === 0) {
+      alert('Aucune transaction à exporter');
+      return;
+    }
+
+    // En-têtes CSV
+    const headers = [
+      'Date',
+      'Heure',
+      'Broker',
+      'ID Trade',
+      'Paire',
+      'Volume (lots)',
+      'Commission (€)',
+      'Cashback (€)',
+      'Statut'
+    ];
+
+    // Conversion des données en lignes CSV
+    const rows = filteredData.map((transaction: Transaction) => {
+      const date = new Date(transaction.trade_date);
+      const formattedDate = format(date, 'dd/MM/yyyy', { locale: fr });
+      const formattedTime = format(date, 'HH:mm', { locale: fr });
+      const status =
+        transaction.status === 'confirmed' ? 'Confirmé' : 'En attente';
+
+      return [
+        formattedDate,
+        formattedTime,
+        transaction.broker.name,
+        transaction.trade_id,
+        transaction.pair,
+        transaction.volume.toFixed(2),
+        transaction.commission.toFixed(2),
+        transaction.cashback_amount.toFixed(2),
+        status
+      ];
+    });
+
+    // Création du contenu CSV
+    const csvContent = [
+      headers.join(','),
+      ...rows.map((row) =>
+        row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(',')
+      )
+    ].join('\n');
+
+    // Création du BOM UTF-8 pour Excel
+    const BOM = '\uFEFF';
+    const blob = new Blob([BOM + csvContent], {
+      type: 'text/csv;charset=utf-8;'
+    });
+    const url = URL.createObjectURL(blob);
+
+    // Création du lien de téléchargement
+    const link = document.createElement('a');
+    const timestamp = format(new Date(), 'yyyy-MM-dd_HH-mm-ss', { locale: fr });
+    link.href = url;
+    link.download = `transactions_${timestamp}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <div className='space-y-6'>
@@ -309,6 +379,8 @@ export function TransactionListing() {
               variant='outline'
               size='sm'
               className='border-white/10 bg-white/5'
+              onClick={exportToCSV}
+              disabled={filteredData.length === 0}
             >
               <IconDownload className='mr-2 h-4 w-4' />
               Exporter
