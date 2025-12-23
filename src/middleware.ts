@@ -7,7 +7,15 @@ import { NextResponse, type NextRequest } from 'next/server';
 const intlMiddleware = createMiddleware(routing);
 
 export default async function middleware(request: NextRequest) {
-  // D'abord, appliquer le middleware i18n pour détecter/rediriger vers la bonne locale
+  const pathname = request.nextUrl.pathname;
+
+  // Exclure les routes API de next-intl (elles ne doivent pas avoir de préfixe de locale)
+  if (pathname.startsWith('/api/')) {
+    // Pour les routes API, on applique seulement le middleware Supabase
+    return await updateSession(request);
+  }
+
+  // Pour les autres routes, appliquer le middleware i18n pour détecter/rediriger vers la bonne locale
   const intlResponse = intlMiddleware(request);
 
   // Si next-intl a fait une redirection (pour ajouter la locale), on la retourne directement
@@ -28,13 +36,12 @@ export default async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  // Matcher pour toutes les routes sauf les fichiers statiques et les routes API internes
+  // Matcher pour toutes les routes sauf les fichiers statiques
   matcher: [
     // Match all pathnames except for
-    // - … if they start with `/api`, `/_next` or `/_vercel`
+    // - … if they start with `/_next` or `/_vercel`
     // - … the ones containing a dot (e.g. `favicon.ico`)
-    '/((?!api|_next|_vercel|.*\\..*).*)',
-    // Always run for API routes
-    '/(api|trpc)(.*)'
+    // Note: Les routes API sont incluses pour le middleware Supabase, mais exclues de next-intl
+    '/((?!_next|_vercel|.*\\..*).*)'
   ]
 };
