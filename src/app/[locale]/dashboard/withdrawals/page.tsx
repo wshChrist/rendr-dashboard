@@ -1,18 +1,24 @@
 import PageContainer from '@/components/layout/page-container';
 import { PageHeader } from '@/components/layout/page-header';
 import { WithdrawalsView } from '@/features/withdrawals/components/withdrawals-view';
+import { getTranslations } from 'next-intl/server';
 
-export const metadata = {
-  title: 'Dashboard : Mes Retraits'
-};
+export async function generateMetadata() {
+  const t = await getTranslations();
+  return {
+    title: `Dashboard : ${t('pages.withdrawals.title')}`
+  };
+}
 
-export default function WithdrawalsPage() {
+export default async function WithdrawalsPage() {
+  const t = await getTranslations();
+
   return (
     <PageContainer>
       <div className='space-y-4'>
         <PageHeader
-          title='Vos retraits'
-          description='Récupérez votre cashback quand vous le souhaitez.'
+          title={t('pages.withdrawals.title')}
+          description={t('pages.withdrawals.description')}
         />
         <WithdrawalsView />
       </div>

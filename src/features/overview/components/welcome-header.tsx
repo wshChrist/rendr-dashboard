@@ -5,38 +5,42 @@ import { createSupabaseClient } from '@/lib/supabase/client';
 import { RendRBadge } from '@/components/ui/rendr-badge';
 import { RendRAsterisk } from '@/components/ui/rendr-decorations';
 import { useTradingData } from '@/hooks/use-trading-data';
+import { useTranslations } from 'next-intl';
 import type { User } from '@supabase/supabase-js';
 
-function getGreeting(): string {
+function getGreeting(t: (key: string) => string): string {
   const hour = new Date().getHours();
 
   if (hour >= 5 && hour < 12) {
-    return 'Bonjour';
+    return t('greetings.goodMorning');
   } else if (hour >= 12 && hour < 18) {
-    return 'Bon après-midi';
+    return t('greetings.goodAfternoon');
   } else if (hour >= 18 && hour < 22) {
-    return 'Bonsoir';
+    return t('greetings.goodEvening');
   } else {
-    return 'Bonne nuit';
+    return t('greetings.goodNight');
   }
 }
 
-function getMotivationalMessage(cashback: number): string {
+function getMotivationalMessage(
+  cashback: number,
+  t: (key: string) => string
+): string {
   const messages = [
-    'Prêt à faire croître votre cashback ?',
-    'Vos trades travaillent pour vous.',
-    'Continuez comme ça, vous êtes sur la bonne voie.',
-    'Chaque trade compte.',
-    "Votre cashback s'accumule."
+    t('welcome.motivational.ready'),
+    t('welcome.motivational.tradesWorking'),
+    t('welcome.motivational.keepGoing'),
+    t('welcome.motivational.everyTrade'),
+    t('welcome.motivational.accumulating')
   ];
 
   // Message basé sur le cashback
   if (cashback > 500) {
-    return 'Excellente performance ce mois-ci.';
+    return t('welcome.motivational.excellent');
   } else if (cashback > 200) {
-    return 'Vous êtes sur une belle lancée.';
+    return t('welcome.motivational.greatMomentum');
   } else if (cashback > 0) {
-    return 'Chaque trade vous rapproche de vos objectifs.';
+    return t('welcome.motivational.gettingCloser');
   }
 
   // Message aléatoire sinon
@@ -48,6 +52,7 @@ export function WelcomeHeader() {
   const [loading, setLoading] = useState(true);
   const supabase = createSupabaseClient();
   const { transactions, isLoading: isLoadingTradingData } = useTradingData();
+  const t = useTranslations();
 
   // Calculer le cashback total depuis les transactions réelles
   const totalCashback = useMemo(
@@ -70,13 +75,13 @@ export function WelcomeHeader() {
     getUser();
   }, [supabase]);
 
-  const greeting = getGreeting();
+  const greeting = getGreeting(t);
   const firstName =
     user?.user_metadata?.first_name ||
     user?.user_metadata?.name?.split(' ')[0] ||
     user?.email?.split('@')[0] ||
-    'Trader';
-  const motivationalMessage = getMotivationalMessage(totalCashback);
+    t('greetings.trader');
+  const motivationalMessage = getMotivationalMessage(totalCashback, t);
 
   if (loading || isLoadingTradingData) {
     return (
@@ -98,7 +103,7 @@ export function WelcomeHeader() {
       {/* Header avec style RendR */}
       <div className='text-muted-foreground flex items-center gap-2 text-sm'>
         <RendRAsterisk size='sm' />
-        <span>Dashboard</span>
+        <span>{t('welcome.dashboard')}</span>
         <div className='h-px w-8 bg-gradient-to-r from-white/30 to-transparent' />
       </div>
 
@@ -114,7 +119,7 @@ export function WelcomeHeader() {
             dotColor='green'
             className='animate-pulse-subtle w-fit'
           >
-            +{pendingCashback.toFixed(2)}€ en attente
+            +{pendingCashback.toFixed(2)}€ {t('welcome.pendingCashback')}
           </RendRBadge>
         )}
       </div>

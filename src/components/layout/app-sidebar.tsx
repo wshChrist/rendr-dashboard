@@ -45,6 +45,7 @@ import {
   IconUserCircle
 } from '@tabler/icons-react';
 import { Link, usePathname, useRouter } from '@/i18n/routing';
+import { useTranslations } from 'next-intl';
 import * as React from 'react';
 import { Icons } from '../icons';
 import { RendRLogo } from '../rendr-logo';
@@ -55,6 +56,7 @@ export default function AppSidebar() {
   const [user, setUser] = useState<User | null>(null);
   const supabase = createSupabaseClient();
   const router = useRouter();
+  const t = useTranslations();
 
   useEffect(() => {
     const getUser = async () => {
@@ -80,7 +82,68 @@ export default function AppSidebar() {
     router.push('/auth/sign-in');
     router.refresh();
   };
-  const filteredItems = useFilteredNavItems(navItems);
+
+  // Fonction helper pour traduire les navItems
+  const translateNavItems = (items: typeof navItems) => {
+    return items.map((item) => {
+      const translationKey = item.title.toLowerCase().replace(/\s+/g, '');
+      let translatedTitle = item.title;
+
+      // Mapping des clés de traduction
+      const translationMap: Record<string, string> = {
+        dashboard: t('nav.dashboard'),
+        transactions: t('nav.transactions'),
+        brokers: t('nav.brokers'),
+        retraits: t('nav.withdrawals'),
+        parrainage: t('nav.referral'),
+        nouveautés: t('nav.updates'),
+        administration: t('nav.administration'),
+        compte: t('nav.account'),
+        mescomptes: t('nav.myAccounts'),
+        brokerspartenaires: t('nav.partnerBrokers'),
+        "vued'ensemble": t('nav.overview'),
+        profil: t('nav.profile'),
+        déconnexion: t('nav.logout')
+      };
+
+      // Chercher la traduction
+      for (const [key, value] of Object.entries(translationMap)) {
+        if (translationKey.includes(key)) {
+          translatedTitle = value;
+          break;
+        }
+      }
+
+      return {
+        ...item,
+        title: translatedTitle,
+        items: item.items?.map((subItem) => {
+          const subTranslationKey = subItem.title
+            .toLowerCase()
+            .replace(/\s+/g, '');
+          let translatedSubTitle = subItem.title;
+
+          for (const [key, value] of Object.entries(translationMap)) {
+            if (subTranslationKey.includes(key)) {
+              translatedSubTitle = value;
+              break;
+            }
+          }
+
+          return {
+            ...subItem,
+            title: translatedSubTitle
+          };
+        })
+      };
+    });
+  };
+
+  const translatedNavItems = React.useMemo(
+    () => translateNavItems(navItems),
+    [t]
+  );
+  const filteredItems = useFilteredNavItems(translatedNavItems);
   const { state: sidebarState } = useSidebar();
   const isCollapsed = sidebarState === 'collapsed';
 
@@ -95,7 +158,7 @@ export default function AppSidebar() {
       </SidebarHeader>
       <SidebarContent className='overflow-x-hidden'>
         <SidebarGroup>
-          <SidebarGroupLabel>Menu Principal</SidebarGroupLabel>
+          <SidebarGroupLabel>{t('nav.mainMenu')}</SidebarGroupLabel>
           <SidebarMenu>
             {filteredItems.map((item, index) => {
               const Icon = item.icon ? Icons[item.icon] : Icons.logo;
@@ -281,23 +344,23 @@ export default function AppSidebar() {
                     onClick={() => router.push('/dashboard/profile')}
                   >
                     <IconUserCircle className='mr-2 h-4 w-4' />
-                    Profil
+                    {t('nav.profile')}
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => router.push('/dashboard/withdrawals')}
                   >
                     <IconCreditCard className='mr-2 h-4 w-4' />
-                    Retraits
+                    {t('nav.withdrawals')}
                   </DropdownMenuItem>
                   <DropdownMenuItem>
                     <IconBell className='mr-2 h-4 w-4' />
-                    Notifications
+                    {t('nav.notifications')}
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleSignOut}>
                   <IconLogout className='mr-2 h-4 w-4' />
-                  Déconnexion
+                  {t('nav.logout')}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

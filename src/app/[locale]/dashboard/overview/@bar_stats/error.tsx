@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { IconAlertCircle } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useTransition } from 'react';
+import { useTranslations } from 'next-intl';
 import * as Sentry from '@sentry/nextjs';
 
 interface StatsErrorProps {
@@ -15,6 +16,7 @@ interface StatsErrorProps {
 export default function StatsError({ error, reset }: StatsErrorProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const t = useTranslations();
 
   useEffect(() => {
     Sentry.captureException(error);
@@ -33,9 +35,9 @@ export default function StatsError({ error, reset }: StatsErrorProps) {
         <div className='flex flex-1 flex-col justify-center gap-1 px-6 py-5 sm:py-6'>
           <Alert variant='destructive' className='border-none'>
             <IconAlertCircle className='h-4 w-4' />
-            <AlertTitle>Erreur</AlertTitle>
+            <AlertTitle>{t('pages.error.title')}</AlertTitle>
             <AlertDescription className='mt-2'>
-              Impossible de charger les statistiques : {error.message}
+              {t('pages.error.statsLoadError')} : {error.message}
             </AlertDescription>
           </Alert>
         </div>
@@ -43,7 +45,7 @@ export default function StatsError({ error, reset }: StatsErrorProps) {
       <CardContent className='flex h-[316px] items-center justify-center p-6'>
         <div className='text-center'>
           <p className='text-muted-foreground mb-4 text-sm'>
-            Impossible d'afficher les statistiques pour le moment
+            {t('pages.error.statsDisplayError')}
           </p>
           <Button
             onClick={() => reload()}
@@ -51,7 +53,7 @@ export default function StatsError({ error, reset }: StatsErrorProps) {
             className='min-w-[120px]'
             disabled={isPending}
           >
-            Réessayer
+            {t('pages.error.retry')}
           </Button>
         </div>
       </CardContent>

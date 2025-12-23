@@ -4,8 +4,9 @@ import StatsCards from '@/features/overview/components/stats-cards-wrapper';
 import { PlatformUpdates } from '@/features/overview/components/platform-updates';
 import { WelcomeHeader } from '@/features/overview/components/welcome-header';
 import { SectionHeading } from '@/components/ui/section-heading';
+import { getTranslations } from 'next-intl/server';
 
-export default function OverViewLayout({
+export default async function OverViewLayout({
   sales,
   pie_stats,
   bar_stats,
@@ -16,6 +17,8 @@ export default function OverViewLayout({
   bar_stats: React.ReactNode;
   area_stats: React.ReactNode;
 }) {
+  const t = await getTranslations();
+
   return (
     <PageContainer>
       <div className='relative flex flex-1 flex-col space-y-6'>
@@ -34,7 +37,7 @@ export default function OverViewLayout({
         {/* Section principale : Updates + Activité */}
         <section className='space-y-4'>
           <SectionHeading
-            title='Aperçu'
+            title={t('pages.overview.title')}
             size='sm'
             className='animate-fade-in-up opacity-0'
             style={{ animationDelay: '350ms', animationFillMode: 'forwards' }}
@@ -60,7 +63,7 @@ export default function OverViewLayout({
         {/* Charts avec animations décalées */}
         <section className='space-y-4'>
           <SectionHeading
-            title='Statistiques'
+            title={t('pages.overview.stats')}
             size='sm'
             className='animate-fade-in-up opacity-0'
             style={{ animationDelay: '550ms', animationFillMode: 'forwards' }}

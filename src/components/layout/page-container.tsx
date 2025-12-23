@@ -1,6 +1,9 @@
+'use client';
+
 import React from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Heading } from '../ui/heading';
+import { useTranslations } from 'next-intl';
 
 function PageSkeleton() {
   return (
@@ -36,12 +39,14 @@ export default function PageContainer({
   pageDescription?: string;
   pageHeaderAction?: React.ReactNode;
 }) {
+  const t = useTranslations();
+
   if (!access) {
     return (
       <div className='flex flex-1 items-center justify-center p-4 md:px-6'>
         {accessFallback ?? (
           <div className='text-muted-foreground text-center text-lg'>
-            You do not have access to this page.
+            {t('access.noAccess')}
           </div>
         )}
       </div>

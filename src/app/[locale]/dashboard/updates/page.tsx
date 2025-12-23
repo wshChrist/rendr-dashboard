@@ -1,18 +1,24 @@
 import PageContainer from '@/components/layout/page-container';
 import { PageHeader } from '@/components/layout/page-header';
 import { AllUpdates } from '@/features/updates/components/all-updates';
+import { getTranslations } from 'next-intl/server';
 
-export const metadata = {
-  title: 'Dashboard : Nouveautés'
-};
+export async function generateMetadata() {
+  const t = await getTranslations();
+  return {
+    title: `Dashboard : ${t('pages.updates.title')}`
+  };
+}
 
-export default function UpdatesPage() {
+export default async function UpdatesPage() {
+  const t = await getTranslations();
+
   return (
     <PageContainer>
       <div className='space-y-4'>
         <PageHeader
-          title='Quoi de neuf ?'
-          description='On bosse dur pour vous. Voici nos dernières améliorations.'
+          title={t('pages.updates.title')}
+          description={t('pages.updates.description')}
         />
         <AllUpdates />
       </div>

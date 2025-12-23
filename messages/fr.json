@@ -14,7 +14,11 @@
     "updates": "Nouveautés",
     "account": "Compte",
     "profile": "Profil",
-    "logout": "Déconnexion"
+    "logout": "Déconnexion",
+    "administration": "Administration",
+    "overview": "Vue d'ensemble",
+    "mainMenu": "Menu Principal",
+    "notifications": "Notifications"
   },
   "common": {
     "loading": "Chargement...",
@@ -25,7 +29,81 @@
     "delete": "Supprimer",
     "edit": "Modifier",
     "create": "Créer",
-    "search": "Rechercher"
+    "search": "Rechercher",
+    "platform": "Platform",
+    "addBroker": "Ajouter un broker"
+  },
+  "greetings": {
+    "goodMorning": "Bonjour",
+    "goodAfternoon": "Bon après-midi",
+    "goodEvening": "Bonsoir",
+    "goodNight": "Bonne nuit",
+    "trader": "Trader"
+  },
+  "welcome": {
+    "dashboard": "Dashboard",
+    "pendingCashback": "en attente",
+    "motivational": {
+      "ready": "Prêt à faire croître votre cashback ?",
+      "tradesWorking": "Vos trades travaillent pour vous.",
+      "keepGoing": "Continuez comme ça, vous êtes sur la bonne voie.",
+      "everyTrade": "Chaque trade compte.",
+      "accumulating": "Votre cashback s'accumule.",
+      "excellent": "Excellente performance ce mois-ci.",
+      "greatMomentum": "Vous êtes sur une belle lancée.",
+      "gettingCloser": "Chaque trade vous rapproche de vos objectifs."
+    }
+  },
+  "pages": {
+    "overview": {
+      "title": "Aperçu",
+      "stats": "Statistiques"
+    },
+    "transactions": {
+      "title": "Historique des transactions",
+      "description": "Chaque trade vous rapporte. Voici le détail."
+    },
+    "brokers": {
+      "title": "Brokers",
+      "myAccounts": {
+        "title": "Vos comptes connectés",
+        "description": "Suivez la performance de chacun de vos comptes de trading."
+      },
+      "available": {
+        "title": "Nos brokers partenaires",
+        "description": "Connectez votre compte et commencez à gagner du cashback immédiatement."
+      }
+    },
+    "withdrawals": {
+      "title": "Vos retraits",
+      "description": "Récupérez votre cashback quand vous le souhaitez."
+    },
+    "referral": {
+      "title": "Parrainez, gagnez plus",
+      "description": "Invitez vos amis traders et recevez un bonus sur chacun de leurs trades."
+    },
+    "updates": {
+      "title": "Quoi de neuf ?",
+      "description": "On bosse dur pour vous. Voici nos dernières améliorations."
+    },
+    "profile": {
+      "title": "Votre espace personnel",
+      "description": "Gérez votre compte, vos préférences et vos méthodes de paiement."
+    },
+    "admin": {
+      "title": "Administration"
+    },
+    "error": {
+      "title": "Erreur",
+      "description": "Une erreur s'est produite lors du chargement des données.",
+      "statsLoadError": "Impossible de charger les statistiques",
+      "activityLoadError": "Impossible de charger les données d'activité",
+      "statsDisplayError": "Impossible d'afficher les statistiques pour le moment",
+      "retry": "Réessayer"
+    }
+  },
+  "access": {
+    "noAccess": "Vous n'avez pas accès à cette page."
   }
 }
 

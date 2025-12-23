@@ -2,24 +2,30 @@ import PageContainer from '@/components/layout/page-container';
 import { PageHeader } from '@/components/layout/page-header';
 import { MyBrokers } from '@/features/brokers/components/my-brokers';
 import { Button } from '@/components/ui/button';
-import Link from 'next/link';
+import { Link } from '@/i18n/routing';
 import { IconArrowRight } from '@tabler/icons-react';
+import { getTranslations } from 'next-intl/server';
 
-export const metadata = {
-  title: 'Dashboard : Mes Comptes'
-};
+export async function generateMetadata() {
+  const t = await getTranslations();
+  return {
+    title: `Dashboard : ${t('nav.myAccounts')}`
+  };
+}
 
-export default function MyBrokersPage() {
+export default async function MyBrokersPage() {
+  const t = await getTranslations();
+
   return (
     <PageContainer>
       <div className='space-y-4'>
         <PageHeader
-          title='Vos comptes connectés'
-          description='Suivez la performance de chacun de vos comptes de trading.'
+          title={t('pages.brokers.myAccounts.title')}
+          description={t('pages.brokers.myAccounts.description')}
         >
           <Button asChild variant='outline'>
             <Link href='/dashboard/brokers/available'>
-              Ajouter un broker
+              {t('common.addBroker')}
               <IconArrowRight className='ml-2 h-4 w-4' />
             </Link>
           </Button>

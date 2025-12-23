@@ -14,7 +14,11 @@
     "updates": "Updates",
     "account": "Account",
     "profile": "Profile",
-    "logout": "Logout"
+    "logout": "Logout",
+    "administration": "Administration",
+    "overview": "Overview",
+    "mainMenu": "Main Menu",
+    "notifications": "Notifications"
   },
   "common": {
     "loading": "Loading...",
@@ -25,7 +29,81 @@
     "delete": "Delete",
     "edit": "Edit",
     "create": "Create",
-    "search": "Search"
+    "search": "Search",
+    "platform": "Platform",
+    "addBroker": "Add a broker"
+  },
+  "greetings": {
+    "goodMorning": "Good morning",
+    "goodAfternoon": "Good afternoon",
+    "goodEvening": "Good evening",
+    "goodNight": "Good night",
+    "trader": "Trader"
+  },
+  "welcome": {
+    "dashboard": "Dashboard",
+    "pendingCashback": "pending",
+    "motivational": {
+      "ready": "Ready to grow your cashback?",
+      "tradesWorking": "Your trades are working for you.",
+      "keepGoing": "Keep it up, you're on the right track.",
+      "everyTrade": "Every trade counts.",
+      "accumulating": "Your cashback is accumulating.",
+      "excellent": "Excellent performance this month.",
+      "greatMomentum": "You're on a great momentum.",
+      "gettingCloser": "Every trade brings you closer to your goals."
+    }
+  },
+  "pages": {
+    "overview": {
+      "title": "Overview",
+      "stats": "Statistics"
+    },
+    "transactions": {
+      "title": "Transaction History",
+      "description": "Every trade earns you money. Here are the details."
+    },
+    "brokers": {
+      "title": "Brokers",
+      "myAccounts": {
+        "title": "Your Connected Accounts",
+        "description": "Track the performance of each of your trading accounts."
+      },
+      "available": {
+        "title": "Our Partner Brokers",
+        "description": "Connect your account and start earning cashback immediately."
+      }
+    },
+    "withdrawals": {
+      "title": "Your Withdrawals",
+      "description": "Withdraw your cashback whenever you want."
+    },
+    "referral": {
+      "title": "Refer and Earn More",
+      "description": "Invite your trader friends and receive a bonus on each of their trades."
+    },
+    "updates": {
+      "title": "What's New?",
+      "description": "We're working hard for you. Here are our latest improvements."
+    },
+    "profile": {
+      "title": "Your Personal Space",
+      "description": "Manage your account, preferences and payment methods."
+    },
+    "admin": {
+      "title": "Administration"
+    },
+    "error": {
+      "title": "Error",
+      "description": "An error occurred while loading the data.",
+      "statsLoadError": "Unable to load statistics",
+      "activityLoadError": "Unable to load activity data",
+      "statsDisplayError": "Unable to display statistics at the moment",
+      "retry": "Retry"
+    }
+  },
+  "access": {
+    "noAccess": "You do not have access to this page."
   }
 }
 
