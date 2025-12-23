@@ -495,130 +495,18 @@ export function AvailableBrokers() {
       {/* Broker cards - Layout compact innovant */}
       {availableBrokers.length > 0 ? (
         <div className='space-y-2'>
-          {availableBrokers.map((broker, index) => {
-            const [imageError, setImageError] = useState(false);
-
-            return (
-              <div
-                key={broker.id}
-                className={cn(
-                  'group relative overflow-hidden rounded-xl p-4',
-                  'bg-zinc-900/40 backdrop-blur-sm',
-                  'border border-white/5 hover:border-white/10',
-                  'transition-all duration-300',
-                  'hover:bg-zinc-900/50',
-                  'animate-fade-in-up opacity-0'
-                )}
-                style={{
-                  animationDelay: `${(index + 1) * 50}ms`,
-                  animationFillMode: 'forwards'
-                }}
-              >
-                <div className='flex items-center gap-4'>
-                  {/* Logo */}
-                  <div className='relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-white/10 bg-white/5'>
-                    {!imageError && broker.logo_url ? (
-                      <img
-                        src={broker.logo_url}
-                        alt={broker.name}
-                        className='[box-sizing:content-box] h-full w-full object-contain'
-                        onError={() => setImageError(true)}
-                      />
-                    ) : (
-                      <span className='text-sm font-bold'>
-                        {broker.name.slice(0, 2).toUpperCase()}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Info principale */}
-                  <div className='min-w-0 flex-1'>
-                    <div className='mb-1 flex items-center gap-2'>
-                      <h3 className='text-sm font-semibold'>{broker.name}</h3>
-                      {broker.name !== 'Vantage' && (
-                        <RendRBadge variant='muted' size='sm'>
-                          Bientôt disponible
-                        </RendRBadge>
-                      )}
-                    </div>
-                    <p className='text-muted-foreground mb-2 line-clamp-1 text-xs'>
-                      {broker.description}
-                    </p>
-
-                    {/* Stats inline */}
-                    <div className='flex items-center gap-4 text-xs'>
-                      <div className='flex items-center gap-1'>
-                        <IconPercentage className='h-3.5 w-3.5 text-[#c5d13f]' />
-                        <span className='text-foreground font-bold'>
-                          {(broker.cashback_rate * 100).toFixed(0)}%
-                        </span>
-                        <span className='text-muted-foreground'>cashback</span>
-                      </div>
-                      <div className='flex items-center gap-1'>
-                        <IconCurrencyEuro className='text-muted-foreground h-3.5 w-3.5' />
-                        <span className='font-semibold'>
-                          {broker.min_withdrawal}€
-                        </span>
-                        <span className='text-muted-foreground'>min</span>
-                      </div>
-                      <div className='flex min-w-0 flex-1 items-center gap-1.5'>
-                        {broker.supported_pairs.slice(0, 3).map((pair) => (
-                          <RendRBadge
-                            key={pair}
-                            variant='outline'
-                            size='sm'
-                            className='h-4 px-1.5 font-mono text-[10px]'
-                          >
-                            {pair}
-                          </RendRBadge>
-                        ))}
-                        {broker.supported_pairs.length > 3 && (
-                          <span className='text-muted-foreground text-[10px]'>
-                            +{broker.supported_pairs.length - 3}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Actions */}
-                  <div className='flex shrink-0 items-center gap-2'>
-                    {broker.name === 'Vantage' ? (
-                      <Button
-                        size='sm'
-                        onClick={() => handleConnectClick(broker)}
-                        className='text-xs'
-                      >
-                        Connecter
-                      </Button>
-                    ) : (
-                      <Button
-                        size='sm'
-                        disabled
-                        className='cursor-not-allowed text-xs opacity-50'
-                      >
-                        Bientôt disponible
-                      </Button>
-                    )}
-                    <Button
-                      variant='ghost'
-                      size='icon'
-                      className='h-8 w-8 hover:bg-white/5'
-                      asChild
-                    >
-                      <a
-                        href={broker.website_url}
-                        target='_blank'
-                        rel='noopener noreferrer'
-                      >
-                        <IconExternalLink className='h-3.5 w-3.5' />
-                      </a>
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+          {availableBrokers.map((broker, index) => (
+            <div
+              key={broker.id}
+              className='animate-fade-in-up opacity-0'
+              style={{
+                animationDelay: `${(index + 1) * 50}ms`,
+                animationFillMode: 'forwards'
+              }}
+            >
+              <BrokerCard broker={broker} onConnect={handleConnectClick} />
+            </div>
+          ))}
         </div>
       ) : (
         <div

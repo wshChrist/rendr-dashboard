@@ -4,10 +4,12 @@
 /node_modules
 /.pnp
 .pnp.js
+/backend/node_modules
 
 # testing
 /coverage
 *.lcov
+/backend/coverage
 
 # next.js
 /.next/
@@ -17,6 +19,7 @@
 # production
 /build
 /dist
+/backend/dist
 
 # misc
 *.pem
