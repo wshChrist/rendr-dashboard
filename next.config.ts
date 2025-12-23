@@ -1,5 +1,8 @@
 import type { NextConfig } from 'next';
 import { withSentryConfig } from '@sentry/nextjs';
+import createNextIntlPlugin from 'next-intl/plugin';
+
+const withNextIntl = createNextIntlPlugin('./i18n.ts');
 
 // Define the base Next.js configuration
 const baseConfig: NextConfig = {
@@ -25,7 +28,7 @@ const baseConfig: NextConfig = {
   transpilePackages: ['geist', '@radix-ui/react-select']
 };
 
-let configWithPlugins = baseConfig;
+let configWithPlugins = withNextIntl(baseConfig);
 
 // Conditionally enable Sentry configuration
 if (!process.env.NEXT_PUBLIC_SENTRY_DISABLED) {

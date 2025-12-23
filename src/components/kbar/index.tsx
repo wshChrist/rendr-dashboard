@@ -7,7 +7,7 @@ import {
   KBarProvider,
   KBarSearch
 } from 'kbar';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/i18n/routing';
 import { useMemo } from 'react';
 import RenderResults from './render-result';
 import useThemeSwitching from './use-theme-switching';

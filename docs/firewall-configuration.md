@@ -78,3 +78,4 @@ Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled True
 - Vérifier que FastAPI est démarré et écoute sur 0.0.0.0:8001
 
 
+

@@ -125,3 +125,4 @@ Write-Host "2. Vérifier que l'URL est dans la liste blanche MetaTrader" -Foregr
 Write-Host "3. Tester l'EA" -ForegroundColor White
 
 
+

@@ -26,3 +26,4 @@ uvicorn main:app --host 0.0.0.0 --port 8001
 - **Log alternatif** : `MQL4/Files/RendR_debug.log` (dans le dossier MetaTrader)
 
 
+

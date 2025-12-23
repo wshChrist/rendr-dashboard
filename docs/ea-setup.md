@@ -18,3 +18,4 @@ Créer une nouvelle EA propre pour RendR qui :
 - Liste blanche MetaTrader configurée
 
 
+

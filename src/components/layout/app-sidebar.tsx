@@ -44,8 +44,7 @@ import {
   IconLogout,
   IconUserCircle
 } from '@tabler/icons-react';
-import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { Link, usePathname, useRouter } from '@/i18n/routing';
 import * as React from 'react';
 import { Icons } from '../icons';
 import { RendRLogo } from '../rendr-logo';

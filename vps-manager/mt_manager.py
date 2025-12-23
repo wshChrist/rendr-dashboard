@@ -19,6 +19,9 @@ class MTManager:
         self.config = config
         self.terminals_base = Path(config.TERMINALS_BASE_PATH)
         self.terminals_base.mkdir(parents=True, exist_ok=True)
+        # Chemin vers le terminal de base pré-configuré
+        self.mt4_base_terminal = self.terminals_base / "MT4-Base"
+        self.mt5_base_terminal = self.terminals_base / "MT5-Base"
 
     def setup_account(self, account_data: Dict) -> bool:
         """
@@ -50,13 +53,14 @@ class MTManager:
 
         try:
             # Déterminer les chemins selon la plateforme
+            # mt_path doit pointer vers le template préconfiguré (WebRequest, profil RendR, etc.)
             if platform == 'MT4':
-                mt_path = Path(self.config.MT4_PATH)
+                mt_path = Path(self.config.MT4_PATH)  # Template préconfiguré
                 ea_source = Path(self.config.MT4_EA_PATH)
                 terminal_dir = self.terminals_base / f"MT4-{external_account_id}"
                 experts_dir = terminal_dir / "MQL4" / "Experts"
             elif platform == 'MT5':
-                mt_path = Path(self.config.MT5_PATH)
+                mt_path = Path(self.config.MT5_PATH)  # Template préconfiguré
                 ea_source = Path(self.config.MT5_EA_PATH)
                 terminal_dir = self.terminals_base / f"MT5-{external_account_id}"
                 experts_dir = terminal_dir / "MQL5" / "Experts"
@@ -64,9 +68,9 @@ class MTManager:
                 logger.error(f"Plateforme non supportee: {platform}")
                 return False
 
-            # Vérifier que MT est installé
+            # Vérifier que le template existe
             if not mt_path.exists():
-                logger.error(f"Terminal {platform} non trouve: {mt_path}")
+                logger.error(f"Template {platform} non trouve: {mt_path}")
                 return False
 
             # Vérifier que l'EA existe
@@ -76,18 +80,18 @@ class MTManager:
 
             logger.info(f"Configuration du terminal {platform} pour {external_account_id}")
 
-            # 1. Créer/copier le dossier terminal
+            # 1. Créer/copier le dossier terminal depuis le template
             if terminal_dir.exists():
                 logger.warning(f"Dossier terminal existe deja: {terminal_dir}")
             else:
-                # Copier le dossier de base du terminal
-                logger.info(f"Copie du terminal depuis {mt_path}")
+                # Copier depuis le template (déjà configuré avec WebRequest, profil RendR, etc.)
+                logger.info(f"Copie du terminal depuis le template: {mt_path}")
                 shutil.copytree(mt_path, terminal_dir, ignore=shutil.ignore_patterns('*.log', '*.tmp'))
 
             # 2. Créer le dossier Experts s'il n'existe pas
             experts_dir.mkdir(parents=True, exist_ok=True)
 
-            # 3. Copier l'EA
+            # 3. Copier l'EA (mise à jour à chaque fois pour être sûr d'avoir la bonne version)
             ea_dest = experts_dir / ea_source.name
             logger.info(f"Copie de l'EA vers {ea_dest}")
             shutil.copy2(ea_source, ea_dest)
@@ -146,6 +150,66 @@ class MTManager:
         logger.info(f"  - Register URL: {register_url}")
         logger.info(f"  - Trades URL: {trades_url}")
 
+    def _create_mt4_profile(self, terminal_dir: Path, platform: str, ea_name: str):
+        """Crée un profil MT4 de base pour utiliser avec Profile= dans start.ini"""
+        if platform not in ['MT4', 'MT5']:
+            return
+        
+        # Créer le dossier profiles s'il n'existe pas
+        profiles_dir = terminal_dir / "profiles"
+        profiles_dir.mkdir(exist_ok=True)
+        
+        # Créer le profil "RendR"
+        profile_dir = profiles_dir / "RendR"
+        profile_dir.mkdir(exist_ok=True)
+        
+        logger.info(f"[OK] Profil MT4 cree: {profile_dir}")
+        logger.info(f"   - Note: Le profil doit etre configure manuellement avec un graphique EURUSD H1 et l'EA {ea_name} attache")
+
+    def _configure_webrequests(self, terminal_dir: Path, platform: str):
+        """Configure les WebRequests autorisées dans common.ini pour éviter les prompts"""
+        if platform not in ['MT4', 'MT5']:
+            return
+        
+        # URLs à autoriser pour l'EA
+        register_url = f"{self.config.API_URL}/api/trades/register"
+        trades_url = f"{self.config.API_URL}/api/trades"
+        
+        # Créer le dossier config s'il n'existe pas
+        config_dir = terminal_dir / "config"
+        config_dir.mkdir(exist_ok=True)
+        
+        # Chemin vers common.ini
+        common_ini = config_dir / "common.ini"
+        
+        # Lire le fichier existant s'il existe, sinon créer une nouvelle configuration
+        config = configparser.ConfigParser()
+        if common_ini.exists():
+            try:
+                config.read(common_ini, encoding='utf-8')
+            except Exception as e:
+                logger.warning(f"Impossible de lire common.ini existant: {e}")
+                config = configparser.ConfigParser()
+        
+        # Créer ou mettre à jour la section [Experts]
+        if 'Experts' not in config:
+            config['Experts'] = {}
+        
+        # Configurer les WebRequests
+        config['Experts']['WebRequest'] = '1'  # Activer WebRequest
+        # Ajouter les URLs autorisées (séparées par des virgules)
+        allowed_urls = f"{register_url},{trades_url}"
+        config['Experts']['WebRequestUrl'] = allowed_urls
+        
+        # Écrire le fichier
+        try:
+            with open(common_ini, 'w', encoding='utf-8') as f:
+                config.write(f)
+            logger.info(f"[OK] Fichier common.ini configure pour WebRequests: {common_ini}")
+            logger.info(f"   - URLs autorisees: {allowed_urls}")
+        except Exception as e:
+            logger.error(f"Erreur lors de l'ecriture de common.ini: {e}")
+
     def _create_terminal_config(
         self,
         terminal_dir: Path,
@@ -154,7 +218,7 @@ class MTManager:
         password: str,
         server: str
     ):
-        """Crée un fichier start.ini pour la connexion automatique MT4/MT5"""
+        """Crée un fichier start.ini pour la connexion automatique MT4/MT5 avec Profile"""
         if platform not in ['MT4', 'MT5']:
             logger.warning(f"Plateforme {platform} non supportee pour la config")
             return
@@ -181,7 +245,7 @@ class MTManager:
         config_dir.mkdir(exist_ok=True)
         
         # Créer le fichier start.ini dans le dossier config selon la documentation officielle MT4
-        # Format: Login=xxx\nPassword=xxx\nServer=xxx
+        # Utiliser Profile= pour charger un profil préconfiguré avec graphique et EA
         # Documentation: https://www.metatrader4.com/fr/trading-platform/help/service/start_conf_file
         config_file = config_dir / "start.ini"
         
@@ -190,9 +254,14 @@ class MTManager:
         password_clean = str(password).strip()
         server_clean = str(server).strip()
         
-        config_content = f"""Login={login_clean}
+        # Configuration selon la documentation MT4
+        # Section [Common] requise pour que MT4 lise correctement Login/Password/Server
+        # Utiliser Profile=RendR pour charger le profil avec l'EA déjà configuré
+        config_content = f"""[Common]
+Login={login_clean}
 Password={password_clean}
 Server={server_clean}
+Profile=RendR
 """
         
         with open(config_file, 'w', encoding='utf-8') as f:
@@ -201,6 +270,7 @@ Server={server_clean}
         logger.info(f"[OK] Fichier start.ini cree: {config_file}")
         logger.info(f"   - Login: {login_clean}")
         logger.info(f"   - Server: {server_clean}")
+        logger.info(f"   - Profile: RendR")
         
         # Lire le fichier créé pour vérification
         try:

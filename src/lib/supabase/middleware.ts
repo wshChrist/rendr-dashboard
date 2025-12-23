@@ -3,17 +3,20 @@ import { NextResponse, type NextRequest } from 'next/server';
 
 export async function updateSession(request: NextRequest) {
   // Exclure les routes API de l'EA du middleware (pas besoin d'authentification)
-  const pathname = request.nextUrl.pathname;
+  const requestPathname = request.nextUrl.pathname;
 
   // Routes publiques pour l'EA (pas d'authentification requise)
   if (
-    pathname.startsWith('/api/trades/register') ||
-    (pathname.startsWith('/api/trades') &&
-      pathname !== '/api/trades/register') ||
-    pathname.startsWith('/api/test')
+    requestPathname.startsWith('/api/trades/register') ||
+    (requestPathname.startsWith('/api/trades') &&
+      requestPathname !== '/api/trades/register') ||
+    requestPathname.startsWith('/api/test')
   ) {
     // Ces routes sont publiques et ne nécessitent pas d'authentification
-    console.log('Route API EA détectée, bypass du middleware:', pathname);
+    console.log(
+      'Route API EA détectée, bypass du middleware:',
+      requestPathname
+    );
     return NextResponse.next({
       request: {
         headers: request.headers
@@ -22,7 +25,7 @@ export async function updateSession(request: NextRequest) {
   }
 
   // Pour /api/trading-accounts, on laisse passer mais l'authentification sera vérifiée dans la route
-  if (pathname.startsWith('/api/trading-accounts')) {
+  if (requestPathname.startsWith('/api/trading-accounts')) {
     // Cette route vérifie l'authentification elle-même
     return NextResponse.next({
       request: {
@@ -95,21 +98,26 @@ export async function updateSession(request: NextRequest) {
     data: { user }
   } = await supabase.auth.getUser();
 
-  // Protéger les routes /dashboard
-  if (request.nextUrl.pathname.startsWith('/dashboard') && !user) {
+  // Extraire la locale de l'URL (format: /fr/... ou /en/...)
+  const currentPathname = request.nextUrl.pathname;
+  const localeMatch = currentPathname.match(/^\/(fr|en)(\/|$)/);
+  const locale = localeMatch ? localeMatch[1] : 'fr'; // Par défaut 'fr' si pas de locale
+
+  // Protéger les routes /dashboard (avec locale)
+  if (currentPathname.startsWith(`/${locale}/dashboard`) && !user) {
     const url = request.nextUrl.clone();
-    url.pathname = '/auth/sign-in';
+    url.pathname = `/${locale}/auth/sign-in`;
     return NextResponse.redirect(url);
   }
 
-  // Rediriger les utilisateurs connectés depuis /auth vers /dashboard
+  // Rediriger les utilisateurs connectés depuis /auth vers /dashboard (avec locale)
   if (
-    (request.nextUrl.pathname.startsWith('/auth/sign-in') ||
-      request.nextUrl.pathname.startsWith('/auth/sign-up')) &&
+    (currentPathname.startsWith(`/${locale}/auth/sign-in`) ||
+      currentPathname.startsWith(`/${locale}/auth/sign-up`)) &&
     user
   ) {
     const url = request.nextUrl.clone();
-    url.pathname = '/dashboard/overview';
+    url.pathname = `/${locale}/dashboard/overview`;
     return NextResponse.redirect(url);
   }
 

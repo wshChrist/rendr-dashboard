@@ -1,14 +1,18 @@
 import { getRequestConfig } from 'next-intl/server';
-import { routing } from './src/i18n/routing';
+import { notFound } from 'next/navigation';
 
 export default getRequestConfig(async ({ requestLocale }) => {
   // Cette fonction sera appelée pour chaque requête
   // requestLocale est déterminé par le middleware
   let locale = await requestLocale;
 
+  // Liste des locales supportées
+  const locales = ['fr', 'en'];
+  const defaultLocale = 'fr';
+
   // Assurez-vous que la locale est valide
-  if (!locale || !routing.locales.includes(locale as any)) {
-    locale = routing.defaultLocale;
+  if (!locale || !locales.includes(locale)) {
+    locale = defaultLocale;
   }
 
   return {

@@ -43,3 +43,4 @@ CREATE POLICY "Users can create their own withdrawals"
 
 -- Les utilisateurs ne peuvent pas modifier leurs retraits (seuls les admins peuvent le faire)
 -- Cette politique peut être ajustée selon vos besoins
+

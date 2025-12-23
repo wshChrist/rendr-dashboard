@@ -32,3 +32,4 @@ Write-Host "Appuyez sur Ctrl+C pour arrêter`n" -ForegroundColor Gray
 uvicorn main:app --reload --host 0.0.0.0 --port 8000
 
 
+
