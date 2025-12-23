@@ -1,0 +1,31 @@
+{
+  "metadata": {
+    "title": "RendR - Cashback Traders",
+    "description": "Recover part of your trading fees thanks to our IB partnership with regulated brokers."
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "transactions": "Transactions",
+    "brokers": "Brokers",
+    "myAccounts": "My Accounts",
+    "partnerBrokers": "Partner Brokers",
+    "withdrawals": "Withdrawals",
+    "referral": "Referral",
+    "updates": "Updates",
+    "account": "Account",
+    "profile": "Profile",
+    "logout": "Logout"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "search": "Search"
+  }
+}
+
