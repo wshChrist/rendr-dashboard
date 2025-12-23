@@ -70,6 +70,37 @@ export const navItems: NavItem[] = [
     items: []
   },
   {
+    title: 'Administration',
+    url: '/dashboard/admin',
+    icon: 'settings',
+    isActive: false,
+    shortcut: ['a', 'a'],
+    access: { role: 'admin' },
+    items: [
+      {
+        title: 'Vue d’ensemble',
+        url: '/dashboard/admin/overview',
+        icon: 'dashboard',
+        shortcut: ['a', 'v'],
+        access: { role: 'admin' }
+      },
+      {
+        title: 'Retraits',
+        url: '/dashboard/admin/withdrawals',
+        icon: 'withdrawals',
+        shortcut: ['a', 'r'],
+        access: { role: 'admin' }
+      },
+      {
+        title: 'Brokers',
+        url: '/dashboard/admin/brokers',
+        icon: 'brokers',
+        shortcut: ['a', 'b'],
+        access: { role: 'admin' }
+      }
+    ]
+  },
+  {
     title: 'Compte',
     url: '#',
     icon: 'account',
