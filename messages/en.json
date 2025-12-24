@@ -243,6 +243,28 @@
       "activityLoadError": "Unable to load activity data",
       "statsDisplayError": "Unable to display statistics at the moment",
       "retry": "Retry"
+    },
+    "billing": {
+      "title": "Billing & Plans",
+      "description": "Manage your subscription and usage limits",
+      "info": "Billing functionality will be implemented here. You can integrate with Stripe, Paddle, or another payment provider.",
+      "availablePlans": "Available Plans",
+      "choosePlan": "Choose a plan that fits your needs",
+      "comingSoon": "Billing integration coming soon"
+    },
+    "workspaces": {
+      "title": "Workspaces",
+      "description": "Manage your workspaces and switch between them",
+      "info": "Workspace functionality will be implemented here. You can create custom organization/workspace management using Supabase tables.",
+      "createAndManage": "Create and manage your workspaces",
+      "comingSoon": "Workspace management coming soon"
+    },
+    "exclusive": {
+      "message": "Have a wonderful day!"
+    },
+    "dashboard": {
+      "title": "Next Shadcn Dashboard Starter",
+      "description": "Basic dashboard with Next.js and Shadcn"
     }
   },
   "stats": {
@@ -276,7 +298,8 @@
       "signInButton": "Sign in",
       "signingIn": "Signing in...",
       "forgotPassword": "Forgot password?",
-      "forgotPassword": "Forgot password?"
+      "noAccountYet": "Don't have an account yet? ",
+      "signingInProgress": "Signing in..."
     },
     "signUp": {
       "title": "Create an account",
@@ -293,7 +316,8 @@
       "signUpError": "Error signing up",
       "sessionError": "Session error. Please try again.",
       "creatingAccount": "Creating account...",
-      "alreadyHaveAccount": "Already have an account?"
+      "alreadyHaveAccount": "Already have an account?",
+      "signingUpProgress": "Signing up..."
     }
   },
   "brokers": {
@@ -371,7 +395,10 @@
       "of": "of",
       "selected": "row(s) selected",
       "total": "row(s) total"
-    }
+    },
+    "searchColumn": "Search for a column...",
+    "noColumnsFound": "No columns found.",
+    "noResultsFound": "No results found."
   },
   "modal": {
     "confirm": {
@@ -387,7 +414,9 @@
     "subjectPlaceholder": "Subject of your message",
     "message": "Your message",
     "messagePlaceholder": "Your message...",
-    "sendError": "Error sending message"
+    "sendError": "Error sending message",
+    "socialNetworks": "Our social networks",
+    "sending": "Sending..."
   },
   "access": {
     "noAccess": "You do not have access to this page."
@@ -409,30 +438,6 @@
     "morePages": "More pages",
     "changeTheme": "Change theme",
     "deleteFile": "Delete file"
-  },
-  "pages": {
-    "billing": {
-      "title": "Billing & Plans",
-      "description": "Manage your subscription and usage limits",
-      "info": "Billing functionality will be implemented here. You can integrate with Stripe, Paddle, or another payment provider.",
-      "availablePlans": "Available Plans",
-      "choosePlan": "Choose a plan that fits your needs",
-      "comingSoon": "Billing integration coming soon"
-    },
-    "workspaces": {
-      "title": "Workspaces",
-      "description": "Manage your workspaces and switch between them",
-      "info": "Workspace functionality will be implemented here. You can create custom organization/workspace management using Supabase tables.",
-      "createAndManage": "Create and manage your workspaces",
-      "comingSoon": "Workspace management coming soon"
-    },
-    "exclusive": {
-      "message": "Have a wonderful day!"
-    },
-    "dashboard": {
-      "title": "Next Shadcn Dashboard Starter",
-      "description": "Basic dashboard with Next.js and Shadcn"
-    }
   },
   "referral": {
     "shareTitle": "Join RendR",
@@ -482,16 +487,8 @@
     },
     "volumeTrading": "Trading Volume",
     "browserDistribution": "Browser distribution",
-    "noUpdates": "No updates"
-  },
-  "auth": {
-    "signIn": {
-      "noAccountYet": "Don't have an account yet? ",
-      "signingInProgress": "Signing in..."
-    },
-    "signUp": {
-      "signingUpProgress": "Signing up..."
-    }
+    "noUpdates": "No updates",
+    "totalVisitorsByBrowser": "Total visitors by browser for the last 6 months"
   },
   "transactions": {
     "allTime": "All time",
@@ -501,51 +498,6 @@
     "pendingWithdrawals": "Pending withdrawals",
     "maintenancePlaceholder": "Ex: Scheduled maintenance until 14:00 UTC",
     "maintenanceActivatePlaceholder": "Activate maintenance to set a message",
-    "form": {
-      "brokerRequired": "Broker is required",
-      "platformRequired": "Platform is required",
-      "serverRequired": "Server is required",
-      "accountNumberRequired": "Account number is required",
-      "investorPasswordRequired": "Investor password is required"
-    }
-  },
-  "contact": {
-    "socialNetworks": "Our social networks",
-    "sending": "Sending..."
-  },
-  "forms": {
-    "firstName": "First name",
-    "lastName": "Last name"
-  },
-  "org": {
-    "createOrganization": "Create organization"
-  },
-  "sidebar": {
-    "toggleSidebar": "Toggle Sidebar",
-    "displaysMobileSidebar": "Displays the mobile sidebar."
-  },
-  "table": {
-    "searchColumn": "Search for a column...",
-    "noColumnsFound": "No columns found.",
-    "noResultsFound": "No results found."
-  },
-  "forms": {
-    "selectOption": "Select an option"
-  },
-  "overview": {
-    "volumeTrading": "Trading Volume",
-    "browserDistribution": "Browser distribution",
-    "totalVisitorsByBrowser": "Total visitors by browser for the last 6 months"
-  },
-  "updates": {
-    "noUpdates": "No updates",
-    "noUpdatesFilter": "No updates match this filter. Try another filter or come back later."
-  },
-  "tradingAccount": {
-    "mustBeConnected": "You must be logged in",
-    "pleaseConnect": "Please connect with Supabase Auth"
-  },
-  "admin": {
     "cashbackForecast": "Forecast",
     "cashback30d": "Cashback (30d)",
     "cashback30dForecast": "Cashback (30d) + forecast",
@@ -556,9 +508,6 @@
     "completed": "Completed",
     "calculatedFromTrades": "Calculated from trades",
     "amount": "Amount",
-    "pendingWithdrawals": "Pending withdrawals",
-    "maintenancePlaceholder": "Ex: Scheduled maintenance until 14:00 UTC",
-    "maintenanceActivatePlaceholder": "Activate maintenance to set a message",
     "form": {
       "brokerRequired": "Broker is required",
       "platformRequired": "Platform is required",
@@ -566,5 +515,25 @@
       "accountNumberRequired": "Account number is required",
       "investorPasswordRequired": "Investor password is required"
     }
+  },
+  "forms": {
+    "firstName": "First name",
+    "lastName": "Last name",
+    "selectOption": "Select an option"
+  },
+  "org": {
+    "createOrganization": "Create organization"
+  },
+  "sidebar": {
+    "toggleSidebar": "Toggle Sidebar",
+    "displaysMobileSidebar": "Displays the mobile sidebar."
+  },
+  "updates": {
+    "noUpdates": "No updates",
+    "noUpdatesFilter": "No updates match this filter. Try another filter or come back later."
+  },
+  "tradingAccount": {
+    "mustBeConnected": "You must be logged in",
+    "pleaseConnect": "Please connect with Supabase Auth"
   }
 }

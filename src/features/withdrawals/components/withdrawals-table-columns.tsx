@@ -11,9 +11,8 @@ import {
   IconCurrencyBitcoin
 } from '@tabler/icons-react';
 import type { Withdrawal } from '@/types/cashback';
-import type { useTranslations } from 'next-intl';
 
-type TFunction = ReturnType<typeof useTranslations>;
+type TFunction = (key: string) => string;
 
 const getStatusBadge = (status: string, t: TFunction) => {
   switch (status) {

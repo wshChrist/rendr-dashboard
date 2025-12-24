@@ -5,9 +5,8 @@ import { RendRBadge } from '@/components/ui/rendr-badge';
 import { DataTableColumnHeader } from '@/components/ui/table/data-table-column-header';
 import { format } from 'date-fns';
 import { fr, enUS } from 'date-fns/locale';
-import type { useTranslations } from 'next-intl';
 
-type TFunction = ReturnType<typeof useTranslations>;
+type TFunction = (key: string) => string;
 
 export interface ReferredUser {
   id: string | number;
