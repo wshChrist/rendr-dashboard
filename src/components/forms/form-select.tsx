@@ -1,6 +1,7 @@
 'use client';
 
 import { FieldPath, FieldValues } from 'react-hook-form';
+import { useTranslations } from 'next-intl';
 import {
   FormControl,
   FormDescription,
@@ -38,10 +39,12 @@ function FormSelect<
   description,
   required,
   options,
-  placeholder = 'Select an option',
+  placeholder,
   disabled,
   className
 }: FormSelectProps<TFieldValues, TName>) {
+  const t = useTranslations();
+  const defaultPlaceholder = placeholder || t('forms.selectOption');
   return (
     <FormField
       control={control}
@@ -61,7 +64,7 @@ function FormSelect<
           >
             <FormControl>
               <SelectTrigger>
-                <SelectValue placeholder={placeholder} />
+                <SelectValue placeholder={defaultPlaceholder} />
               </SelectTrigger>
             </FormControl>
             <SelectContent>

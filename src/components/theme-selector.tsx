@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useThemeConfig } from '@/components/active-theme';
 import { Label } from '@/components/ui/label';
 import {
@@ -28,6 +29,7 @@ const SCALED_THEMES = [
 ];
 
 export function ThemeSelector() {
+  const t = useTranslations();
   const { activeTheme, setActiveTheme } = useThemeConfig();
 
   return (
@@ -41,14 +43,14 @@ export function ThemeSelector() {
           className='justify-start *:data-[slot=select-value]:w-12'
         >
           <span className='text-muted-foreground hidden sm:block'>
-            Choisir un thème :
+            {t('common.chooseTheme')} :
           </span>
-          <span className='text-muted-foreground block sm:hidden'>Thème</span>
-          <SelectValue placeholder='Choisir un thème' />
+          <span className='text-muted-foreground block sm:hidden'>{t('common.theme')}</span>
+          <SelectValue placeholder={t('common.chooseTheme')} />
         </SelectTrigger>
         <SelectContent align='end'>
           <SelectGroup>
-            <SelectLabel>Par défaut</SelectLabel>
+            <SelectLabel>{t('common.default')}</SelectLabel>
             {DEFAULT_THEMES.map((theme) => (
               <SelectItem key={theme.name} value={theme.value}>
                 {theme.name}
@@ -57,7 +59,7 @@ export function ThemeSelector() {
           </SelectGroup>
           <SelectSeparator />
           <SelectGroup>
-            <SelectLabel>Compact</SelectLabel>
+            <SelectLabel>{t('common.compact')}</SelectLabel>
             {SCALED_THEMES.map((theme) => (
               <SelectItem key={theme.name} value={theme.value}>
                 {theme.name}

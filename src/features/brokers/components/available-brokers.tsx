@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { brokersData, userBrokersData } from '@/constants/cashback-data';
 import { Button } from '@/components/ui/button';
 import {
@@ -51,6 +52,7 @@ function ConnectBrokerDialog({
   isOpen,
   onOpenChange
 }: ConnectBrokerDialogProps) {
+  const t = useTranslations();
   const [accountId, setAccountId] = useState('');
   const [password, setPassword] = useState('');
   const [server, setServer] = useState('');
@@ -110,7 +112,7 @@ function ConnectBrokerDialog({
       }, 1000);
     } catch (error: any) {
       setIsLoading(false);
-      toast.error('Erreur lors de la connexion du compte', {
+      toast.error(t('brokers.errors.connectionError'), {
         description: error.message || 'Une erreur est survenue'
       });
     }
@@ -124,11 +126,10 @@ function ConnectBrokerDialog({
             <div className='rounded-xl border border-white/5 bg-white/5 p-2'>
               <IconKey className='h-5 w-5' />
             </div>
-            Connecter {broker.name}
+            {t('brokers.form.connectBroker')} {broker.name}
           </DialogTitle>
           <DialogDescription>
-            Entrez les informations de connexion de votre compte de trading pour
-            le lier à votre profil RendR.
+            {t('brokers.form.connectDescription')}
           </DialogDescription>
         </DialogHeader>
 
@@ -138,19 +139,19 @@ function ConnectBrokerDialog({
             <div className='space-y-2'>
               <Label htmlFor='account-id' className='flex items-center gap-2'>
                 <IconUser className='h-4 w-4' />
-                ID de compte *
+                {t('brokers.form.accountNumber')} *
               </Label>
               <Input
                 id='account-id'
                 type='text'
-                placeholder='Ex: ICM-123456'
+                placeholder={t('brokers.form.accountNumberPlaceholder')}
                 value={accountId}
                 onChange={(e) => setAccountId(e.target.value)}
                 className='border-white/10 bg-white/5'
                 required
               />
               <p className='text-muted-foreground text-xs'>
-                L&apos;ID de votre compte de trading chez {broker.name}
+                {t('brokers.form.accountIdDescription')} {broker.name}
               </p>
             </div>
 
@@ -158,20 +159,19 @@ function ConnectBrokerDialog({
             <div className='space-y-2'>
               <Label htmlFor='password' className='flex items-center gap-2'>
                 <IconLock className='h-4 w-4' />
-                Mot de passe *
+                {t('brokers.form.password')} *
               </Label>
               <Input
                 id='password'
                 type='password'
-                placeholder='Votre mot de passe de trading'
+                placeholder={t('brokers.form.passwordPlaceholder')}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className='border-white/10 bg-white/5'
                 required
               />
               <p className='text-muted-foreground text-xs'>
-                Le mot de passe de votre compte de trading (utilisé uniquement
-                pour la synchronisation)
+                {t('brokers.form.passwordDescription')}
               </p>
             </div>
 
@@ -179,14 +179,14 @@ function ConnectBrokerDialog({
             <div className='space-y-2'>
               <Label htmlFor='platform' className='flex items-center gap-2'>
                 <IconServer className='h-4 w-4' />
-                Plateforme *
+                {t('brokers.form.platform')} *
               </Label>
               <Select
                 value={platform}
                 onValueChange={(value) => setPlatform(value as 'MT4' | 'MT5')}
               >
                 <SelectTrigger className='border-white/10 bg-white/5'>
-                  <SelectValue placeholder='Sélectionner une plateforme' />
+                  <SelectValue placeholder={t('brokers.form.selectPlatform')} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value='MT4'>MetaTrader 4</SelectItem>
@@ -194,7 +194,7 @@ function ConnectBrokerDialog({
                 </SelectContent>
               </Select>
               <p className='text-muted-foreground text-xs'>
-                Plateforme de trading utilisée
+                {t('brokers.form.platformDescription')}
               </p>
             </div>
 
@@ -202,19 +202,19 @@ function ConnectBrokerDialog({
             <div className='space-y-2'>
               <Label htmlFor='server' className='flex items-center gap-2'>
                 <IconServer className='h-4 w-4' />
-                Serveur *
+                {t('brokers.form.server')} *
               </Label>
               <Input
                 id='server'
                 type='text'
-                placeholder='Ex: ICMarkets-Demo'
+                placeholder={t('brokers.form.serverPlaceholder')}
                 value={server}
                 onChange={(e) => setServer(e.target.value)}
                 className='border-white/10 bg-white/5'
                 required
               />
               <p className='text-muted-foreground text-xs'>
-                Nom exact du serveur MT4/MT5 (visible dans votre terminal)
+                {t('brokers.form.serverDescription')}
               </p>
             </div>
 
@@ -223,11 +223,9 @@ function ConnectBrokerDialog({
               <div className='flex items-start gap-2'>
                 <IconInfoCircle className='text-muted-foreground mt-0.5 h-4 w-4' />
                 <div className='text-muted-foreground space-y-1 text-xs'>
-                  <p className='text-foreground font-medium'>Sécurité</p>
+                  <p className='text-foreground font-medium'>{t('brokers.form.security')}</p>
                   <p>
-                    Vos identifiants sont chiffrés et utilisés uniquement pour
-                    synchroniser vos trades. Nous ne stockons jamais votre mot
-                    de passe en clair.
+                    {t('brokers.form.securityDescription')}
                   </p>
                 </div>
               </div>
@@ -241,10 +239,10 @@ function ConnectBrokerDialog({
               onClick={() => onOpenChange(false)}
               disabled={isLoading}
             >
-              Annuler
+              {t('common.cancel')}
             </Button>
             <Button type='submit' disabled={isLoading}>
-              {isLoading ? 'Connexion en cours...' : 'Connecter le compte'}
+              {isLoading ? t('brokers.form.connecting') : t('brokers.form.connectAccount')}
             </Button>
           </DialogFooter>
         </form>
@@ -353,7 +351,7 @@ function BrokerCard({
               onClick={() => onConnect(broker)}
               className='text-xs'
             >
-              Connecter
+              {t('brokers.form.connectBroker')}
             </Button>
           ) : (
             <Button
@@ -385,6 +383,7 @@ function BrokerCard({
 }
 
 export function AvailableBrokers() {
+  const t = useTranslations();
   const connectedBrokerIds = userBrokersData.map((ub) => ub.broker_id);
   const [selectedBroker, setSelectedBroker] = useState<
     (typeof brokersData)[0] | null
@@ -434,12 +433,12 @@ export function AvailableBrokers() {
             <IconInfoCircle className='text-muted-foreground h-5 w-5' />
           </div>
           <div>
-            <h3 className='mb-2 font-semibold'>Comment ça marche ?</h3>
+            <h3 className='mb-2 font-semibold'>{t('brokers.howItWorks.title')}</h3>
             <ol className='text-muted-foreground list-inside list-decimal space-y-1 text-sm'>
-              <li>Choisissez un broker partenaire ci-dessous</li>
-              <li>Créez un compte via notre lien d&apos;affiliation</li>
-              <li>Entrez vos identifiants pour connecter votre compte</li>
-              <li>Recevez automatiquement du cashback sur chaque trade !</li>
+              <li>{t('brokers.howItWorks.step1')}</li>
+              <li>{t('brokers.howItWorks.step2')}</li>
+              <li>{t('brokers.howItWorks.step3')}</li>
+              <li>{t('brokers.howItWorks.step4')}</li>
             </ol>
           </div>
         </div>

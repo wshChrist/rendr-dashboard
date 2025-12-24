@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { createSupabaseClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -36,6 +37,7 @@ const signInSchema = z.object({
 type SignInFormValues = z.infer<typeof signInSchema>;
 
 export function CustomSignInForm() {
+  const t = useTranslations();
   const router = useRouter();
   const supabase = createSupabaseClient();
   const [isLoading, setIsLoading] = useState(false);
@@ -81,7 +83,7 @@ export function CustomSignInForm() {
             router.refresh();
             router.push('/dashboard/overview');
           } else {
-            toast.error('Erreur de session. Veuillez réessayer.');
+            toast.error(t('auth.signIn.sessionError'));
           }
         }, 500);
       }
@@ -106,14 +108,14 @@ export function CustomSignInForm() {
         name='email'
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Email</FormLabel>
+            <FormLabel>{t('auth.signIn.email')}</FormLabel>
             <FormControl>
               <div className='relative' suppressHydrationWarning>
                 <IconMail className='text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2' />
                 <Input
                   {...field}
                   type='email'
-                  placeholder='votre@email.com'
+                  placeholder={t('auth.signIn.emailPlaceholder')}
                   className='pl-10'
                   disabled={isLoading}
                   autoComplete='email'
@@ -131,12 +133,12 @@ export function CustomSignInForm() {
         render={({ field }) => (
           <FormItem>
             <div className='flex items-center justify-between'>
-              <FormLabel>Mot de passe</FormLabel>
+              <FormLabel>{t('auth.signIn.password')}</FormLabel>
               <Link
                 href='/auth/forgot-password'
                 className='text-primary hover:text-primary/80 text-sm underline-offset-4 hover:underline'
               >
-                Mot de passe oublié ?
+                {t('auth.signIn.forgotPassword')}
               </Link>
             </div>
             <FormControl>
@@ -145,7 +147,7 @@ export function CustomSignInForm() {
                 <Input
                   {...field}
                   type={showPassword ? 'text' : 'password'}
-                  placeholder='••••••••'
+                  placeholder={t('auth.signIn.passwordPlaceholder')}
                   className='pr-10 pl-10'
                   disabled={isLoading}
                   autoComplete='current-password'
@@ -182,15 +184,15 @@ export function CustomSignInForm() {
         {isLoading ? (
           <>
             <IconLoader2 className='mr-2 h-4 w-4 animate-spin' />
-            Connexion en cours...
+            {t('auth.signIn.signingIn')}
           </>
         ) : (
-          'Se connecter'
+          t('auth.signIn.signInButton')
         )}
       </Button>
 
       <div className='text-center text-sm'>
-        <span className='text-muted-foreground'>Pas encore de compte ? </span>
+        <span className='text-muted-foreground'>{t('auth.signIn.noAccountYet')}</span>
         <Link
           href='/auth/sign-up'
           className='text-primary hover:text-primary/80 font-medium underline-offset-4 transition-colors hover:underline'
@@ -202,3 +204,4 @@ export function CustomSignInForm() {
     </Form>
   );
 }
+

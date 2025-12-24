@@ -1,7 +1,8 @@
 'use client';
 
 import * as React from 'react';
-import { columns } from './columns';
+import { useTranslations, useLocale } from 'next-intl';
+import { getTransactionColumns } from './columns';
 import { Transaction } from '@/types/cashback';
 import {
   useReactTable,
@@ -45,6 +46,8 @@ interface TransactionTableProps {
 }
 
 export function TransactionTable({ data }: TransactionTableProps) {
+  const t = useTranslations();
+  const locale = useLocale();
   const [sorting, setSorting] = React.useState<SortingState>([
     { id: 'trade_date', desc: true }
   ]);
@@ -89,6 +92,8 @@ export function TransactionTable({ data }: TransactionTableProps) {
     []
   );
 
+  const columns = React.useMemo(() => getTransactionColumns(t, locale), [t, locale]);
+
   const table = useReactTable({
     data,
     columns,
@@ -122,7 +127,7 @@ export function TransactionTable({ data }: TransactionTableProps) {
         <div className='relative max-w-sm flex-1'>
           <IconSearch className='text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2' />
           <Input
-            placeholder='Rechercher une paire, broker...'
+            placeholder={t('pages.transactions.searchPlaceholder')}
             value={globalFilter ?? ''}
             onChange={(e) => setGlobalFilter(e.target.value)}
             className='border-white/10 bg-white/5 pl-9 focus:border-white/20'
@@ -130,7 +135,8 @@ export function TransactionTable({ data }: TransactionTableProps) {
         </div>
         <div className='flex items-center gap-2'>
           <span className='text-muted-foreground text-sm'>
-            {table.getFilteredRowModel().rows.length} transaction(s)
+            {table.getFilteredRowModel().rows.length} {t('pages.transactions.transaction')}
+            {table.getFilteredRowModel().rows.length > 1 ? 's' : ''}
           </span>
         </div>
       </div>
@@ -204,10 +210,10 @@ export function TransactionTable({ data }: TransactionTableProps) {
                         <IconReceipt className='text-muted-foreground h-6 w-6' />
                       </div>
                       <span className='text-muted-foreground'>
-                        Aucune transaction trouvée
+                        {t('pages.transactions.noTransactionsFound')}
                       </span>
                       <span className='text-muted-foreground/60 text-sm'>
-                        Connectez un broker pour voir vos trades ici
+                        {t('pages.transactions.connectBrokerToSeeTrades')}
                       </span>
                     </div>
                   </TableCell>
@@ -224,7 +230,7 @@ export function TransactionTable({ data }: TransactionTableProps) {
         style={{ animationDelay: '200ms', animationFillMode: 'forwards' }}
       >
         <div className='flex items-center gap-2'>
-          <span className='text-muted-foreground text-sm'>Lignes par page</span>
+          <span className='text-muted-foreground text-sm'>{t('table.pagination.rowsPerPage')}</span>
           <Select
             value={`${table.getState().pagination.pageSize}`}
             onValueChange={(value) => {
@@ -245,7 +251,7 @@ export function TransactionTable({ data }: TransactionTableProps) {
         </div>
         <div className='flex items-center gap-2'>
           <span className='text-muted-foreground text-sm'>
-            Page {table.getState().pagination.pageIndex + 1} sur{' '}
+            {t('table.pagination.page')} {table.getState().pagination.pageIndex + 1} {t('table.pagination.of')}{' '}
             {table.getPageCount()}
           </span>
           <div className='flex items-center gap-1'>

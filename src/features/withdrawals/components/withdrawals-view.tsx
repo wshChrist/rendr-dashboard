@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { createSupabaseClient } from '@/lib/supabase/client';
 import type { Withdrawal } from '@/types/cashback';
 import { Button } from '@/components/ui/button';
@@ -37,6 +38,7 @@ import { WithdrawalsTable } from './withdrawals-table';
 import { toast } from 'sonner';
 
 export function WithdrawalsView() {
+  const t = useTranslations();
   const [amount, setAmount] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('');
   const [paymentDetails, setPaymentDetails] = useState('');
@@ -84,7 +86,7 @@ export function WithdrawalsView() {
       }
     } catch (error) {
       console.error('Erreur lors du chargement des données:', error);
-      toast.error('Erreur lors du chargement des données');
+      toast.error(t('common.loadError'));
     } finally {
       setIsLoading(false);
     }
@@ -92,14 +94,14 @@ export function WithdrawalsView() {
 
   const handleWithdrawal = async () => {
     if (!amount || !paymentMethod || !paymentDetails) {
-      toast.error('Veuillez remplir tous les champs');
+      toast.error(t('common.fillAllFields'));
       return;
     }
 
     const amountNum = parseFloat(amount);
     if (amountNum < 20 || amountNum > stats.available_balance) {
       toast.error(
-        `Le montant doit être entre 20€ et ${stats.available_balance.toFixed(2)}€`
+        t('withdrawals.amountRange', { max: stats.available_balance.toFixed(2) })
       );
       return;
     }
@@ -122,11 +124,11 @@ export function WithdrawalsView() {
       const data = await response.json();
 
       if (!response.ok) {
-        toast.error(data.message || 'Erreur lors de la création du retrait');
+        toast.error(data.message || t('withdrawals.errors.createError'));
         return;
       }
 
-      toast.success('Demande de retrait créée avec succès');
+      toast.success(t('withdrawals.success.createSuccess'));
       setAmount('');
       setPaymentMethod('');
       setPaymentDetails('');
@@ -135,7 +137,7 @@ export function WithdrawalsView() {
       // Recharger les données
       await loadData();
     } catch (error) {
-      toast.error('Erreur lors de la création du retrait');
+      toast.error(t('withdrawals.errors.createError'));
       console.error(error);
     } finally {
       setIsSubmitting(false);
@@ -170,7 +172,7 @@ export function WithdrawalsView() {
               <IconWallet className='h-4 w-4' />
             </span>
             <span className='text-muted-foreground text-sm'>
-              Solde Disponible
+              {t('withdrawals.availableBalance')}
             </span>
           </div>
           <p className='text-foreground stat-number mb-4 text-3xl font-bold'>
@@ -180,16 +182,16 @@ export function WithdrawalsView() {
             <DialogTrigger asChild>
               <Button className='w-full'>
                 <IconArrowDown className='mr-2 h-4 w-4' />
-                Demander un retrait
+                {t('withdrawals.requestWithdrawal')}
               </Button>
             </DialogTrigger>
             <DialogContent className='border-white/10 bg-zinc-900/95 backdrop-blur-sm'>
               <DialogHeader>
                 <DialogTitle className='text-xl'>
-                  Demander un retrait
+                  {t('withdrawals.requestWithdrawal')}
                 </DialogTitle>
                 <DialogDescription className='text-muted-foreground'>
-                  Solde disponible:{' '}
+                  {t('withdrawals.availableBalance')}:{' '}
                   <span className='font-semibold text-[#c5d13f]'>
                     {isLoading ? '...' : stats.available_balance.toFixed(2)}€
                   </span>
@@ -198,7 +200,7 @@ export function WithdrawalsView() {
               <div className='space-y-5 py-4'>
                 <div className='space-y-2'>
                   <Label htmlFor='amount' className='text-sm font-medium'>
-                    Montant (€)
+                    {t('withdrawals.amount')}
                   </Label>
                   <Input
                     id='amount'
@@ -209,20 +211,20 @@ export function WithdrawalsView() {
                     className='border-white/10 bg-white/5 focus:border-white/20'
                   />
                   <p className='text-muted-foreground text-xs'>
-                    Minimum: 20€ | Maximum:{' '}
+                    {t('withdrawals.minimum')}: 20€ | {t('withdrawals.maximum')}:{' '}
                     {isLoading ? '...' : stats.available_balance.toFixed(2)}€
                   </p>
                 </div>
                 <div className='space-y-2'>
                   <Label className='text-sm font-medium'>
-                    Méthode de paiement
+                    {t('withdrawals.paymentMethod')}
                   </Label>
                   <Select
                     value={paymentMethod}
                     onValueChange={setPaymentMethod}
                   >
                     <SelectTrigger className='border-white/10 bg-white/5'>
-                      <SelectValue placeholder='Choisir une méthode' />
+                      <SelectValue placeholder={t('withdrawals.chooseMethod')} />
                     </SelectTrigger>
                     <SelectContent className='border-white/10 bg-zinc-900'>
                       <SelectItem
@@ -231,19 +233,19 @@ export function WithdrawalsView() {
                       >
                         <div className='flex items-center gap-2'>
                           <IconCreditCard className='h-4 w-4' />
-                          Virement bancaire
+                          {t('withdrawals.bankTransfer')}
                         </div>
                       </SelectItem>
                       <SelectItem value='paypal' className='focus:bg-white/10'>
                         <div className='flex items-center gap-2'>
                           <IconBrandPaypal className='h-4 w-4' />
-                          PayPal
+                          {t('withdrawals.paypal')}
                         </div>
                       </SelectItem>
                       <SelectItem value='crypto' className='focus:bg-white/10'>
                         <div className='flex items-center gap-2'>
                           <IconCurrencyBitcoin className='h-4 w-4' />
-                          Crypto (USDT)
+                          {t('withdrawals.crypto')}
                         </div>
                       </SelectItem>
                     </SelectContent>
@@ -256,10 +258,10 @@ export function WithdrawalsView() {
                       className='text-sm font-medium'
                     >
                       {paymentMethod === 'bank_transfer'
-                        ? 'IBAN'
+                        ? t('withdrawals.iban')
                         : paymentMethod === 'paypal'
-                          ? 'Email PayPal'
-                          : 'Adresse crypto (USDT)'}
+                          ? t('withdrawals.paypalEmail')
+                          : t('withdrawals.cryptoAddress')}
                     </Label>
                     <Input
                       id='payment-details'
@@ -289,7 +291,7 @@ export function WithdrawalsView() {
                     setDialogOpen(false);
                   }}
                 >
-                  Annuler
+                  {t('common.cancel')}
                 </Button>
                 <Button
                   className='bg-[#c5d13f] text-black hover:bg-[#c5d13f]/90'
@@ -298,7 +300,7 @@ export function WithdrawalsView() {
                     isSubmitting || !amount || !paymentMethod || !paymentDetails
                   }
                 >
-                  {isSubmitting ? 'Traitement...' : 'Confirmer le retrait'}
+                  {isSubmitting ? t('common.processing') : t('withdrawals.confirmWithdrawal')}
                 </Button>
               </DialogFooter>
             </DialogContent>
@@ -321,14 +323,13 @@ export function WithdrawalsView() {
             <span className='rounded-xl border border-white/5 bg-white/5 p-2'>
               <IconClock className='h-4 w-4' />
             </span>
-            <span className='text-muted-foreground text-sm'>En attente</span>
+            <span className='text-muted-foreground text-sm'>{t('withdrawals.pending')}</span>
           </div>
           <p className='text-muted-foreground mb-2 text-2xl font-bold'>
             {isLoading ? '...' : stats.pending_withdrawals_amount.toFixed(2)}€
           </p>
           <p className='text-muted-foreground text-sm'>
-            {isLoading ? '...' : stats.pending_withdrawals_count} retrait(s) en
-            cours
+            {isLoading ? '...' : stats.pending_withdrawals_count} {t('withdrawals.withdrawalsInProgress')}
           </p>
         </div>
 
@@ -348,14 +349,13 @@ export function WithdrawalsView() {
             <span className='rounded-xl border border-white/5 bg-white/5 p-2'>
               <IconCheck className='h-4 w-4' />
             </span>
-            <span className='text-muted-foreground text-sm'>Total retiré</span>
+            <span className='text-muted-foreground text-sm'>{t('withdrawals.totalWithdrawn')}</span>
           </div>
           <p className='text-foreground stat-number mb-2 text-2xl font-bold'>
             {isLoading ? '...' : stats.total_withdrawn.toFixed(2)}€
           </p>
           <p className='text-muted-foreground text-sm'>
-            {isLoading ? '...' : stats.completed_withdrawals_count} retrait(s)
-            complété(s)
+            {isLoading ? '...' : stats.completed_withdrawals_count} {t('withdrawals.completed')}
           </p>
         </div>
       </div>
@@ -377,7 +377,7 @@ export function WithdrawalsView() {
             <IconHistory className='h-4 w-4' />
           </span>
           <div>
-            <h3 className='text-lg font-semibold'>Historique des retraits</h3>
+            <h3 className='text-lg font-semibold'>{t('withdrawals.history')}</h3>
             <p className='text-muted-foreground text-sm'>
               Gérez et suivez tous vos retraits en un seul endroit
             </p>

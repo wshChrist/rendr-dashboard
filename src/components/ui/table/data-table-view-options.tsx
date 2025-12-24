@@ -2,6 +2,7 @@
 
 import type { Table } from '@tanstack/react-table';
 import { Settings2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -28,6 +29,7 @@ interface DataTableViewOptionsProps<TData> {
 export function DataTableViewOptions<TData>({
   table
 }: DataTableViewOptionsProps<TData>) {
+  const t = useTranslations();
   const columns = React.useMemo(
     () =>
       table
@@ -56,9 +58,9 @@ export function DataTableViewOptions<TData>({
       </PopoverTrigger>
       <PopoverContent align='end' className='w-44 p-0'>
         <Command>
-          <CommandInput placeholder='Rechercher une colonne...' />
+          <CommandInput placeholder={t('table.searchColumn')} />
           <CommandList>
-            <CommandEmpty>Aucune colonne trouvée.</CommandEmpty>
+            <CommandEmpty>{t('table.noColumnsFound')}</CommandEmpty>
             <CommandGroup>
               {columns.map((column) => (
                 <CommandItem

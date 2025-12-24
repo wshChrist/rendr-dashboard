@@ -9,8 +9,10 @@ import {
   CardTitle
 } from '@/components/ui/card';
 import { BadgeCheck } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 export default function ExclusivePage() {
+  const t = useTranslations();
   // Note: Supabase doesn't have built-in plan protection like Clerk
   // This page is simplified to work without Clerk plans
   // You can implement custom plan checks using user metadata or database queries
@@ -35,7 +37,7 @@ export default function ExclusivePage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className='text-lg'>Have a wonderful day!</div>
+            <div className='text-lg'>{t('pages.exclusive.message')}</div>
           </CardContent>
         </Card>
       </div>

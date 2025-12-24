@@ -60,38 +60,28 @@ import {
 } from '@tabler/icons-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
-// Schéma de validation pour le profil
-const profileFormSchema = z.object({
-  firstName: z.string().min(2, 'Le prénom doit contenir au moins 2 caractères'),
-  lastName: z.string().min(2, 'Le nom doit contenir au moins 2 caractères'),
-  email: z.string().email('Adresse email invalide'),
-  avatar: z.string().optional() // Accepte une URL (pas de validation stricte pour permettre les URLs de Storage)
-});
+// Types pour les formulaires
+type ProfileFormValues = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  avatar?: string;
+};
 
-type ProfileFormValues = z.infer<typeof profileFormSchema>;
-
-// Schéma de validation pour le mot de passe
-const passwordFormSchema = z
-  .object({
-    currentPassword: z.string().min(1, 'Le mot de passe actuel est requis'),
-    newPassword: z
-      .string()
-      .min(8, 'Le nouveau mot de passe doit contenir au moins 8 caractères'),
-    confirmPassword: z.string().min(1, 'La confirmation est requise')
-  })
-  .refine((data) => data.newPassword === data.confirmPassword, {
-    message: 'Les mots de passe ne correspondent pas',
-    path: ['confirmPassword']
-  });
-
-type PasswordFormValues = z.infer<typeof passwordFormSchema>;
+type PasswordFormValues = {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+};
 
 export default function ProfileViewPage() {
+  const t = useTranslations();
   const [user, setUser] = useState<User | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const supabase = createSupabaseClient();
@@ -175,6 +165,27 @@ export default function ProfileViewPage() {
     null
   );
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Créer les schémas de validation avec les traductions
+  const profileFormSchema = useMemo(() => z.object({
+    firstName: z.string().min(2, t('profile.validation.firstNameMin')),
+    lastName: z.string().min(2, t('profile.validation.lastNameMin')),
+    email: z.string().email(t('profile.validation.invalidEmail')),
+    avatar: z.string().optional()
+  }), [t]);
+
+  const passwordFormSchema = useMemo(() => z
+    .object({
+      currentPassword: z.string().min(1, t('profile.validation.currentPasswordRequired')),
+      newPassword: z
+        .string()
+        .min(8, t('profile.validation.newPasswordMin')),
+      confirmPassword: z.string().min(1, t('profile.validation.confirmPasswordRequired'))
+    })
+    .refine((data) => data.newPassword === data.confirmPassword, {
+      message: t('profile.validation.passwordsDoNotMatch'),
+      path: ['confirmPassword']
+    }), [t]);
 
   // Formulaires react-hook-form
   const profileForm = useForm<ProfileFormValues>({
@@ -264,7 +275,7 @@ export default function ProfileViewPage() {
   const handleSaveProfile = async (data: ProfileFormValues) => {
     try {
       if (!user) {
-        toast.error('Utilisateur non connecté');
+        toast.error(t('auth.userNotConnected'));
         return;
       }
 
@@ -300,14 +311,14 @@ export default function ProfileViewPage() {
       setAvatarPreview(null);
       setUploadedAvatarUrl(null);
 
-      toast.success('Profil mis à jour avec succès');
+      toast.success(t('profile.profileUpdatedSuccess'));
       setEditProfileDialogOpen(false);
 
       // Recharger la page pour s'assurer que tous les composants sont à jour
       router.refresh();
     } catch (error: any) {
       console.error('Erreur lors de la mise à jour du profil:', error);
-      toast.error(error.message || 'Erreur lors de la mise à jour du profil');
+      toast.error(error.message || t('profile.profileUpdateError'));
     }
   };
 
@@ -330,7 +341,7 @@ export default function ProfileViewPage() {
 
     try {
       if (!user) {
-        toast.error('Utilisateur non connecté');
+        toast.error(t('auth.userNotConnected'));
         return;
       }
 
@@ -541,7 +552,7 @@ export default function ProfileViewPage() {
                 </span>
                 <span className='flex items-center gap-2'>
                   <IconCalendar className='h-4 w-4' />
-                  <span className='text-sm'>Membre depuis {memberSince}</span>
+                  <span className='text-sm'>{t('profile.memberSince')} {memberSince}</span>
                 </span>
               </div>
             </div>
@@ -553,7 +564,7 @@ export default function ProfileViewPage() {
             onClick={handleEditProfile}
           >
             <IconEdit className='mr-2 h-4 w-4' />
-            Modifier le profil
+            {t('profile.editProfile')}
           </Button>
         </div>
       </div>
@@ -576,7 +587,7 @@ export default function ProfileViewPage() {
               <IconWallet className='h-5 w-5 text-[#c5d13f]' />
             </div>
             <span className='text-muted-foreground text-sm'>
-              Solde disponible
+              {t('stats.availableBalance')}
             </span>
           </div>
           <p className='stat-number text-3xl font-bold text-[#c5d13f]'>
@@ -723,7 +734,7 @@ export default function ProfileViewPage() {
                     <IconCreditCard className='h-6 w-6' />
                   </div>
                   <div>
-                    <p className='font-medium'>Virement bancaire</p>
+                    <p className='font-medium'>{t('profile.bankTransfer')}</p>
                     <p className='text-muted-foreground text-sm'>
                       FR76 •••• •••• •••• 4532
                     </p>
@@ -822,7 +833,7 @@ export default function ProfileViewPage() {
                 <IconHistory className='h-4 w-4' />
               </div>
               <div>
-                <h3 className='text-lg font-semibold'>Derniers retraits</h3>
+                <h3 className='text-lg font-semibold'>{t('profile.lastWithdrawals')}</h3>
                 <p className='text-muted-foreground text-sm'>
                   Historique de vos retraits récents
                 </p>
@@ -996,7 +1007,7 @@ export default function ProfileViewPage() {
             <div className='space-y-4'>
               {/* Email */}
               <div className='space-y-2'>
-                <Label>Email de connexion</Label>
+                <Label>{t('profile.loginEmail')}</Label>
                 <div className='flex gap-2'>
                   <Input
                     value={user?.email || ''}
@@ -1026,7 +1037,7 @@ export default function ProfileViewPage() {
                   )}
                 >
                   <div>
-                    <p className='font-medium'>Changer le mot de passe</p>
+                    <p className='font-medium'>{t('profile.changePassword')}</p>
                     <p className='text-muted-foreground text-sm'>
                       Dernière modification il y a 3 mois
                     </p>
@@ -1058,7 +1069,7 @@ export default function ProfileViewPage() {
                       Ajoutez une couche de sécurité supplémentaire
                     </p>
                   </div>
-                  <RendRBadge variant='outline'>Non activé</RendRBadge>
+                  <RendRBadge variant='outline'>{t('profile.notActivated')}</RendRBadge>
                 </div>
 
                 <div
@@ -1075,7 +1086,7 @@ export default function ProfileViewPage() {
                       <IconDeviceDesktop className='h-4 w-4' />
                     </div>
                     <div>
-                      <p className='font-medium'>Sessions actives</p>
+                      <p className='font-medium'>{t('profile.activeSessions')}</p>
                       <p className='text-muted-foreground text-sm'>
                         1 appareil connecté
                       </p>
@@ -1128,7 +1139,7 @@ export default function ProfileViewPage() {
               )}
             >
               <div>
-                <p className='font-medium'>Supprimer le compte</p>
+                <p className='font-medium'>{t('profile.deleteAccount')}</p>
                 <p className='text-muted-foreground text-sm'>
                   Cette action est irréversible. Toutes vos données seront
                   perdues.
@@ -1153,7 +1164,7 @@ export default function ProfileViewPage() {
       >
         <DialogContent className='max-w-2xl border-white/5 bg-zinc-900'>
           <DialogHeader>
-            <DialogTitle>Modifier le profil</DialogTitle>
+            <DialogTitle>{t('profile.editProfile')}</DialogTitle>
             <DialogDescription>
               Mettez à jour vos informations personnelles
             </DialogDescription>
@@ -1207,12 +1218,12 @@ export default function ProfileViewPage() {
 
               {/* Prénom */}
               <div className='space-y-2'>
-                <Label htmlFor='firstName'>Prénom</Label>
+                <Label htmlFor='firstName'>{t('auth.signUp.firstName')}</Label>
                 <Input
                   id='firstName'
                   {...profileForm.register('firstName')}
                   className='border-white/10 bg-white/5'
-                  placeholder='Votre prénom'
+                  placeholder={t('forms.firstName')}
                 />
                 {profileForm.formState.errors.firstName && (
                   <p className='text-sm text-red-400'>
@@ -1223,12 +1234,12 @@ export default function ProfileViewPage() {
 
               {/* Nom */}
               <div className='space-y-2'>
-                <Label htmlFor='lastName'>Nom</Label>
+                <Label htmlFor='lastName'>{t('auth.signUp.lastName')}</Label>
                 <Input
                   id='lastName'
                   {...profileForm.register('lastName')}
                   className='border-white/10 bg-white/5'
-                  placeholder='Votre nom'
+                  placeholder={t('forms.lastName')}
                 />
                 {profileForm.formState.errors.lastName && (
                   <p className='text-sm text-red-400'>
@@ -1261,7 +1272,7 @@ export default function ProfileViewPage() {
                 onClick={() => setEditProfileDialogOpen(false)}
                 className='border-white/10 bg-white/5'
               >
-                Annuler
+                {t('common.cancel')}
               </Button>
               <Button
                 type='submit'
@@ -1269,8 +1280,8 @@ export default function ProfileViewPage() {
                 className='bg-[#c5d13f] text-zinc-900 hover:bg-[#c5d13f]/90'
               >
                 {profileForm.formState.isSubmitting
-                  ? 'Enregistrement...'
-                  : 'Enregistrer'}
+                  ? t('common.processing')
+                  : t('common.save')}
               </Button>
             </DialogFooter>
           </form>
@@ -1284,7 +1295,7 @@ export default function ProfileViewPage() {
       >
         <DialogContent className='border-white/5 bg-zinc-900'>
           <DialogHeader>
-            <DialogTitle>Changer le mot de passe</DialogTitle>
+            <DialogTitle>{t('profile.changePassword')}</DialogTitle>
             <DialogDescription>
               Entrez votre mot de passe actuel et choisissez un nouveau mot de
               passe sécurisé
@@ -1295,7 +1306,7 @@ export default function ProfileViewPage() {
             className='space-y-4'
           >
             <div className='space-y-2'>
-              <Label htmlFor='currentPassword'>Mot de passe actuel</Label>
+              <Label htmlFor='currentPassword'>{t('profile.currentPassword')}</Label>
               <Input
                 id='currentPassword'
                 type='password'
@@ -1311,7 +1322,7 @@ export default function ProfileViewPage() {
             </div>
 
             <div className='space-y-2'>
-              <Label htmlFor='newPassword'>Nouveau mot de passe</Label>
+              <Label htmlFor='newPassword'>{t('profile.newPassword')}</Label>
               <Input
                 id='newPassword'
                 type='password'
@@ -1354,7 +1365,7 @@ export default function ProfileViewPage() {
                 onClick={() => setChangePasswordDialogOpen(false)}
                 className='border-white/10 bg-white/5'
               >
-                Annuler
+                {t('common.cancel')}
               </Button>
               <Button
                 type='submit'
@@ -1362,8 +1373,8 @@ export default function ProfileViewPage() {
                 className='bg-[#c5d13f] text-zinc-900 hover:bg-[#c5d13f]/90'
               >
                 {passwordForm.formState.isSubmitting
-                  ? 'Enregistrement...'
-                  : 'Changer le mot de passe'}
+                  ? t('common.processing')
+                  : t('profile.changePassword')}
               </Button>
             </DialogFooter>
           </form>
@@ -1374,7 +1385,7 @@ export default function ProfileViewPage() {
       <Dialog open={editBankDialogOpen} onOpenChange={setEditBankDialogOpen}>
         <DialogContent className='border-white/5 bg-zinc-900'>
           <DialogHeader>
-            <DialogTitle>Modifier le compte bancaire</DialogTitle>
+            <DialogTitle>{t('profile.modifyBankAccount')}</DialogTitle>
             <DialogDescription>
               Mettez à jour vos informations de virement bancaire
             </DialogDescription>
@@ -1391,10 +1402,10 @@ export default function ProfileViewPage() {
               />
             </div>
             <div className='space-y-2'>
-              <Label htmlFor='bank-name'>Nom de la banque</Label>
+              <Label htmlFor='bank-name'>{t('profile.bankName')}</Label>
               <Input
                 id='bank-name'
-                placeholder='Nom de votre banque'
+                placeholder={t('profile.bankName')}
                 className='border-white/10 bg-white/5'
               />
             </div>
@@ -1405,13 +1416,13 @@ export default function ProfileViewPage() {
               onClick={() => setEditBankDialogOpen(false)}
               className='border-white/10 bg-white/5'
             >
-              Annuler
+              {t('common.cancel')}
             </Button>
             <Button
               onClick={handleSaveBankAccount}
               className='bg-[#c5d13f] text-zinc-900 hover:bg-[#c5d13f]/90'
             >
-              Enregistrer
+              {t('common.save')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -1428,7 +1439,7 @@ export default function ProfileViewPage() {
           </DialogHeader>
           <div className='space-y-4 py-4'>
             <div className='space-y-2'>
-              <Label htmlFor='paypal-email'>Adresse email PayPal</Label>
+              <Label htmlFor='paypal-email'>{t('profile.paypalEmailAddress')}</Label>
               <Input
                 id='paypal-email'
                 type='email'
@@ -1445,7 +1456,7 @@ export default function ProfileViewPage() {
               onClick={() => setAddPaypalDialogOpen(false)}
               className='border-white/10 bg-white/5'
             >
-              Annuler
+              {t('common.cancel')}
             </Button>
             <Button
               onClick={handleSavePaypal}
@@ -1461,7 +1472,7 @@ export default function ProfileViewPage() {
       <Dialog open={addCryptoDialogOpen} onOpenChange={setAddCryptoDialogOpen}>
         <DialogContent className='border-white/5 bg-zinc-900'>
           <DialogHeader>
-            <DialogTitle>Ajouter une adresse crypto (USDT)</DialogTitle>
+            <DialogTitle>{t('profile.addCryptoAddress')}</DialogTitle>
             <DialogDescription>
               Ajoutez votre adresse USDT pour recevoir vos retraits
             </DialogDescription>
@@ -1490,7 +1501,7 @@ export default function ProfileViewPage() {
               onClick={() => setAddCryptoDialogOpen(false)}
               className='border-white/10 bg-white/5'
             >
-              Annuler
+              {t('common.cancel')}
             </Button>
             <Button
               onClick={handleSaveCrypto}
@@ -1506,7 +1517,7 @@ export default function ProfileViewPage() {
       <Dialog open={sessionsDialogOpen} onOpenChange={setSessionsDialogOpen}>
         <DialogContent className='border-white/5 bg-zinc-900'>
           <DialogHeader>
-            <DialogTitle>Sessions actives</DialogTitle>
+            <DialogTitle>{t('profile.activeSessions')}</DialogTitle>
             <DialogDescription>
               Gérez vos appareils et sessions connectés
             </DialogDescription>
@@ -1524,7 +1535,7 @@ export default function ProfileViewPage() {
                   <IconDeviceDesktop className='h-4 w-4' />
                 </div>
                 <div>
-                  <p className='font-medium'>Appareil actuel</p>
+                  <p className='font-medium'>{t('profile.currentDevice')}</p>
                   <p className='text-muted-foreground text-sm'>
                     {typeof window !== 'undefined'
                       ? window.navigator.userAgent.split(' ')[0]
@@ -1573,31 +1584,30 @@ export default function ProfileViewPage() {
         <AlertDialogContent className='border-red-500/20 bg-zinc-900'>
           <AlertDialogHeader>
             <AlertDialogTitle className='text-red-400'>
-              Supprimer le compte
+              {t('profile.deleteAccount')}
             </AlertDialogTitle>
             <AlertDialogDescription className='text-muted-foreground'>
-              Cette action est irréversible. Toutes vos données seront
-              définitivement supprimées :
+              {t('modal.confirm.description')} {t('profile.deleteAccountWarning')}
               <ul className='mt-4 list-inside list-disc space-y-2 text-sm'>
-                <li>Votre profil et vos informations personnelles</li>
-                <li>Votre historique de transactions</li>
-                <li>Vos cashbacks et récompenses</li>
-                <li>Toutes les données associées à votre compte</li>
+                <li>{t('profile.deleteAccountWarning1')}</li>
+                <li>{t('profile.deleteAccountWarning2')}</li>
+                <li>{t('profile.deleteAccountWarning3')}</li>
+                <li>{t('profile.deleteAccountWarning4')}</li>
               </ul>
               <p className='mt-4 font-semibold text-red-400'>
-                Êtes-vous absolument sûr de vouloir continuer ?
+                {t('modal.confirm.title')}
               </p>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel className='border-white/10 bg-white/5'>
-              Annuler
+              {t('common.cancel')}
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteAccount}
               className='bg-red-500 text-white hover:bg-red-600'
             >
-              Supprimer définitivement
+              {t('brokers.deletePermanently')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

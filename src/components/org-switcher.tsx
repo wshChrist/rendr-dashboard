@@ -95,7 +95,7 @@ export function OrgSwitcher() {
                   : 'visible max-w-full opacity-100'
               }`}
             >
-              <span className='truncate font-medium'>Create organization</span>
+              <span className='truncate font-medium'>{t('org.createOrganization')}</span>
               <span className='text-muted-foreground truncate text-xs'>
                 Get started
               </span>

@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Modal } from '@/components/ui/modal';
 
@@ -16,6 +17,7 @@ export const AlertModal: React.FC<AlertModalProps> = ({
   onConfirm,
   loading
 }) => {
+  const t = useTranslations();
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -28,17 +30,17 @@ export const AlertModal: React.FC<AlertModalProps> = ({
 
   return (
     <Modal
-      title='Êtes-vous sûr ?'
-      description='Cette action est irréversible.'
+      title={t('modal.confirm.title')}
+      description={t('modal.confirm.description')}
       isOpen={isOpen}
       onClose={onClose}
     >
       <div className='flex w-full items-center justify-end space-x-2 pt-6'>
         <Button disabled={loading} variant='outline' onClick={onClose}>
-          Annuler
+          {t('common.cancel')}
         </Button>
         <Button disabled={loading} variant='destructive' onClick={onConfirm}>
-          Continuer
+          {t('common.continue')}
         </Button>
       </div>
     </Modal>

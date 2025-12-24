@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { createSupabaseClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -38,6 +39,7 @@ const signUpSchema = z.object({
 type SignUpFormValues = z.infer<typeof signUpSchema>;
 
 export function CustomSignUpForm() {
+  const t = useTranslations();
   const router = useRouter();
   const supabase = createSupabaseClient();
   const [isLoading, setIsLoading] = useState(false);
@@ -75,7 +77,7 @@ export function CustomSignUpForm() {
 
       if (authData.user && authData.session) {
         // Confirmation d'email désactivée, connexion directe
-        toast.success('Compte créé avec succès !');
+        toast.success(t('auth.signUp.accountCreated'));
         // Attendre un court instant pour que les cookies soient sauvegardés
         await new Promise((resolve) => setTimeout(resolve, 200));
         // Rafraîchir le routeur pour que le middleware détecte la session
@@ -84,7 +86,7 @@ export function CustomSignUpForm() {
         router.push('/dashboard/overview');
       } else if (authData.user) {
         // Si pas de session immédiatement, attendre un peu
-        toast.success('Compte créé avec succès !');
+        toast.success(t('auth.signUp.accountCreated'));
         setTimeout(async () => {
           const {
             data: { session }
@@ -93,7 +95,7 @@ export function CustomSignUpForm() {
             router.refresh();
             router.push('/dashboard/overview');
           } else {
-            toast.error('Erreur de session. Veuillez réessayer.');
+            toast.error(t('auth.signUp.sessionError'));
           }
         }, 500);
       }
@@ -119,11 +121,11 @@ export function CustomSignUpForm() {
           name='firstName'
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Prénom</FormLabel>
+              <FormLabel>{t('auth.signUp.firstName')}</FormLabel>
               <FormControl>
                 <Input
                   {...field}
-                  placeholder='Jean'
+                  placeholder={t('auth.signUp.firstNamePlaceholder')}
                   disabled={isLoading}
                   autoComplete='given-name'
                 />
@@ -138,11 +140,11 @@ export function CustomSignUpForm() {
           name='lastName'
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Nom</FormLabel>
+              <FormLabel>{t('auth.signUp.lastName')}</FormLabel>
               <FormControl>
                 <Input
                   {...field}
-                  placeholder='Dupont'
+                  placeholder={t('auth.signUp.lastNamePlaceholder')}
                   disabled={isLoading}
                   autoComplete='family-name'
                 />
@@ -158,7 +160,7 @@ export function CustomSignUpForm() {
         name='email'
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Email</FormLabel>
+            <FormLabel>{t('auth.signUp.email')}</FormLabel>
             <FormControl>
               <div className='relative' suppressHydrationWarning>
                 <IconMail className='text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2' />
@@ -182,14 +184,14 @@ export function CustomSignUpForm() {
         name='password'
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Mot de passe</FormLabel>
+            <FormLabel>{t('auth.signUp.password')}</FormLabel>
             <FormControl>
               <div className='relative' suppressHydrationWarning>
                 <IconLock className='text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2' />
                 <Input
                   {...field}
                   type={showPassword ? 'text' : 'password'}
-                  placeholder='••••••••'
+                  placeholder={t('auth.signUp.passwordPlaceholder')}
                   className='pr-10 pl-10'
                   disabled={isLoading}
                   autoComplete='new-password'
@@ -226,23 +228,24 @@ export function CustomSignUpForm() {
         {isLoading ? (
           <>
             <IconLoader2 className='mr-2 h-4 w-4 animate-spin' />
-            Création en cours...
+            {t('auth.signUp.creatingAccount')}
           </>
         ) : (
-          'Créer mon compte'
+          t('auth.signUp.createAccount')
         )}
       </Button>
 
       <div className='text-center text-sm'>
-        <span className='text-muted-foreground'>Déjà un compte ? </span>
+        <span className='text-muted-foreground'>{t('auth.signUp.alreadyHaveAccount')} </span>
         <Link
           href='/auth/sign-in'
           className='text-primary hover:text-primary/80 font-medium underline-offset-4 transition-colors hover:underline'
           style={{ viewTransitionName: 'auth-link' } as React.CSSProperties}
         >
-          Se connecter
+          {t('auth.signIn.signInButton')}
         </Link>
       </div>
     </Form>
   );
 }
+

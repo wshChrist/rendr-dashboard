@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -25,6 +26,7 @@ const formSchema = z.object({
 type UserFormValue = z.infer<typeof formSchema>;
 
 export default function UserAuthForm() {
+  const t = useTranslations();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl');
   const [loading, startTransition] = useTransition();
@@ -39,7 +41,7 @@ export default function UserAuthForm() {
   const onSubmit = async (data: UserFormValue) => {
     startTransition(() => {
       console.log('continue with email clicked');
-      toast.success('Signed In Successfully!');
+      toast.success(t('auth.signIn.signInSuccess'));
     });
   };
 
@@ -53,8 +55,8 @@ export default function UserAuthForm() {
         <FormInput
           control={form.control}
           name='email'
-          label='Email'
-          placeholder='Enter your email...'
+          label={t('auth.signIn.email')}
+          placeholder={t('auth.signIn.emailPlaceholder')}
           disabled={loading}
         />
         <Button
@@ -62,7 +64,7 @@ export default function UserAuthForm() {
           className='mt-2 ml-auto w-full'
           type='submit'
         >
-          Continue With Email
+          {t('auth.signIn.continueWithEmail')}
         </Button>
       </Form>
       <div className='relative'>
@@ -71,7 +73,7 @@ export default function UserAuthForm() {
         </div>
         <div className='relative flex justify-center text-xs uppercase'>
           <span className='bg-background text-muted-foreground px-2'>
-            Or continue with
+            {t('auth.signIn.orContinueWith')}
           </span>
         </div>
       </div>

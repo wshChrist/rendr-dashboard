@@ -1,6 +1,7 @@
 'use client';
 
 import { IconChevronRight } from '@tabler/icons-react';
+import { useTranslations } from 'next-intl';
 
 import {
   Collapsible,
@@ -34,9 +35,10 @@ export function NavMain({
     }[];
   }[];
 }) {
+  const t = useTranslations();
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Platform</SidebarGroupLabel>
+      <SidebarGroupLabel>{t('ui.platform')}</SidebarGroupLabel>
       <SidebarGroupContent className='flex flex-col gap-2'>
         <SidebarMenu>
           {items.map((item) => (

@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { toast } from 'sonner';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
@@ -48,6 +49,7 @@ async function patchBrokerSettings(input: Partial<BrokerSettings> & { broker_nam
 }
 
 export function AdminBrokersView() {
+  const t = useTranslations();
   const [rows, setRows] = React.useState<Row[]>([]);
   const [isLoading, setIsLoading] = React.useState(true);
   const [saving, setSaving] = React.useState<string | null>(null);
@@ -259,7 +261,7 @@ export function AdminBrokersView() {
                             }))
                           }
                           className='border-white/10 bg-white/5 focus:border-white/20'
-                          placeholder='Ex: Maintenance planifiée jusqu’à 14:00 UTC'
+                          placeholder={t('admin.maintenancePlaceholder')}
                         />
                         <div className='flex justify-end'>
                           <Button
@@ -267,7 +269,7 @@ export function AdminBrokersView() {
                             onClick={() => onSaveMessage(s.broker_name)}
                             disabled={isSaving}
                           >
-                            Enregistrer
+                            {t('common.save')}
                           </Button>
                         </div>
                       </>
@@ -276,7 +278,7 @@ export function AdminBrokersView() {
                         value={draftMessages[s.broker_name] ?? ''}
                         disabled
                         className='border-white/10 bg-white/5'
-                        placeholder='Activez la maintenance pour définir un message'
+                        placeholder={t('admin.maintenanceActivatePlaceholder')}
                       />
                     )}
                   </div>

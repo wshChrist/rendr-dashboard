@@ -22,6 +22,7 @@ import { cn } from '@/lib/utils';
 import { ReferralTable } from './referral-table';
 import type { ReferredUser } from './referral-table-columns';
 import { toast } from 'sonner';
+import { useTranslations } from 'next-intl';
 
 interface ReferralData {
   code: string | null;
@@ -34,6 +35,7 @@ interface ReferralData {
 }
 
 export function ReferralView() {
+  const t = useTranslations();
   const [copied, setCopied] = useState(false);
   const [referralData, setReferralData] = useState<ReferralData>({
     code: null,
@@ -67,7 +69,7 @@ export function ReferralView() {
         const errorData = await referralResponse.json();
         // Si c'est juste un code manquant, ce n'est pas une erreur critique
         if (errorData.error !== 'Code de parrainage non trouvé') {
-          toast.error('Erreur lors du chargement des données de parrainage');
+          toast.error(t('referral.errors.loadError'));
         }
       }
 
@@ -77,11 +79,11 @@ export function ReferralView() {
         const users = await usersResponse.json();
         setReferredUsers(users);
       } else {
-        toast.error('Erreur lors du chargement des filleuls');
+        toast.error(t('referral.errors.loadUsersError'));
       }
     } catch (error) {
       console.error('Erreur lors du chargement des données:', error);
-      toast.error('Erreur lors du chargement des données');
+      toast.error(t('common.loadError'));
     } finally {
       setIsLoading(false);
     }
@@ -91,7 +93,7 @@ export function ReferralView() {
     navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
-    toast.success('Lien copié dans le presse-papier');
+    toast.success(t('referral.linkCopied'));
   };
 
   const handleCreateCode = async (e: React.FormEvent) => {
@@ -119,18 +121,18 @@ export function ReferralView() {
       const data = await response.json();
 
       if (!response.ok) {
-        setCodeError(data.message || 'Erreur lors de la création du code');
+        setCodeError(data.message || t('referral.errors.createError'));
         setIsCreatingCode(false);
         return;
       }
 
-      toast.success('Code de parrainage créé avec succès !');
+      toast.success(t('referral.success.codeCreated'));
       setNewCode('');
       // Recharger les données
       await loadData();
     } catch (error) {
       console.error('Erreur lors de la création du code:', error);
-      setCodeError('Erreur lors de la création du code');
+      setCodeError(t('referral.errors.createError'));
     } finally {
       setIsCreatingCode(false);
     }
@@ -140,7 +142,7 @@ export function ReferralView() {
     platform: 'native' | 'twitter' | 'telegram' | 'whatsapp'
   ) => {
     if (!referralData.link) {
-      toast.error("Veuillez d'abord créer un code de parrainage");
+      toast.error(t('referral.createCodeFirst'));
       return;
     }
 
@@ -153,7 +155,7 @@ export function ReferralView() {
         if (navigator.share) {
           navigator
             .share({
-              title: 'Rejoins RendR',
+              title: t('referral.shareTitle'),
               text: text,
               url: referralData.link
             })
@@ -211,14 +213,14 @@ export function ReferralView() {
               <IconUsers className='h-4 w-4' />
             </span>
             <span className='text-muted-foreground text-sm'>
-              Filleuls Total
+              {t('referral.totalReferrals')}
             </span>
           </div>
           <p className='stat-number text-3xl font-bold'>
             {referralData.totalReferrals || 0}
           </p>
           <p className='text-muted-foreground mt-1 text-sm'>
-            {referralData.activeReferrals || 0} actifs
+            {referralData.activeReferrals || 0} {t('referral.active')}
           </p>
         </div>
 
@@ -238,13 +240,13 @@ export function ReferralView() {
             <span className='rounded-xl border border-white/5 bg-white/5 p-2'>
               <IconGift className='h-4 w-4' />
             </span>
-            <span className='text-muted-foreground text-sm'>Gains Totaux</span>
+            <span className='text-muted-foreground text-sm'>{t('referral.totalEarnings')}</span>
           </div>
           <p className='text-foreground stat-number text-3xl font-bold'>
             {referralData.totalEarnings?.toFixed(2) || '0.00'}€
           </p>
           <p className='mt-1 text-sm text-[#c5d13f]'>
-            +{referralData.pendingEarnings?.toFixed(2) || '0.00'}€ en attente
+            +{referralData.pendingEarnings?.toFixed(2) || '0.00'}€ {t('referral.pending')}
           </p>
         </div>
 
@@ -265,14 +267,14 @@ export function ReferralView() {
               <IconPercentage className='h-4 w-4' />
             </span>
             <span className='text-muted-foreground text-sm'>
-              Taux de Commission
+              {t('referral.commissionRate')}
             </span>
           </div>
           <p className='text-foreground stat-number text-3xl font-bold'>
             {referralData.commissionRate}%
           </p>
           <p className='text-muted-foreground mt-1 text-sm'>
-            Du cashback de vos filleuls
+            {t('referral.fromReferrals')}
           </p>
         </div>
 
@@ -292,7 +294,7 @@ export function ReferralView() {
             <span className='rounded-xl border border-white/5 bg-white/5 p-2'>
               <IconChartBar className='h-4 w-4' />
             </span>
-            <span className='text-muted-foreground text-sm'>Gain Moyen</span>
+            <span className='text-muted-foreground text-sm'>{t('referral.averageEarnings')}</span>
           </div>
           <p className='stat-number text-3xl font-bold'>
             {referralData.activeReferrals > 0 && referralData.totalEarnings > 0
@@ -303,7 +305,7 @@ export function ReferralView() {
             €
           </p>
           <p className='text-muted-foreground mt-1 text-sm'>
-            Par filleul actif
+            {t('referral.perActiveReferral')}
           </p>
         </div>
       </div>
@@ -329,10 +331,10 @@ export function ReferralView() {
               </span>
               <div>
                 <h3 className='text-lg font-semibold'>
-                  Créer votre code de parrainage
+                  {t('referral.createYourCode')}
                 </h3>
                 <p className='text-muted-foreground text-sm'>
-                  Choisissez un code unique pour commencer à parrainer vos amis
+                  {t('referral.chooseUniqueCode')}
                 </p>
               </div>
             </div>
@@ -340,7 +342,7 @@ export function ReferralView() {
             <form onSubmit={handleCreateCode} className='space-y-4'>
               <div>
                 <label className='text-muted-foreground mb-2 block text-sm font-medium'>
-                  Votre code de parrainage
+                  {t('referral.yourCode')}
                 </label>
                 <div className='flex gap-2'>
                   <Input
@@ -361,7 +363,7 @@ export function ReferralView() {
                     {isCreatingCode ? (
                       <IconLoader2 className='h-4 w-4 animate-spin' />
                     ) : (
-                      'Créer'
+                      {t('referral.createCode')}
                     )}
                   </Button>
                 </div>
@@ -369,9 +371,7 @@ export function ReferralView() {
                   <p className='mt-2 text-sm text-red-500'>{codeError}</p>
                 )}
                 <p className='text-muted-foreground mt-2 text-xs'>
-                  Le code doit contenir entre 3 et 20 caractères (lettres
-                  majuscules, chiffres et tirets uniquement). Il doit être
-                  unique.
+                  {t('referral.codeRules')}
                 </p>
               </div>
             </form>
@@ -385,11 +385,10 @@ export function ReferralView() {
               </span>
               <div>
                 <h3 className='text-lg font-semibold'>
-                  Votre lien de parrainage
+                  {t('referral.yourLink')}
                 </h3>
                 <p className='text-muted-foreground text-sm'>
-                  Partagez ce lien pour gagner {referralData.commissionRate}% du
-                  cashback de vos filleuls
+                  {t('referral.shareLinkDescription', { rate: referralData.commissionRate })}
                 </p>
               </div>
             </div>
@@ -415,7 +414,7 @@ export function ReferralView() {
 
               <div className='flex items-center gap-3 rounded-xl border border-white/5 bg-white/5 p-3'>
                 <span className='text-muted-foreground text-sm'>
-                  Votre code de parrainage:
+                  {t('referral.yourCode')}:
                 </span>
                 <RendRBadge variant='outline' size='lg' className='font-mono'>
                   {referralData.code}
@@ -436,7 +435,7 @@ export function ReferralView() {
                   onClick={() => shareLink('native')}
                 >
                   <IconShare className='mr-2 h-4 w-4' />
-                  Partager
+                  {t('referral.share')}
                 </Button>
                 <Button
                   variant='outline'
@@ -483,17 +482,17 @@ export function ReferralView() {
           {[
             {
               step: 1,
-              title: 'Partagez votre lien',
-              desc: 'Envoyez votre lien de parrainage à vos amis traders'
+              title: t('referral.shareLink'),
+              desc: t('pages.referral.description')
             },
             {
               step: 2,
-              title: "Ils s'inscrivent",
+              title: t('referral.theySignUp'),
               desc: 'Vos filleuls créent leur compte et connectent leurs brokers'
             },
             {
               step: 3,
-              title: 'Vous gagnez',
+              title: t('referral.youEarn'),
               desc: `Recevez ${referralData.commissionRate}% de leur cashback à vie !`
             }
           ].map((item) => (
@@ -523,7 +522,7 @@ export function ReferralView() {
             <IconUsers className='h-4 w-4' />
           </span>
           <div>
-            <h3 className='text-lg font-semibold'>Vos filleuls</h3>
+            <h3 className='text-lg font-semibold'>{t('referral.yourReferrals')}</h3>
             <p className='text-muted-foreground text-sm'>
               Gérez et suivez tous vos filleuls en un seul endroit
             </p>

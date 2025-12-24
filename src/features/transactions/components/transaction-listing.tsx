@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations, useLocale } from 'next-intl';
 import { useTradingData } from '@/hooks/use-trading-data';
 import { TransactionTable } from './transaction-tables';
 import { cn } from '@/lib/utils';
@@ -23,10 +24,13 @@ import {
 import { useState, useMemo } from 'react';
 import { RendRBadge } from '@/components/ui/rendr-badge';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { fr, enUS } from 'date-fns/locale';
 import { Transaction } from '@/types/cashback';
 
 export function TransactionListing() {
+  const t = useTranslations();
+  const locale = useLocale();
+  const dateLocale = locale === 'en' ? enUS : fr;
   const { transactions, accounts, isLoading } = useTradingData();
   const [selectedBroker, setSelectedBroker] = useState<string>('all');
   const [selectedPeriod, setSelectedPeriod] = useState<string>('all');
@@ -137,24 +141,24 @@ export function TransactionListing() {
 
     // En-têtes CSV
     const headers = [
-      'Date',
-      'Heure',
-      'Broker',
-      'ID Trade',
-      'Paire',
-      'Volume (lots)',
-      'Commission (€)',
-      'Cashback (€)',
-      'Statut'
+      t('pages.transactions.columns.date'),
+      t('common.time'),
+      t('pages.transactions.columns.broker'),
+      t('common.tradeId'),
+      t('pages.transactions.columns.pair'),
+      t('pages.transactions.columns.volume'),
+      t('pages.transactions.columns.commission'),
+      t('pages.transactions.columns.cashback'),
+      t('pages.transactions.columns.status')
     ];
 
     // Conversion des données en lignes CSV
     const rows = filteredData.map((transaction: Transaction) => {
       const date = new Date(transaction.trade_date);
-      const formattedDate = format(date, 'dd/MM/yyyy', { locale: fr });
-      const formattedTime = format(date, 'HH:mm', { locale: fr });
+      const formattedDate = format(date, 'dd/MM/yyyy', { locale: dateLocale });
+      const formattedTime = format(date, 'HH:mm', { locale: dateLocale });
       const status =
-        transaction.status === 'confirmed' ? 'Confirmé' : 'En attente';
+        transaction.status === 'confirmed' ? t('pages.transactions.status.confirmed') : t('pages.transactions.status.pending');
 
       return [
         formattedDate,
@@ -329,17 +333,17 @@ export function TransactionListing() {
         <div className='flex flex-col justify-between gap-4 md:flex-row md:items-center'>
           <div className='flex items-center gap-2'>
             <IconFilter className='text-muted-foreground h-4 w-4' />
-            <span className='text-sm font-medium'>Filtres</span>
+            <span className='text-sm font-medium'>{t('common.filters')}</span>
           </div>
 
           <div className='flex flex-wrap items-center gap-3'>
             {/* Filtre Broker */}
             <Select value={selectedBroker} onValueChange={setSelectedBroker}>
               <SelectTrigger className='w-[160px] border-white/10 bg-white/5'>
-                <SelectValue placeholder='Tous les brokers' />
+                <SelectValue placeholder={t('common.allBrokers')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value='all'>Tous les brokers</SelectItem>
+                <SelectItem value='all'>{t('common.allBrokers')}</SelectItem>
                 {accounts.map((account) => (
                   <SelectItem key={account.id} value={account.id}>
                     {account.broker}
@@ -352,10 +356,10 @@ export function TransactionListing() {
             <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
               <SelectTrigger className='w-[140px] border-white/10 bg-white/5'>
                 <IconCalendar className='mr-2 h-4 w-4' />
-                <SelectValue placeholder='Période' />
+                <SelectValue placeholder={t('common.period')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value='all'>Tout le temps</SelectItem>
+                <SelectItem value='all'>{t('transactions.allTime')}</SelectItem>
                 <SelectItem value='7d'>7 derniers jours</SelectItem>
                 <SelectItem value='30d'>30 derniers jours</SelectItem>
                 <SelectItem value='90d'>90 derniers jours</SelectItem>
@@ -365,10 +369,10 @@ export function TransactionListing() {
             {/* Filtre Status */}
             <Select value={selectedStatus} onValueChange={setSelectedStatus}>
               <SelectTrigger className='w-[140px] border-white/10 bg-white/5'>
-                <SelectValue placeholder='Statut' />
+                <SelectValue placeholder={t('common.status')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value='all'>Tous statuts</SelectItem>
+                <SelectItem value='all'>{t('transactions.allStatuses')}</SelectItem>
                 <SelectItem value='confirmed'>Confirmés</SelectItem>
                 <SelectItem value='pending'>En attente</SelectItem>
               </SelectContent>

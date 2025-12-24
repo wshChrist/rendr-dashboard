@@ -272,6 +272,7 @@
       "orContinueWith": "Ou continuer avec",
       "signInSuccess": "Connexion réussie !",
       "signInError": "Erreur lors de la connexion",
+      "sessionError": "Erreur de session. Veuillez réessayer.",
       "signInButton": "Se connecter",
       "signingIn": "Connexion en cours...",
       "forgotPassword": "Mot de passe oublié ?"
@@ -389,5 +390,170 @@
   },
   "access": {
     "noAccess": "Vous n'avez pas accès à cette page."
+  },
+  "ui": {
+    "platform": "Plateforme",
+    "settings": "Paramètres",
+    "billing": "Facturation",
+    "signOut": "Se déconnecter",
+    "profile": "Profil",
+    "user": "Utilisateur",
+    "toggleSidebar": "Basculer la barre latérale",
+    "displaysMobileSidebar": "Affiche la barre latérale mobile.",
+    "selectOption": "Sélectionner une option",
+    "noResultsFound": "Aucun résultat trouvé.",
+    "noColumnsFound": "Aucune colonne trouvée.",
+    "openMenu": "Ouvrir le menu",
+    "moveTask": "Déplacer la tâche",
+    "morePages": "Plus de pages",
+    "changeTheme": "Changer le thème",
+    "deleteFile": "Supprimer le fichier"
+  },
+  "pages": {
+    "billing": {
+      "title": "Facturation et Plans",
+      "description": "Gérez votre abonnement et vos limites d'utilisation",
+      "info": "La fonctionnalité de facturation sera implémentée ici. Vous pouvez intégrer Stripe, Paddle ou un autre fournisseur de paiement.",
+      "availablePlans": "Plans Disponibles",
+      "choosePlan": "Choisissez un plan qui correspond à vos besoins",
+      "comingSoon": "Intégration de facturation bientôt disponible"
+    },
+    "workspaces": {
+      "title": "Espaces de travail",
+      "description": "Gérez vos espaces de travail et basculez entre eux",
+      "info": "La fonctionnalité d'espace de travail sera implémentée ici. Vous pouvez créer une gestion personnalisée d'organisation/espace de travail en utilisant les tables Supabase.",
+      "createAndManage": "Créer et gérer vos espaces de travail",
+      "comingSoon": "Gestion des espaces de travail bientôt disponible"
+    },
+    "exclusive": {
+      "message": "Passez une excellente journée !"
+    },
+    "dashboard": {
+      "title": "Next Shadcn Dashboard Starter",
+      "description": "Tableau de bord de base avec Next.js et Shadcn"
+    }
+  },
+  "referral": {
+    "shareTitle": "Rejoins RendR",
+    "yourReferrals": "Vos filleuls",
+    "shareLink": "Partagez votre lien",
+    "theySignUp": "Ils s'inscrivent",
+    "youEarn": "Vous gagnez"
+  },
+  "profile": {
+    "memberSince": "Membre depuis",
+    "bankTransfer": "Virement bancaire",
+    "lastWithdrawals": "Derniers retraits",
+    "loginEmail": "Email de connexion",
+    "changePassword": "Changer le mot de passe",
+    "notActivated": "Non activé",
+    "activeSessions": "Sessions actives",
+    "deleteAccount": "Supprimer le compte",
+    "editProfile": "Modifier le profil",
+    "currentPassword": "Mot de passe actuel",
+    "newPassword": "Nouveau mot de passe",
+    "modifyBankAccount": "Modifier le compte bancaire",
+    "bankName": "Nom de la banque",
+    "paypalEmailAddress": "Adresse email PayPal",
+    "addCryptoAddress": "Ajouter une adresse crypto (USDT)",
+    "currentDevice": "Appareil actuel",
+    "deleteAccountWarning": "Cela supprimera définitivement :",
+    "deleteAccountWarning1": "Votre profil et vos informations personnelles",
+    "deleteAccountWarning2": "Votre historique de transactions",
+    "deleteAccountWarning3": "Vos cashbacks et récompenses",
+    "deleteAccountWarning4": "Toutes les données associées à votre compte",
+    "validation": {
+      "firstNameMin": "Le prénom doit contenir au moins 2 caractères",
+      "lastNameMin": "Le nom doit contenir au moins 2 caractères",
+      "invalidEmail": "Adresse email invalide",
+      "currentPasswordRequired": "Le mot de passe actuel est requis",
+      "newPasswordMin": "Le nouveau mot de passe doit contenir au moins 8 caractères",
+      "confirmPasswordRequired": "La confirmation est requise",
+      "passwordsDoNotMatch": "Les mots de passe ne correspondent pas"
+    },
+    "profileUpdatedSuccess": "Profil mis à jour avec succès",
+    "profileUpdateError": "Erreur lors de la mise à jour du profil"
+  },
+  "overview": {
+    "recentSales": {
+      "title": "Ventes récentes",
+      "description": "Vous avez effectué 265 ventes ce mois-ci."
+    },
+    "volumeTrading": "Volume de Trading",
+    "browserDistribution": "Répartition des navigateurs",
+    "noUpdates": "Aucune mise à jour"
+  },
+  "auth": {
+    "signIn": {
+      "noAccountYet": "Pas encore de compte ? ",
+      "signingInProgress": "Connexion en cours..."
+    },
+    "signUp": {
+      "signingUpProgress": "Inscription en cours..."
+    }
+  },
+  "transactions": {
+    "allTime": "Tout le temps",
+    "allStatuses": "Tous statuts"
+  },
+  "admin": {
+    "pendingWithdrawals": "Retraits en attente",
+    "maintenancePlaceholder": "Ex: Maintenance planifiée jusqu'à 14:00 UTC",
+    "maintenanceActivatePlaceholder": "Activez la maintenance pour définir un message",
+    "form": {
+      "brokerRequired": "Le broker est requis",
+      "platformRequired": "La plateforme est requise",
+      "serverRequired": "Le serveur est requis",
+      "accountNumberRequired": "Le numéro de compte est requis",
+      "investorPasswordRequired": "Le mot de passe investisseur est requis"
+    }
+  },
+  "contact": {
+    "socialNetworks": "Nos réseaux sociaux",
+    "sending": "Envoi en cours..."
+  },
+  "forms": {
+    "firstName": "Votre prénom",
+    "lastName": "Votre nom"
+  },
+  "org": {
+    "createOrganization": "Créer une organisation"
+  },
+  "sidebar": {
+    "toggleSidebar": "Basculer la barre latérale",
+    "displaysMobileSidebar": "Affiche la barre latérale mobile."
+  },
+  "table": {
+    "searchColumn": "Rechercher une colonne...",
+    "noColumnsFound": "Aucune colonne trouvée.",
+    "noResultsFound": "Aucun résultat trouvé."
+  },
+  "forms": {
+    "selectOption": "Sélectionner une option"
+  },
+  "overview": {
+    "volumeTrading": "Volume de Trading",
+    "browserDistribution": "Répartition des navigateurs",
+    "totalVisitorsByBrowser": "Total des visiteurs par navigateur pour les 6 derniers mois"
+  },
+  "updates": {
+    "noUpdates": "Aucune mise à jour",
+    "noUpdatesFilter": "Aucune mise à jour ne correspond à ce filtre. Essayez un autre filtre ou revenez plus tard."
+  },
+  "tradingAccount": {
+    "mustBeConnected": "Vous devez être connecté",
+    "pleaseConnect": "Veuillez vous connecter avec Supabase Auth"
+  },
+  "admin": {
+    "cashbackForecast": "Prévision",
+    "cashback30d": "Cashback (30j)",
+    "cashback30dForecast": "Cashback (30j) + prévision",
+    "forecastDescription": "Prévision simple : moyenne des 14 derniers jours.",
+    "withdrawals30d": "Retraits (30j)",
+    "requestsVsCompleted": "Demandes vs retraits complétés.",
+    "requests": "Demandes",
+    "completed": "Complétés",
+    "calculatedFromTrades": "Calculé depuis les trades",
+    "amount": "Montant"
   }
 }

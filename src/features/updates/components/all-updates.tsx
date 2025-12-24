@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { PlatformUpdate } from '@/constants/updates-data';
 import { format, formatDistanceToNow } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { useTranslations } from 'next-intl';
 import {
   IconSparkles,
   IconRocket,
@@ -89,6 +90,7 @@ const getUpdateIconColor = (type: PlatformUpdate['type']) => {
 type FilterType = 'all' | PlatformUpdate['type'];
 
 export function AllUpdates() {
+  const t = useTranslations();
   const [filter, setFilter] = useState<FilterType>('all');
   const [contactDialogOpen, setContactDialogOpen] = useState(false);
   const { updates: platformUpdates, isLoading } = useGitHubUpdates();
@@ -443,10 +445,9 @@ export function AllUpdates() {
               <div className='mb-4 rounded-2xl border border-white/5 bg-white/5 p-4'>
                 <IconBell className='text-muted-foreground h-10 w-10' />
               </div>
-              <h3 className='mb-2 text-lg font-semibold'>Aucune mise à jour</h3>
+              <h3 className='mb-2 text-lg font-semibold'>{t('updates.noUpdates')}</h3>
               <p className='text-muted-foreground max-w-md text-center'>
-                Aucune mise à jour ne correspond à ce filtre. Essayez un autre
-                filtre ou revenez plus tard.
+                {t('updates.noUpdatesFilter')}
               </p>
             </div>
           </div>

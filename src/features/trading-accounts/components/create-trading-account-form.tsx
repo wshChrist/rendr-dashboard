@@ -3,6 +3,7 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { FormInput } from '@/components/forms/form-input';
@@ -16,19 +17,14 @@ import { useRouter } from 'next/navigation';
 import { brokersData } from '@/constants/cashback-data';
 import { RendRBadge } from '@/components/ui/rendr-badge';
 
-const formSchema = z.object({
-  broker: z.string().min(1, 'Le broker est requis'),
-  platform: z.enum(['MT4', 'MT5'], {
-    message: 'La plateforme est requise'
-  }),
-  server: z.string().min(1, 'Le serveur est requis'),
-  login: z.string().min(1, 'Le numéro de compte est requis'),
-  investor_password: z
-    .string()
-    .min(1, 'Le mot de passe investisseur est requis')
-});
-
-type FormValues = z.infer<typeof formSchema>;
+// Le schéma sera créé dans le composant pour accéder aux traductions
+type FormValues = {
+  broker: string;
+  platform: 'MT4' | 'MT5';
+  server: string;
+  login: string;
+  investor_password: string;
+};
 
 // Générer la liste des brokers depuis brokersData avec indication de disponibilité
 const BROKERS = brokersData.map((broker) => {
@@ -53,9 +49,23 @@ interface CreateTradingAccountFormProps {
 export function CreateTradingAccountForm({
   onSuccess
 }: CreateTradingAccountFormProps) {
+  const t = useTranslations();
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const supabase = createSupabaseClient();
+
+  // Créer le schéma de validation avec les traductions
+  const formSchema = useMemo(() => z.object({
+    broker: z.string().min(1, t('brokers.form.brokerRequired')),
+    platform: z.enum(['MT4', 'MT5'], {
+      message: t('brokers.form.platformRequired')
+    }),
+    server: z.string().min(1, t('brokers.form.serverRequired')),
+    login: z.string().min(1, t('brokers.form.accountNumberRequired')),
+    investor_password: z
+      .string()
+      .min(1, t('brokers.form.investorPasswordRequired'))
+  }), [t]);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -92,8 +102,8 @@ export function CreateTradingAccountForm({
 
       if (!session?.access_token) {
         console.error("Pas de token d'accès");
-        toast.error('Vous devez être connecté', {
-          description: 'Veuillez vous connecter avec Supabase Auth'
+        toast.error(t('tradingAccount.mustBeConnected'), {
+          description: t('tradingAccount.pleaseConnect')
         });
         setIsLoading(false);
         return;
@@ -147,7 +157,7 @@ export function CreateTradingAccountForm({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Ajouter un compte de trading</CardTitle>
+        <CardTitle>{t('brokers.addTradingAccount')}</CardTitle>
       </CardHeader>
       <CardContent>
         <Form
@@ -159,8 +169,8 @@ export function CreateTradingAccountForm({
             <FormSelect
               control={form.control}
               name='broker'
-              label='Broker'
-              placeholder='Sélectionner un broker'
+              label={t('nav.brokers')}
+              placeholder={t('common.search')}
               options={BROKERS}
               required
             />
@@ -168,8 +178,8 @@ export function CreateTradingAccountForm({
             <FormSelect
               control={form.control}
               name='platform'
-              label='Plateforme'
-              placeholder='Sélectionner une plateforme'
+              label={t('brokers.form.platform')}
+              placeholder={t('brokers.form.selectPlatform')}
               options={PLATFORMS}
               required
             />
@@ -178,18 +188,18 @@ export function CreateTradingAccountForm({
           <FormInput
             control={form.control}
             name='server'
-            label='Serveur'
-            placeholder='Ex: ICMarkets-Demo'
-            description='Nom exact du serveur MT4/MT5'
+            label={t('brokers.form.server')}
+            placeholder={t('brokers.form.serverPlaceholder')}
+            description={t('brokers.form.serverDescription')}
             required
           />
 
           <FormInput
             control={form.control}
             name='login'
-            label='Numéro de compte'
-            placeholder='Ex: 12345678'
-            description='Le numéro de compte (login) de votre terminal MT4/MT5'
+            label={t('brokers.form.accountNumber')}
+            placeholder={t('brokers.form.accountNumberPlaceholder')}
+            description={t('brokers.accountIdDescription')}
             required
             type='text'
             inputMode='numeric'
@@ -198,9 +208,9 @@ export function CreateTradingAccountForm({
           <FormInput
             control={form.control}
             name='investor_password'
-            label='Mot de passe investisseur'
-            placeholder='••••••••'
-            description='Mot de passe investisseur (lecture seule) - Ne sera jamais affiché'
+            label={t('brokers.form.investorPassword')}
+            placeholder={t('brokers.form.investorPasswordPlaceholder')}
+            description={t('brokers.form.investorPasswordDescription')}
             required
             type='password'
           />

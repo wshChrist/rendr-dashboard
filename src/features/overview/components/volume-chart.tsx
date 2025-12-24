@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
+import { useTranslations } from 'next-intl';
 
 import {
   ChartConfig,
@@ -13,19 +14,20 @@ import { useTradingData } from '@/hooks/use-trading-data';
 import { cn } from '@/lib/utils';
 import { useMemo } from 'react';
 
-const chartConfig = {
-  volume: {
-    label: 'Volume',
-    color: '#c5d13f' // Jaune/vert accent RendR
-  },
-  trades: {
-    label: 'Trades',
-    color: '#c5d13f' // Jaune/vert accent RendR
-  }
-} satisfies ChartConfig;
-
 export function VolumeChart() {
+  const t = useTranslations();
   const { trades, isLoading } = useTradingData();
+  
+  const chartConfig = {
+    volume: {
+      label: t('overview.volumeTrading'),
+      color: '#c5d13f' // Jaune/vert accent RendR
+    },
+    trades: {
+      label: t('brokers.trades'),
+      color: '#c5d13f' // Jaune/vert accent RendR
+    }
+  } satisfies ChartConfig;
   const [activeChart, setActiveChart] =
     React.useState<keyof typeof chartConfig>('volume');
 
@@ -129,7 +131,7 @@ export function VolumeChart() {
       {/* Header */}
       <div className='flex flex-col items-stretch border-b border-white/5 sm:flex-row'>
         <div className='flex flex-1 flex-col justify-center gap-1 p-5 md:p-6'>
-          <h3 className='text-lg font-semibold'>Volume de Trading</h3>
+          <h3 className='text-lg font-semibold'>{t('overview.volumeTrading')}</h3>
           <p className='text-muted-foreground text-sm'>
             <span className='hidden @[540px]/card:block'>
               Statistiques sur les 6 derniers mois

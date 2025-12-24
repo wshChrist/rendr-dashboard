@@ -43,7 +43,7 @@ import {
   IconArrowRight
 } from '@tabler/icons-react';
 import { formatDistanceToNow, format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { fr, enUS } from 'date-fns/locale';
 import Link from 'next/link';
 import { RendRBadge } from '@/components/ui/rendr-badge';
 import { cn } from '@/lib/utils';
@@ -83,37 +83,40 @@ function BrokerLogoDisplay({
   );
 }
 
-const getStatusBadge = (status: string, errorMessage?: string) => {
+const getStatusBadge = (status: string, errorMessage: string | undefined, t: ReturnType<typeof useTranslations>) => {
   switch (status) {
     case 'active':
     case 'connected':
       return (
         <RendRBadge variant='success' dot dotColor='green'>
-          Connecté
+          {t('brokers.status.connected')}
         </RendRBadge>
       );
     case 'pending':
     case 'pending_vps_setup':
       return (
         <RendRBadge variant='accent' dot dotColor='yellow'>
-          Configuration en cours
+          {t('brokers.status.configuring')}
         </RendRBadge>
       );
     case 'error':
       return (
         <RendRBadge variant='warning' dot dotColor='red'>
-          Erreur
+          {t('common.error')}
         </RendRBadge>
       );
     case 'inactive':
     case 'disconnected':
-      return <RendRBadge variant='muted'>Déconnecté</RendRBadge>;
+      return <RendRBadge variant='muted'>{t('brokers.status.disconnected')}</RendRBadge>;
     default:
-      return <RendRBadge variant='outline'>Inconnu</RendRBadge>;
+      return <RendRBadge variant='outline'>{t('common.unknown')}</RendRBadge>;
   }
 };
 
 export function MyBrokers() {
+  const t = useTranslations();
+  const locale = useLocale();
+  const dateLocale = locale === 'en' ? enUS : fr;
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [accounts, setAccounts] = useState<any[]>([]);
   const [tradesByAccount, setTradesByAccount] = useState<Record<string, any[]>>(
@@ -155,7 +158,7 @@ export function MyBrokers() {
       }
     } catch (error) {
       console.error('Erreur lors du chargement des comptes:', error);
-      toast.error('Erreur lors du chargement des comptes', {
+      toast.error(t('brokers.errors.loadError'), {
         description:
           error instanceof Error ? error.message : 'Une erreur est survenue'
       });
@@ -200,11 +203,11 @@ export function MyBrokers() {
       toast.dismiss(loadingToast);
 
       if (!response.ok) {
-        toast.error(data.message || 'Erreur lors de la suppression du compte');
+        toast.error(data.message || t('brokers.errors.deleteError'));
         return;
       }
 
-      toast.success('Compte supprimé avec succès');
+      toast.success(t('brokers.errors.deleteSuccess'));
       setDeleteDialogOpen(false);
       setAccountToDelete(null);
 
@@ -401,22 +404,21 @@ export function MyBrokers() {
               <IconChartBar className='text-muted-foreground h-8 w-8' />
             </div>
             <h3 className='mb-2 text-lg font-semibold'>
-              Aucun broker connecté
+              {t('brokers.noBrokerConnected')}
             </h3>
             <p className='text-muted-foreground mb-4 max-w-md text-center'>
-              Connectez votre premier compte de trading pour commencer à
-              recevoir du cashback
+              {t('brokers.connectFirstAccount')}
             </p>
             <Dialog open={showCreateForm} onOpenChange={setShowCreateForm}>
               <DialogTrigger asChild>
                 <Button>
                   <IconPlus className='mr-2 h-4 w-4' />
-                  Ajouter un compte
+                  {t('brokers.addAccount')}
                 </Button>
               </DialogTrigger>
               <DialogContent className='max-w-2xl'>
                 <DialogHeader>
-                  <DialogTitle>Ajouter un compte de trading</DialogTitle>
+                  <DialogTitle>{t('brokers.addTradingAccount')}</DialogTitle>
                 </DialogHeader>
                 <CreateTradingAccountForm
                   onSuccess={() => {
@@ -460,7 +462,7 @@ export function MyBrokers() {
             +{globalStats.totalCashback.toFixed(2)}€
           </p>
           <p className='text-muted-foreground/60 mt-1 text-sm'>
-            ~{globalStats.avgCashbackPerBroker.toFixed(2)}€ par compte
+            ~{globalStats.avgCashbackPerBroker.toFixed(2)}€ {t('brokers.perAccount')}
           </p>
         </div>
 
@@ -480,12 +482,12 @@ export function MyBrokers() {
             <div className='rounded-xl border border-white/5 bg-white/5 p-2'>
               <IconChartBar className='h-5 w-5' />
             </div>
-            <span className='text-muted-foreground text-sm'>Volume Total</span>
+            <span className='text-muted-foreground text-sm'>{t('stats.totalVolume')}</span>
           </div>
           <p className='stat-number text-3xl font-bold'>
             {globalStats.totalVolume.toFixed(2)}
           </p>
-          <p className='text-muted-foreground/60 mt-1 text-sm'>lots tradés</p>
+          <p className='text-muted-foreground/60 mt-1 text-sm'>{t('brokers.lotsTraded')}</p>
         </div>
 
         {/* Comptes Actifs */}
@@ -504,18 +506,18 @@ export function MyBrokers() {
             <div className='rounded-xl border border-white/5 bg-white/5 p-2'>
               <IconWallet className='h-5 w-5' />
             </div>
-            <span className='text-muted-foreground text-sm'>Comptes</span>
+            <span className='text-muted-foreground text-sm'>{t('brokers.accounts')}</span>
           </div>
           <p className='stat-number text-3xl font-bold'>
             {globalStats.activeBrokers}
           </p>
           <div className='mt-1 flex items-center gap-2'>
             <RendRBadge variant='success' size='sm' dot dotColor='green'>
-              {globalStats.activeBrokers} actifs
+              {globalStats.activeBrokers} {t('brokers.active')}
             </RendRBadge>
             {userBrokersData.length - globalStats.activeBrokers > 0 && (
               <RendRBadge variant='outline' size='sm'>
-                {userBrokersData.length - globalStats.activeBrokers} autres
+                {userBrokersData.length - globalStats.activeBrokers} {t('brokers.others')}
               </RendRBadge>
             )}
           </div>
@@ -537,7 +539,7 @@ export function MyBrokers() {
             <div className='rounded-xl border border-white/5 bg-white/5 p-2'>
               <IconActivity className='h-5 w-5' />
             </div>
-            <span className='text-muted-foreground text-sm'>Trades</span>
+            <span className='text-muted-foreground text-sm'>{t('brokers.trades')}</span>
           </div>
           <p className='stat-number text-3xl font-bold'>
             {globalStats.totalTrades}
@@ -583,6 +585,7 @@ export function MyBrokers() {
                     <p className='text-muted-foreground/60 text-xs'>
                       Connecté{' '}
                       {formatDistanceToNow(new Date(broker.linked_at), {
+                        locale: dateLocale,
                         addSuffix: true,
                         locale: fr
                       })}
@@ -590,7 +593,7 @@ export function MyBrokers() {
                   </div>
                 </div>
               </div>
-              {getStatusBadge(broker.status)}
+              {getStatusBadge(broker.status, undefined, t)}
             </div>
 
             {/* Stats principales */}
@@ -606,7 +609,7 @@ export function MyBrokers() {
                 <div className='mb-2 flex items-center gap-2'>
                   <IconCash className='h-4 w-4 text-[#c5d13f]' />
                   <span className='text-muted-foreground text-xs'>
-                    Cashback Total
+                    {t('stats.totalCashback')}
                   </span>
                 </div>
                 <p className='stat-number text-2xl font-bold text-[#c5d13f]'>
@@ -629,7 +632,7 @@ export function MyBrokers() {
                 <div className='mb-2 flex items-center gap-2'>
                   <IconChartBar className='h-4 w-4' />
                   <span className='text-muted-foreground text-xs'>
-                    Volume Tradé
+                    {t('brokers.volumeTraded')}
                   </span>
                 </div>
                 <p className='stat-number text-2xl font-bold'>
@@ -642,7 +645,7 @@ export function MyBrokers() {
             {/* Métriques détaillées */}
             <div className='mb-6 grid grid-cols-3 gap-3'>
               <div className='text-center'>
-                <p className='text-muted-foreground mb-1 text-xs'>Trades</p>
+                <p className='text-muted-foreground mb-1 text-xs'>{t('brokers.trades')}</p>
                 <p className='stat-number text-lg font-bold'>
                   {broker.tradeCount}
                 </p>
@@ -670,7 +673,7 @@ export function MyBrokers() {
               <div className='mb-6'>
                 <div className='mb-3 flex items-center gap-2'>
                   <IconActivity className='text-muted-foreground h-4 w-4' />
-                  <span className='text-sm font-medium'>Dernière activité</span>
+                  <span className='text-sm font-medium'>{t('brokers.lastActivity')}</span>
                 </div>
                 <div className='space-y-2'>
                   {broker.recentTrades.slice(0, 2).map((trade) => (
@@ -694,7 +697,7 @@ export function MyBrokers() {
                         </RendRBadge>
                         <span className='text-muted-foreground text-xs'>
                           {format(new Date(trade.trade_date), 'dd MMM', {
-                            locale: fr
+                            locale: dateLocale
                           })}
                         </span>
                       </div>
@@ -717,14 +720,13 @@ export function MyBrokers() {
             {broker.status === 'error' && broker.error_message && (
               <div className='mb-4 rounded-lg border border-red-500/20 bg-red-500/10 p-3'>
                 <p className='text-sm font-medium text-red-400'>
-                  Erreur de connexion
+                  {t('brokers.errors.connectionError')}
                 </p>
                 <p className='mt-1 text-xs text-red-300/80'>
                   {broker.error_message}
                 </p>
                 <p className='mt-2 text-xs text-red-300/60'>
-                  Le VPS va réessayer automatiquement. Si le problème persiste,
-                  vérifiez vos identifiants.
+                  {t('brokers.vpsRetry')}
                 </p>
               </div>
             )}
@@ -801,7 +803,7 @@ export function MyBrokers() {
                   <IconPlus className='text-muted-foreground group-hover:text-foreground h-8 w-8 transition-colors' />
                 </div>
                 <h3 className='group-hover:text-foreground mb-2 text-lg font-semibold transition-colors'>
-                  Ajouter un compte
+                  {t('brokers.addAccount')}
                 </h3>
                 <p className='text-muted-foreground mb-6 max-w-xs text-center text-sm transition-colors'>
                   Connectez un nouveau compte de trading MT4/MT5 pour commencer
@@ -812,7 +814,7 @@ export function MyBrokers() {
                   className='group-hover:border-white/20'
                 >
                   <IconPlus className='mr-2 h-4 w-4' />
-                  Ajouter un compte
+                  {t('brokers.addAccount')}
                   <IconArrowRight className='ml-2 h-4 w-4' />
                 </Button>
               </div>
@@ -820,7 +822,7 @@ export function MyBrokers() {
           </DialogTrigger>
           <DialogContent className='max-h-[90vh] max-w-2xl overflow-y-auto'>
             <DialogHeader>
-              <DialogTitle>Ajouter un compte de trading</DialogTitle>
+              <DialogTitle>{t('brokers.addTradingAccount')}</DialogTitle>
             </DialogHeader>
             <CreateTradingAccountForm
               onSuccess={() => {
@@ -836,7 +838,7 @@ export function MyBrokers() {
           <AlertDialogContent>
             <AlertDialogHeader>
               <AlertDialogTitle>
-                Supprimer le compte de trading
+                {t('brokers.deleteTradingAccount')}
               </AlertDialogTitle>
               <AlertDialogDescription>
                 Êtes-vous sûr de vouloir supprimer ce compte de trading ? Cette
@@ -861,7 +863,7 @@ export function MyBrokers() {
                 }}
                 className='bg-red-500 hover:bg-red-600 focus:ring-red-500'
               >
-                Supprimer définitivement
+                {t('brokers.deletePermanently')}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

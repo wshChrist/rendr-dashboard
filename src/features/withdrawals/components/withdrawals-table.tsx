@@ -1,7 +1,8 @@
 'use client';
 
 import * as React from 'react';
-import { withdrawalsColumns } from './withdrawals-table-columns';
+import { useTranslations, useLocale } from 'next-intl';
+import { getWithdrawalsColumns } from './withdrawals-table-columns';
 import type { Withdrawal } from '@/types/cashback';
 import {
   useReactTable,
@@ -43,6 +44,8 @@ interface WithdrawalsTableProps {
 }
 
 export function WithdrawalsTable({ data }: WithdrawalsTableProps) {
+  const t = useTranslations();
+  const locale = useLocale();
   const [sorting, setSorting] = React.useState<SortingState>([
     { id: 'requested_at', desc: true }
   ]);
@@ -51,9 +54,11 @@ export function WithdrawalsTable({ data }: WithdrawalsTableProps) {
   );
   const [globalFilter, setGlobalFilter] = React.useState('');
 
+  const columns = React.useMemo(() => getWithdrawalsColumns(t, locale), [t, locale]);
+
   const table = useReactTable({
     data,
-    columns: withdrawalsColumns,
+    columns,
     state: {
       sorting,
       columnFilters,
@@ -83,7 +88,7 @@ export function WithdrawalsTable({ data }: WithdrawalsTableProps) {
         <div className='relative max-w-sm flex-1'>
           <IconSearch className='text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2' />
           <Input
-            placeholder='Rechercher un retrait...'
+            placeholder={t('pages.withdrawals.searchPlaceholder')}
             value={globalFilter ?? ''}
             onChange={(e) => setGlobalFilter(e.target.value)}
             className='border-white/10 bg-white/5 pl-9 focus:border-white/20'
@@ -91,7 +96,7 @@ export function WithdrawalsTable({ data }: WithdrawalsTableProps) {
         </div>
         <div className='flex items-center gap-2'>
           <span className='text-muted-foreground text-sm'>
-            {table.getFilteredRowModel().rows.length} retrait
+            {table.getFilteredRowModel().rows.length} {t('pages.withdrawals.withdrawal')}
             {table.getFilteredRowModel().rows.length > 1 ? 's' : ''}
           </span>
         </div>
@@ -158,7 +163,7 @@ export function WithdrawalsTable({ data }: WithdrawalsTableProps) {
               ) : (
                 <TableRow className='border-white/5'>
                   <TableCell
-                    colSpan={withdrawalsColumns.length}
+                    colSpan={columns.length}
                     className='h-32 text-center'
                   >
                     <div className='flex flex-col items-center gap-3'>
@@ -166,10 +171,10 @@ export function WithdrawalsTable({ data }: WithdrawalsTableProps) {
                         <IconWallet className='text-muted-foreground h-6 w-6' />
                       </div>
                       <span className='text-muted-foreground'>
-                        Aucun retrait trouvé
+                        {t('pages.withdrawals.noWithdrawalsFound')}
                       </span>
                       <span className='text-muted-foreground/60 text-sm'>
-                        Vos retraits apparaîtront ici une fois effectués
+                        {t('pages.withdrawals.withdrawalsWillAppear')}
                       </span>
                     </div>
                   </TableCell>
@@ -188,7 +193,7 @@ export function WithdrawalsTable({ data }: WithdrawalsTableProps) {
         >
           <div className='flex items-center gap-2'>
             <span className='text-muted-foreground text-sm'>
-              Lignes par page
+              {t('table.pagination.rowsPerPage')}
             </span>
             <Select
               value={`${table.getState().pagination.pageSize}`}
@@ -212,7 +217,7 @@ export function WithdrawalsTable({ data }: WithdrawalsTableProps) {
           </div>
           <div className='flex items-center gap-2'>
             <span className='text-muted-foreground text-sm'>
-              Page {table.getState().pagination.pageIndex + 1} sur{' '}
+              {t('table.pagination.page')} {table.getState().pagination.pageIndex + 1} {t('table.pagination.of')}{' '}
               {table.getPageCount()}
             </span>
             <div className='flex items-center gap-1'>
@@ -241,3 +246,4 @@ export function WithdrawalsTable({ data }: WithdrawalsTableProps) {
     </div>
   );
 }
+

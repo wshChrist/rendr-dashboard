@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { RendRBadge } from '@/components/ui/rendr-badge';
 import {
   IconTrendingUp,
@@ -108,6 +109,7 @@ function StatCardItem({
 }
 
 export function StatsCards() {
+  const t = useTranslations();
   const { transactions, accounts, isLoading } = useTradingData();
 
   // Calculer les stats depuis les données réelles
@@ -158,9 +160,9 @@ export function StatsCards() {
       <StatCardItem
         href='/dashboard/withdrawals'
         icon={<IconWallet className='h-5 w-5' />}
-        label='Solde Disponible'
+        label={t('stats.availableBalance')}
         value={<AnimatedNumber value={stats.available_balance} suffix='€' />}
-        badge={{ text: 'Retirable', variant: 'accent', dot: true }}
+        badge={{ text: t('stats.withdrawable'), variant: 'accent', dot: true }}
         footer={{
           primary:
             stats.pending_cashback > 0 ? (
@@ -169,9 +171,9 @@ export function StatsCards() {
                 attente
               </span>
             ) : (
-              'Aucun cashback en attente'
+              t('stats.noPendingCashback')
             ),
-          secondary: 'Demander un retrait'
+          secondary: t('stats.requestWithdrawal')
         }}
         delay={0}
       />
@@ -180,7 +182,7 @@ export function StatsCards() {
       <StatCardItem
         href='/dashboard/transactions'
         icon={<IconCash className='h-5 w-5' />}
-        label='Cashback Total'
+        label={t('stats.totalCashback')}
         value={
           <AnimatedNumber value={stats.total_cashback_earned} suffix='€' />
         }
@@ -191,11 +193,11 @@ export function StatsCards() {
         footer={{
           primary: (
             <span className='flex items-center gap-2'>
-              Performance en hausse
+              {t('stats.performanceRising')}
               <IconTrendingUp className='animate-pulse-subtle h-4 w-4 text-white/60' />
             </span>
           ),
-          secondary: `Retiré: ${stats.total_withdrawn.toFixed(2)}€`
+          secondary: `${t('stats.withdrawn')}: ${stats.total_withdrawn.toFixed(2)}€`
         }}
         delay={100}
       />
@@ -204,7 +206,7 @@ export function StatsCards() {
       <StatCardItem
         href='/dashboard/transactions'
         icon={<IconChartBar className='h-5 w-5' />}
-        label='Volume Total'
+        label={t('stats.totalVolume')}
         value={
           <AnimatedNumber
             value={stats.total_volume}
@@ -216,10 +218,10 @@ export function StatsCards() {
         footer={{
           primary: (
             <span>
-              <AnimatedInteger value={stats.total_trades} /> trades exécutés
+              <AnimatedInteger value={stats.total_trades} /> {t('stats.tradesExecuted')}
             </span>
           ),
-          secondary: 'Voir les transactions'
+          secondary: t('stats.viewTransactions')
         }}
         delay={200}
       />
@@ -228,12 +230,12 @@ export function StatsCards() {
       <StatCardItem
         href='/dashboard/brokers/my-brokers'
         icon={<IconUsers className='h-5 w-5' />}
-        label='Brokers Actifs'
+        label={t('stats.activeBrokers')}
         value={<AnimatedInteger value={stats.active_brokers} />}
         badge={{ text: 'Connectés', dot: true }}
         footer={{
-          primary: 'Comptes synchronisés',
-          secondary: 'Gérer mes brokers'
+          primary: t('stats.accountsSynced'),
+          secondary: t('stats.manageBrokers')
         }}
         delay={300}
       />

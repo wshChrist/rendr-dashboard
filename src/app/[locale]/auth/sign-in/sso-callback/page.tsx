@@ -4,9 +4,11 @@ import { useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createSupabaseClient } from '@/lib/supabase/client';
 import { toast } from 'sonner';
+import { useTranslations } from 'next-intl';
 import { IconLoader2 } from '@tabler/icons-react';
 
 export default function SSOCallback() {
+  const t = useTranslations();
   const router = useRouter();
   const searchParams = useSearchParams();
   const supabase = createSupabaseClient();
@@ -23,15 +25,15 @@ export default function SSOCallback() {
         if (data.session) {
           const redirect =
             searchParams.get('redirect') || '/dashboard/overview';
-          toast.success('Connexion réussie !');
+          toast.success(t('auth.signIn.signInSuccess'));
           router.push(redirect);
         } else {
-          toast.error('Erreur lors de la connexion');
+          toast.error(t('auth.signIn.signInError'));
           router.push('/auth/sign-in');
         }
       } catch (error: any) {
         console.error('Erreur callback SSO:', error);
-        toast.error(error.message || 'Erreur lors de la connexion');
+        toast.error(error.message || t('auth.signIn.signInError'));
         router.push('/auth/sign-in');
       }
     };
@@ -43,7 +45,7 @@ export default function SSOCallback() {
     <div className='flex min-h-screen items-center justify-center'>
       <div className='text-center'>
         <IconLoader2 className='text-primary mx-auto h-8 w-8 animate-spin' />
-        <p className='text-muted-foreground mt-4'>Connexion en cours...</p>
+        <p className='text-muted-foreground mt-4'>{t('auth.signIn.signingInProgress')}</p>
       </div>
     </div>
   );

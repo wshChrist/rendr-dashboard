@@ -13,6 +13,7 @@ import {
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { createSupabaseClient } from '@/lib/supabase/client';
 import { useRouter } from '@/i18n/routing';
+import { useTranslations } from 'next-intl';
 import type { User } from '@supabase/supabase-js';
 
 export function UserNav() {
@@ -20,6 +21,7 @@ export function UserNav() {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
   const supabase = createSupabaseClient();
+  const t = useTranslations();
 
   useEffect(() => {
     const getUser = async () => {
@@ -98,13 +100,13 @@ export function UserNav() {
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <DropdownMenuItem onClick={() => router.push('/dashboard/profile')}>
-              Profile
+              {t('ui.profile')}
             </DropdownMenuItem>
-            <DropdownMenuItem>Billing</DropdownMenuItem>
-            <DropdownMenuItem>Settings</DropdownMenuItem>
+            <DropdownMenuItem>{t('ui.billing')}</DropdownMenuItem>
+            <DropdownMenuItem>{t('ui.settings')}</DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={handleSignOut}>Sign out</DropdownMenuItem>
+          <DropdownMenuItem onClick={handleSignOut}>{t('ui.signOut')}</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     );

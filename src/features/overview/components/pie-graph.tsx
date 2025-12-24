@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { IconTrendingUp } from '@tabler/icons-react';
 import { Label, Pie, PieChart } from 'recharts';
+import { useTranslations } from 'next-intl';
 
 import {
   Card,
@@ -54,6 +55,7 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function PieGraph() {
+  const t = useTranslations();
   const totalVisitors = React.useMemo(() => {
     return chartData.reduce((acc, curr) => acc + curr.visitors, 0);
   }, []);
@@ -64,9 +66,9 @@ export function PieGraph() {
         <CardTitle>Pie Chart - Donut with Text</CardTitle>
         <CardDescription>
           <span className='hidden @[540px]/card:block'>
-            Total visitors by browser for the last 6 months
+            {t('overview.totalVisitorsByBrowser')}
           </span>
-          <span className='@[540px]/card:hidden'>Browser distribution</span>
+          <span className='@[540px]/card:hidden'>{t('overview.browserDistribution')}</span>
         </CardDescription>
       </CardHeader>
       <CardContent className='px-2 pt-4 sm:px-6 sm:pt-6'>

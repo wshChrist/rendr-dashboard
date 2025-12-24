@@ -10,6 +10,7 @@ import {
   YAxis
 } from 'recharts';
 import { toast } from 'sonner';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import {
   ChartContainer,
@@ -47,6 +48,7 @@ async function fetchOverview(): Promise<AdminOverviewResponse> {
 }
 
 export function AdminOverviewView() {
+  const t = useTranslations();
   const [data, setData] = React.useState<AdminOverviewResponse | null>(null);
   const [isLoading, setIsLoading] = React.useState(true);
 
@@ -93,8 +95,8 @@ export function AdminOverviewView() {
 
   const chartConfig = React.useMemo<ChartConfig>(
     () => ({
-      cashback: { label: 'Cashback', color: '#c5d13f' },
-      cashbackForecast: { label: 'Prévision', color: '#d4db5a' }
+      cashback: { label: t('stats.totalCashback'), color: '#c5d13f' },
+      cashbackForecast: { label: t('admin.cashbackForecast'), color: '#d4db5a' }
     }),
     []
   );
@@ -150,11 +152,11 @@ export function AdminOverviewView() {
             'border border-[#c5d13f]/20'
           )}
         >
-          <p className='text-muted-foreground text-sm'>Cashback (30j)</p>
+          <p className='text-muted-foreground text-sm'>{t('admin.cashback30d')}</p>
           <p className='stat-number text-3xl font-bold text-[#c5d13f]'>
             {data.kpis.cashbackLast30d.toFixed(2)}€
           </p>
-          <p className='text-muted-foreground/70 text-xs'>Calculé depuis les trades</p>
+          <p className='text-muted-foreground/70 text-xs'>{t('admin.calculatedFromTrades')}</p>
         </div>
         <div
           className={cn(
@@ -168,7 +170,7 @@ export function AdminOverviewView() {
             {data.kpis.pendingWithdrawalsCount}
           </p>
           <p className='text-muted-foreground/70 text-xs'>
-            Montant: {data.kpis.pendingWithdrawalsAmount.toFixed(2)}€
+            {t('admin.amount')}: {data.kpis.pendingWithdrawalsAmount.toFixed(2)}€
           </p>
         </div>
       </div>
@@ -183,9 +185,9 @@ export function AdminOverviewView() {
           )}
         >
           <div className='mb-4'>
-            <h3 className='text-lg font-semibold'>Cashback (30j) + prévision</h3>
+            <h3 className='text-lg font-semibold'>{t('admin.cashback30dForecast')}</h3>
             <p className='text-muted-foreground text-sm'>
-              Prévision simple: moyenne des 14 derniers jours.
+              {t('admin.forecastDescription')}
             </p>
           </div>
           <ChartContainer config={chartConfig} className='h-[220px] w-full'>
@@ -236,15 +238,15 @@ export function AdminOverviewView() {
           )}
         >
           <div className='mb-4'>
-            <h3 className='text-lg font-semibold'>Retraits (30j)</h3>
+            <h3 className='text-lg font-semibold'>{t('admin.withdrawals30d')}</h3>
             <p className='text-muted-foreground text-sm'>
-              Demandes vs retraits complétés.
+              {t('admin.requestsVsCompleted')}
             </p>
           </div>
           <ChartContainer
             config={{
-              withdrawalsRequested: { label: 'Demandes', color: '#c5d13f' },
-              withdrawalsCompleted: { label: 'Complétés', color: '#a5b028' }
+              withdrawalsRequested: { label: t('admin.requests'), color: '#c5d13f' },
+              withdrawalsCompleted: { label: t('admin.completed'), color: '#a5b028' }
             }}
             className='h-[220px] w-full'
           >

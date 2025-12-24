@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import { useTranslations } from 'next-intl';
 import {
   Dialog,
   DialogContent,
@@ -81,6 +82,7 @@ const socialLinks = [
 ];
 
 export function ContactDialog({ open, onOpenChange }: ContactDialogProps) {
+  const t = useTranslations();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<ContactFormValues>({
@@ -131,7 +133,7 @@ export function ContactDialog({ open, onOpenChange }: ContactDialogProps) {
         <div className='space-y-6'>
           {/* Réseaux sociaux */}
           <div>
-            <h3 className='mb-3 text-sm font-medium'>Nos réseaux sociaux</h3>
+            <h3 className='mb-3 text-sm font-medium'>{t('contact.socialNetworks')}</h3>
             <div className='flex flex-wrap gap-3'>
               {socialLinks.map((social) => {
                 const Icon = social.icon;
@@ -183,7 +185,7 @@ export function ContactDialog({ open, onOpenChange }: ContactDialogProps) {
                   <FormItem>
                     <FormLabel>Nom</FormLabel>
                     <FormControl>
-                      <Input placeholder='Votre nom' {...field} />
+                      <Input placeholder={t('forms.firstName')} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -215,7 +217,7 @@ export function ContactDialog({ open, onOpenChange }: ContactDialogProps) {
                 <FormItem>
                   <FormLabel>Sujet</FormLabel>
                   <FormControl>
-                    <Input placeholder='Sujet de votre message' {...field} />
+                    <Input placeholder={t('contact.subjectPlaceholder')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -230,7 +232,7 @@ export function ContactDialog({ open, onOpenChange }: ContactDialogProps) {
                   <FormLabel>Message</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder='Votre message...'
+                      placeholder={t('contact.messagePlaceholder')}
                       rows={5}
                       className='resize-none'
                       {...field}
@@ -243,7 +245,7 @@ export function ContactDialog({ open, onOpenChange }: ContactDialogProps) {
 
             <Button type='submit' disabled={isSubmitting} className='w-full'>
               {isSubmitting ? (
-                <>Envoi en cours...</>
+                <>{t('contact.sending')}</>
               ) : (
                 <>
                   <IconSend className='mr-2 h-4 w-4' />

@@ -391,5 +391,180 @@
   },
   "access": {
     "noAccess": "You do not have access to this page."
+  },
+  "ui": {
+    "platform": "Platform",
+    "settings": "Settings",
+    "billing": "Billing",
+    "signOut": "Sign out",
+    "profile": "Profile",
+    "user": "User",
+    "toggleSidebar": "Toggle Sidebar",
+    "displaysMobileSidebar": "Displays the mobile sidebar.",
+    "selectOption": "Select an option",
+    "noResultsFound": "No results found.",
+    "noColumnsFound": "No columns found.",
+    "openMenu": "Open menu",
+    "moveTask": "Move task",
+    "morePages": "More pages",
+    "changeTheme": "Change theme",
+    "deleteFile": "Delete file"
+  },
+  "pages": {
+    "billing": {
+      "title": "Billing & Plans",
+      "description": "Manage your subscription and usage limits",
+      "info": "Billing functionality will be implemented here. You can integrate with Stripe, Paddle, or another payment provider.",
+      "availablePlans": "Available Plans",
+      "choosePlan": "Choose a plan that fits your needs",
+      "comingSoon": "Billing integration coming soon"
+    },
+    "workspaces": {
+      "title": "Workspaces",
+      "description": "Manage your workspaces and switch between them",
+      "info": "Workspace functionality will be implemented here. You can create custom organization/workspace management using Supabase tables.",
+      "createAndManage": "Create and manage your workspaces",
+      "comingSoon": "Workspace management coming soon"
+    },
+    "exclusive": {
+      "message": "Have a wonderful day!"
+    },
+    "dashboard": {
+      "title": "Next Shadcn Dashboard Starter",
+      "description": "Basic dashboard with Next.js and Shadcn"
+    }
+  },
+  "referral": {
+    "shareTitle": "Join RendR",
+    "yourReferrals": "Your referrals",
+    "shareLink": "Share your link",
+    "theySignUp": "They sign up",
+    "youEarn": "You earn"
+  },
+  "profile": {
+    "memberSince": "Member since",
+    "bankTransfer": "Bank Transfer",
+    "lastWithdrawals": "Last withdrawals",
+    "loginEmail": "Login Email",
+    "changePassword": "Change password",
+    "notActivated": "Not activated",
+    "activeSessions": "Active sessions",
+    "deleteAccount": "Delete account",
+    "editProfile": "Edit profile",
+    "currentPassword": "Current password",
+    "newPassword": "New password",
+    "modifyBankAccount": "Modify bank account",
+    "bankName": "Bank name",
+    "paypalEmailAddress": "PayPal email address",
+    "addCryptoAddress": "Add crypto address (USDT)",
+    "currentDevice": "Current device",
+    "deleteAccountWarning": "This will permanently delete:",
+    "deleteAccountWarning1": "Your profile and personal information",
+    "deleteAccountWarning2": "Your transaction history",
+    "deleteAccountWarning3": "Your cashbacks and rewards",
+    "deleteAccountWarning4": "All data associated with your account",
+    "validation": {
+      "firstNameMin": "First name must contain at least 2 characters",
+      "lastNameMin": "Last name must contain at least 2 characters",
+      "invalidEmail": "Invalid email address",
+      "currentPasswordRequired": "Current password is required",
+      "newPasswordMin": "New password must contain at least 8 characters",
+      "confirmPasswordRequired": "Confirmation is required",
+      "passwordsDoNotMatch": "Passwords do not match"
+    },
+    "profileUpdatedSuccess": "Profile updated successfully",
+    "profileUpdateError": "Error updating profile"
+  },
+  "overview": {
+    "recentSales": {
+      "title": "Recent Sales",
+      "description": "You made 265 sales this month."
+    },
+    "volumeTrading": "Trading Volume",
+    "browserDistribution": "Browser distribution",
+    "noUpdates": "No updates"
+  },
+  "auth": {
+    "signIn": {
+      "noAccountYet": "Don't have an account yet? ",
+      "signingInProgress": "Signing in..."
+    },
+    "signUp": {
+      "signingUpProgress": "Signing up..."
+    }
+  },
+  "transactions": {
+    "allTime": "All time",
+    "allStatuses": "All statuses"
+  },
+  "admin": {
+    "pendingWithdrawals": "Pending withdrawals",
+    "maintenancePlaceholder": "Ex: Scheduled maintenance until 14:00 UTC",
+    "maintenanceActivatePlaceholder": "Activate maintenance to set a message",
+    "form": {
+      "brokerRequired": "Broker is required",
+      "platformRequired": "Platform is required",
+      "serverRequired": "Server is required",
+      "accountNumberRequired": "Account number is required",
+      "investorPasswordRequired": "Investor password is required"
+    }
+  },
+  "contact": {
+    "socialNetworks": "Our social networks",
+    "sending": "Sending..."
+  },
+  "forms": {
+    "firstName": "First name",
+    "lastName": "Last name"
+  },
+  "org": {
+    "createOrganization": "Create organization"
+  },
+  "sidebar": {
+    "toggleSidebar": "Toggle Sidebar",
+    "displaysMobileSidebar": "Displays the mobile sidebar."
+  },
+  "table": {
+    "searchColumn": "Search for a column...",
+    "noColumnsFound": "No columns found.",
+    "noResultsFound": "No results found."
+  },
+  "forms": {
+    "selectOption": "Select an option"
+  },
+  "overview": {
+    "volumeTrading": "Trading Volume",
+    "browserDistribution": "Browser distribution",
+    "totalVisitorsByBrowser": "Total visitors by browser for the last 6 months"
+  },
+  "updates": {
+    "noUpdates": "No updates",
+    "noUpdatesFilter": "No updates match this filter. Try another filter or come back later."
+  },
+  "tradingAccount": {
+    "mustBeConnected": "You must be logged in",
+    "pleaseConnect": "Please connect with Supabase Auth"
+  },
+  "admin": {
+    "cashbackForecast": "Forecast",
+    "cashback30d": "Cashback (30d)",
+    "cashback30dForecast": "Cashback (30d) + forecast",
+    "forecastDescription": "Simple forecast: average of the last 14 days.",
+    "withdrawals30d": "Withdrawals (30d)",
+    "requestsVsCompleted": "Requests vs completed withdrawals.",
+    "requests": "Requests",
+    "completed": "Completed",
+    "calculatedFromTrades": "Calculated from trades",
+    "amount": "Amount",
+    "pendingWithdrawals": "Pending withdrawals",
+    "maintenancePlaceholder": "Ex: Scheduled maintenance until 14:00 UTC",
+    "maintenanceActivatePlaceholder": "Activate maintenance to set a message",
+    "form": {
+      "brokerRequired": "Broker is required",
+      "platformRequired": "Platform is required",
+      "serverRequired": "Server is required",
+      "accountNumberRequired": "Account number is required",
+      "investorPasswordRequired": "Investor password is required"
+    }
   }
 }
