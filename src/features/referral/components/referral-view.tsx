@@ -363,7 +363,7 @@ export function ReferralView() {
                     {isCreatingCode ? (
                       <IconLoader2 className='h-4 w-4 animate-spin' />
                     ) : (
-                      {t('referral.createCode')}
+                      t('referral.createCode')
                     )}
                   </Button>
                 </div>

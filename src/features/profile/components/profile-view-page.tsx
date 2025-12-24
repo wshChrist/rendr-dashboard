@@ -10,7 +10,6 @@ import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useTradingData } from '@/hooks/use-trading-data';
-import { useMemo } from 'react';
 import {
   AnimatedNumber,
   AnimatedInteger
