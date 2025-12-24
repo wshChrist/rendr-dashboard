@@ -10,7 +10,7 @@ import { FormInput } from '@/components/forms/form-input';
 import { FormSelect } from '@/components/forms/form-select';
 import { Form } from '@/components/ui/form';
 import { toast } from 'sonner';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { backendClient } from '@/lib/api/backend-client';
 import { createSupabaseClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
