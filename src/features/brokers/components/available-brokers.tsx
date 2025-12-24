@@ -266,6 +266,7 @@ function BrokerCard({
   broker: (typeof brokersData)[0];
   onConnect: (broker: (typeof brokersData)[0]) => void;
 }) {
+  const t = useTranslations();
   const [imageError, setImageError] = useState(false);
 
   return (
