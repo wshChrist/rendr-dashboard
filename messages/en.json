@@ -31,7 +31,30 @@
     "create": "Create",
     "search": "Search",
     "platform": "Platform",
-    "addBroker": "Add a broker"
+    "addBroker": "Add a broker",
+    "all": "All",
+    "allBrokers": "All brokers",
+    "period": "Period",
+    "status": "Status",
+    "unknown": "Unknown",
+    "goBack": "Go back",
+    "backToHome": "Back to Home",
+    "somethingMissing": "Something's missing",
+    "pageNotFound": "Sorry, the page you are looking for doesn't exist or has been moved.",
+    "chooseTheme": "Choose a theme",
+    "resetFilters": "Reset filters",
+    "searchColumn": "Search for a column...",
+    "toggleColumns": "Toggle columns",
+    "continue": "Continue",
+    "theme": "Theme",
+    "default": "Default",
+    "fillAllFields": "Please fill all fields",
+    "loadError": "Error loading data",
+    "processing": "Processing...",
+    "compact": "Compact",
+    "time": "Time",
+    "tradeId": "Trade ID",
+    "filters": "Filters"
   },
   "greetings": {
     "goodMorning": "Good morning",
@@ -61,7 +84,25 @@
     },
     "transactions": {
       "title": "Transaction History",
-      "description": "Every trade earns you money. Here are the details."
+      "description": "Every trade earns you money. Here are the details.",
+      "searchPlaceholder": "Search for a pair, broker...",
+      "columns": {
+        "date": "Date",
+        "broker": "Broker",
+        "pair": "Pair",
+        "volume": "Volume",
+        "commission": "Commission",
+        "cashback": "Cashback",
+        "status": "Status"
+      },
+      "status": {
+        "confirmed": "Confirmed",
+        "pending": "Pending"
+      },
+      "transaction": "transaction",
+      "noTransactionsFound": "No transactions found",
+      "connectBrokerToSeeTrades": "Connect a broker to see your trades here",
+      "lots": "lots"
     },
     "brokers": {
       "title": "Brokers",
@@ -76,11 +117,112 @@
     },
     "withdrawals": {
       "title": "Your Withdrawals",
-      "description": "Withdraw your cashback whenever you want."
+      "description": "Withdraw your cashback whenever you want.",
+      "searchPlaceholder": "Search for a withdrawal...",
+      "columns": {
+        "paymentMethod": "Payment Method",
+        "amount": "Amount",
+        "status": "Status",
+        "requestDate": "Request Date",
+        "processedDate": "Processed Date",
+        "details": "Details",
+        "reference": "Reference"
+      },
+      "status": {
+        "completed": "Completed",
+        "processing": "Processing",
+        "pending": "Pending",
+        "rejected": "Rejected"
+      },
+      "paymentMethods": {
+        "all": "All",
+        "bankTransfer": "Bank Transfer",
+        "paypal": "PayPal",
+        "crypto": "Crypto (USDT)"
+      },
+      "form": {
+        "amount": "Amount",
+        "amountPlaceholder": "50.00",
+        "paymentMethod": "Payment Method",
+        "chooseMethod": "Choose a method"
+      },
+      "availableBalance": "Available Balance",
+      "requestWithdrawal": "Request a withdrawal",
+      "amount": "Amount (€)",
+      "minimum": "Minimum",
+      "maximum": "Maximum",
+      "paymentMethod": "Payment method",
+      "chooseMethod": "Choose a method",
+      "bankTransfer": "Bank transfer",
+      "paypal": "PayPal",
+      "crypto": "Crypto (USDT)",
+      "iban": "IBAN",
+      "paypalEmail": "PayPal Email",
+      "cryptoAddress": "Crypto address (USDT)",
+      "pending": "Pending",
+      "withdrawalsInProgress": "withdrawal(s) in progress",
+      "totalWithdrawn": "Total withdrawn",
+      "completed": "completed withdrawal(s)",
+      "history": "Withdrawal history",
+      "confirmWithdrawal": "Confirm withdrawal",
+      "amountRange": "Amount must be between €20 and €{max}",
+      "errors": {
+        "createError": "Error creating withdrawal"
+      },
+      "success": {
+        "createSuccess": "Withdrawal request created successfully"
+      },
+      "withdrawal": "withdrawal",
+      "noWithdrawalsFound": "No withdrawals found",
+      "withdrawalsWillAppear": "Your withdrawals will appear here once made"
     },
     "referral": {
       "title": "Refer and Earn More",
-      "description": "Invite your trader friends and receive a bonus on each of their trades."
+      "description": "Invite your trader friends and receive a bonus on each of their trades.",
+      "searchPlaceholder": "Search for a referral...",
+      "columns": {
+        "referred": "Referred",
+        "joinDate": "Join Date",
+        "status": "Status",
+        "earnings": "Earnings"
+      },
+      "status": {
+        "active": "Active",
+        "pending": "Pending"
+      },
+      "codePlaceholder": "EXAMPLE-CODE",
+      "createCode": "Create",
+      "yourCode": "Your referral code",
+      "yourLink": "Your referral link",
+      "createYourCode": "Create your referral code",
+      "share": "Share",
+      "copy": "Copy",
+      "totalReferrals": "Total Referrals",
+      "totalEarnings": "Total earnings",
+      "pendingEarnings": "Pending earnings",
+      "commissionRate": "Commission rate",
+      "linkCopied": "Link copied to clipboard",
+      "errors": {
+        "loadError": "Error loading referral data",
+        "loadUsersError": "Error loading referred users",
+        "createError": "Error creating code"
+      },
+      "success": {
+        "codeCreated": "Referral code created successfully!"
+      },
+      "codeRequired": "Code is required",
+      "createCodeFirst": "Please create a referral code first",
+      "active": "active",
+      "pending": "pending",
+      "fromReferrals": "From your referrals' cashback",
+      "averageEarnings": "Average Earnings",
+      "perActiveReferral": "Per active referral",
+      "chooseUniqueCode": "Choose a unique code to start referring your friends",
+      "codeRules": "Code must contain between 3 and 20 characters (uppercase letters, numbers and hyphens only). It must be unique.",
+      "shareLinkDescription": "Share this link to earn {rate}% of your referrals' cashback",
+      "referredUser": "referral",
+      "noReferralsFound": "No referrals found",
+      "shareLinkToStart": "Share your link to start earning!"
     },
     "updates": {
       "title": "What's New?",
@@ -91,7 +233,8 @@
       "description": "Manage your account, preferences and payment methods."
     },
     "admin": {
-      "title": "Administration"
+      "title": "Administration",
+      "searchPlaceholder": "Search for an email, status, amount…"
     },
     "error": {
       "title": "Error",
@@ -102,8 +245,151 @@
       "retry": "Retry"
     }
   },
+  "stats": {
+    "availableBalance": "Available Balance",
+    "totalCashback": "Total Cashback",
+    "totalVolume": "Total Volume",
+    "activeBrokers": "Active Brokers",
+    "withdrawable": "Withdrawable",
+    "noPendingCashback": "No pending cashback",
+    "requestWithdrawal": "Request withdrawal",
+    "performanceRising": "Performance rising",
+    "withdrawn": "Withdrawn",
+    "tradesExecuted": "trades executed",
+    "viewTransactions": "View transactions",
+    "accountsSynced": "Accounts synced",
+    "manageBrokers": "Manage my brokers"
+  },
+  "auth": {
+    "signIn": {
+      "title": "Sign in to your RendR account",
+      "description": "Sign in to your RendR account to access your trading dashboard with cashback.",
+      "email": "Email",
+      "emailPlaceholder": "your@email.com",
+      "password": "Password",
+      "passwordPlaceholder": "••••••••",
+      "continueWithEmail": "Continue With Email",
+      "orContinueWith": "Or continue with",
+      "signInSuccess": "Signed In Successfully!",
+      "signInError": "Error signing in",
+      "sessionError": "Session error. Please try again.",
+      "signInButton": "Sign in",
+      "signingIn": "Signing in...",
+      "forgotPassword": "Forgot password?",
+      "forgotPassword": "Forgot password?"
+    },
+    "signUp": {
+      "title": "Create an account",
+      "firstName": "First Name",
+      "firstNamePlaceholder": "John",
+      "lastName": "Last Name",
+      "lastNamePlaceholder": "Doe",
+      "email": "Email",
+      "emailPlaceholder": "your@email.com",
+      "password": "Password",
+      "passwordPlaceholder": "••••••••",
+      "createAccount": "Create my account",
+      "accountCreated": "Account created successfully!",
+      "signUpError": "Error signing up",
+      "sessionError": "Session error. Please try again.",
+      "creatingAccount": "Creating account...",
+      "alreadyHaveAccount": "Already have an account?"
+    }
+  },
+  "brokers": {
+    "form": {
+      "accountNumber": "Account Number",
+      "accountNumberPlaceholder": "Ex: ICM-123456",
+      "password": "Trading Password",
+      "passwordPlaceholder": "Your trading password",
+      "platform": "Platform",
+      "selectPlatform": "Select a platform",
+      "server": "Server",
+      "serverPlaceholder": "Ex: ICMarkets-Demo",
+      "serverDescription": "Exact MT4/MT5 server name (visible in your terminal)",
+      "investorPassword": "Investor Password",
+      "investorPasswordPlaceholder": "••••••••",
+      "investorPasswordDescription": "Investor password (read-only) - Will never be displayed",
+      "connectBroker": "Connect",
+      "connectDescription": "Enter your trading account connection information to link it to your RendR profile.",
+      "connectAccount": "Connect account",
+      "connecting": "Connecting...",
+      "platformDescription": "Trading platform used",
+      "security": "Security",
+      "securityDescription": "Your credentials are encrypted and used only to synchronize your trades. We never store your password in plain text.",
+      "accountIdDescription": "Your trading account ID at",
+      "passwordDescription": "Your trading account password (used only for synchronization)",
+      "enterCredentials": "Enter your credentials to connect your account",
+      "comingSoon": "Coming soon",
+      "howItWorks": "How does it work?",
+      "step1": "Choose a partner broker below",
+      "step2": "Create an account via our affiliate link",
+      "step4": "Automatically receive cashback on every trade!"
+    },
+    "status": {
+      "connected": "Connected",
+      "configuring": "Configuring",
+      "disconnected": "Disconnected"
+    },
+    "noBrokerConnected": "No broker connected",
+    "connectFirstAccount": "Connect your first trading account to start receiving cashback",
+    "addAccount": "Add an account",
+    "addTradingAccount": "Add a trading account",
+    "perAccount": "per account",
+    "lotsTraded": "lots traded",
+    "accounts": "Accounts",
+    "active": "active",
+    "others": "others",
+    "trades": "Trades",
+    "volumeTraded": "Volume Traded",
+    "lastActivity": "Last activity",
+    "deleteTradingAccount": "Delete trading account",
+    "deletePermanently": "Delete permanently",
+    "errors": {
+      "connectionError": "Error connecting account",
+      "loadError": "Error loading accounts",
+      "deleteError": "Error deleting account",
+      "deleteSuccess": "Account deleted successfully"
+    },
+    "howItWorks": {
+      "title": "How does it work?",
+      "step1": "Choose a partner broker below",
+      "step2": "Create an account via our affiliate link",
+      "step3": "Enter your credentials to connect your account",
+      "step4": "Automatically receive cashback on every trade!"
+    },
+    "vpsRetry": "The VPS will automatically retry. If the problem persists, check your credentials."
+  },
+  "table": {
+    "pagination": {
+      "goToFirst": "Go to first page",
+      "goToPrevious": "Go to previous page",
+      "goToNext": "Go to next page",
+      "goToLast": "Go to last page",
+      "rowsPerPage": "Rows per page",
+      "page": "Page",
+      "of": "of",
+      "selected": "row(s) selected",
+      "total": "row(s) total"
+    }
+  },
+  "modal": {
+    "confirm": {
+      "title": "Are you sure?",
+      "description": "This action is irreversible."
+    }
+  },
+  "contact": {
+    "name": "Your name",
+    "email": "Email",
+    "emailPlaceholder": "your@email.com",
+    "subject": "Subject of your message",
+    "subjectPlaceholder": "Subject of your message",
+    "message": "Your message",
+    "messagePlaceholder": "Your message...",
+    "sendError": "Error sending message"
+  },
   "access": {
     "noAccess": "You do not have access to this page."
   }
 }
-

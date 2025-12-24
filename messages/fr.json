@@ -31,7 +31,30 @@
     "create": "Créer",
     "search": "Rechercher",
     "platform": "Platform",
-    "addBroker": "Ajouter un broker"
+    "addBroker": "Ajouter un broker",
+    "all": "Tous",
+    "allBrokers": "Tous les brokers",
+    "period": "Période",
+    "status": "Statut",
+    "unknown": "Inconnu",
+    "goBack": "Retour",
+    "backToHome": "Retour à l'accueil",
+    "somethingMissing": "Quelque chose manque",
+    "pageNotFound": "Désolé, la page que vous recherchez n'existe pas ou a été déplacée.",
+    "chooseTheme": "Choisir un thème",
+    "resetFilters": "Réinitialiser les filtres",
+    "searchColumn": "Rechercher une colonne...",
+    "toggleColumns": "Basculer les colonnes",
+    "continue": "Continuer",
+    "theme": "Thème",
+    "default": "Par défaut",
+    "fillAllFields": "Veuillez remplir tous les champs",
+    "loadError": "Erreur lors du chargement des données",
+    "processing": "Traitement...",
+    "compact": "Compact",
+    "time": "Heure",
+    "tradeId": "ID Trade",
+    "filters": "Filtres"
   },
   "greetings": {
     "goodMorning": "Bonjour",
@@ -61,7 +84,25 @@
     },
     "transactions": {
       "title": "Historique des transactions",
-      "description": "Chaque trade vous rapporte. Voici le détail."
+      "description": "Chaque trade vous rapporte. Voici le détail.",
+      "searchPlaceholder": "Rechercher une paire, broker...",
+      "columns": {
+        "date": "Date",
+        "broker": "Broker",
+        "pair": "Paire",
+        "volume": "Volume",
+        "commission": "Commission",
+        "cashback": "Cashback",
+        "status": "Statut"
+      },
+      "status": {
+        "confirmed": "Confirmé",
+        "pending": "En attente"
+      },
+      "transaction": "transaction",
+      "noTransactionsFound": "Aucune transaction trouvée",
+      "connectBrokerToSeeTrades": "Connectez un broker pour voir vos trades ici",
+      "lots": "lots"
     },
     "brokers": {
       "title": "Brokers",
@@ -76,11 +117,112 @@
     },
     "withdrawals": {
       "title": "Vos retraits",
-      "description": "Récupérez votre cashback quand vous le souhaitez."
+      "description": "Récupérez votre cashback quand vous le souhaitez.",
+      "searchPlaceholder": "Rechercher un retrait...",
+      "columns": {
+        "paymentMethod": "Méthode de paiement",
+        "amount": "Montant",
+        "status": "Statut",
+        "requestDate": "Date de demande",
+        "processedDate": "Date de traitement",
+        "details": "Détails",
+        "reference": "Référence"
+      },
+      "status": {
+        "completed": "Complété",
+        "processing": "En cours",
+        "pending": "En attente",
+        "rejected": "Rejeté"
+      },
+      "paymentMethods": {
+        "all": "Toutes",
+        "bankTransfer": "Virement bancaire",
+        "paypal": "PayPal",
+        "crypto": "Crypto (USDT)"
+      },
+      "form": {
+        "amount": "Montant",
+        "amountPlaceholder": "50.00",
+        "paymentMethod": "Méthode de paiement",
+        "chooseMethod": "Choisir une méthode"
+      },
+      "availableBalance": "Solde Disponible",
+      "requestWithdrawal": "Demander un retrait",
+      "amount": "Montant (€)",
+      "minimum": "Minimum",
+      "maximum": "Maximum",
+      "paymentMethod": "Méthode de paiement",
+      "chooseMethod": "Choisir une méthode",
+      "bankTransfer": "Virement bancaire",
+      "paypal": "PayPal",
+      "crypto": "Crypto (USDT)",
+      "iban": "IBAN",
+      "paypalEmail": "Email PayPal",
+      "cryptoAddress": "Adresse crypto (USDT)",
+      "pending": "En attente",
+      "withdrawalsInProgress": "retrait(s) en cours",
+      "totalWithdrawn": "Total retiré",
+      "completed": "retrait(s) complété(s)",
+      "history": "Historique des retraits",
+      "confirmWithdrawal": "Confirmer le retrait",
+      "amountRange": "Le montant doit être entre 20€ et {max}€",
+      "errors": {
+        "createError": "Erreur lors de la création du retrait"
+      },
+      "success": {
+        "createSuccess": "Demande de retrait créée avec succès"
+      },
+      "withdrawal": "retrait",
+      "noWithdrawalsFound": "Aucun retrait trouvé",
+      "withdrawalsWillAppear": "Vos retraits apparaîtront ici une fois effectués"
     },
     "referral": {
       "title": "Parrainez, gagnez plus",
-      "description": "Invitez vos amis traders et recevez un bonus sur chacun de leurs trades."
+      "description": "Invitez vos amis traders et recevez un bonus sur chacun de leurs trades.",
+      "searchPlaceholder": "Rechercher un filleul...",
+      "columns": {
+        "referred": "Filleul",
+        "joinDate": "Date d'inscription",
+        "status": "Statut",
+        "earnings": "Gains"
+      },
+      "status": {
+        "active": "Actif",
+        "pending": "En attente"
+      },
+      "codePlaceholder": "EXEMPLE-CODE",
+      "createCode": "Créer",
+      "yourCode": "Votre code de parrainage",
+      "yourLink": "Votre lien de parrainage",
+      "createYourCode": "Créer votre code de parrainage",
+      "share": "Partager",
+      "copy": "Copier",
+      "totalReferrals": "Filleuls Total",
+      "totalEarnings": "Gains totaux",
+      "pendingEarnings": "Gains en attente",
+      "commissionRate": "Taux de commission",
+      "linkCopied": "Lien copié dans le presse-papier",
+      "errors": {
+        "loadError": "Erreur lors du chargement des données de parrainage",
+        "loadUsersError": "Erreur lors du chargement des filleuls",
+        "createError": "Erreur lors de la création du code"
+      },
+      "success": {
+        "codeCreated": "Code de parrainage créé avec succès !"
+      },
+      "codeRequired": "Le code est requis",
+      "createCodeFirst": "Veuillez d'abord créer un code de parrainage",
+      "active": "actifs",
+      "pending": "en attente",
+      "fromReferrals": "Du cashback de vos filleuls",
+      "averageEarnings": "Gain Moyen",
+      "perActiveReferral": "Par filleul actif",
+      "chooseUniqueCode": "Choisissez un code unique pour commencer à parrainer vos amis",
+      "codeRules": "Le code doit contenir entre 3 et 20 caractères (lettres majuscules, chiffres et tirets uniquement). Il doit être unique.",
+      "shareLinkDescription": "Partagez ce lien pour gagner {rate}% du cashback de vos filleuls",
+      "referredUser": "filleul",
+      "noReferralsFound": "Aucun filleul trouvé",
+      "shareLinkToStart": "Partagez votre lien pour commencer à gagner !"
     },
     "updates": {
       "title": "Quoi de neuf ?",
@@ -91,7 +233,8 @@
       "description": "Gérez votre compte, vos préférences et vos méthodes de paiement."
     },
     "admin": {
-      "title": "Administration"
+      "title": "Administration",
+      "searchPlaceholder": "Rechercher un email, statut, montant…"
     },
     "error": {
       "title": "Erreur",
@@ -102,8 +245,149 @@
       "retry": "Réessayer"
     }
   },
+  "stats": {
+    "availableBalance": "Solde Disponible",
+    "totalCashback": "Cashback Total",
+    "totalVolume": "Volume Total",
+    "activeBrokers": "Brokers Actifs",
+    "withdrawable": "Retirable",
+    "noPendingCashback": "Aucun cashback en attente",
+    "requestWithdrawal": "Demander un retrait",
+    "performanceRising": "Performance en hausse",
+    "withdrawn": "Retiré",
+    "tradesExecuted": "trades exécutés",
+    "viewTransactions": "Voir les transactions",
+    "accountsSynced": "Comptes synchronisés",
+    "manageBrokers": "Gérer mes brokers"
+  },
+  "auth": {
+    "signIn": {
+      "title": "Connectez-vous à votre compte RendR",
+      "description": "Connectez-vous à votre compte RendR pour accéder à votre dashboard de trading avec cashback.",
+      "email": "Email",
+      "emailPlaceholder": "votre@email.com",
+      "password": "Mot de passe",
+      "passwordPlaceholder": "••••••••",
+      "continueWithEmail": "Continuer avec l'email",
+      "orContinueWith": "Ou continuer avec",
+      "signInSuccess": "Connexion réussie !",
+      "signInError": "Erreur lors de la connexion",
+      "signInButton": "Se connecter",
+      "signingIn": "Connexion en cours...",
+      "forgotPassword": "Mot de passe oublié ?"
+    },
+    "signUp": {
+      "title": "Créer un compte",
+      "firstName": "Prénom",
+      "firstNamePlaceholder": "Jean",
+      "lastName": "Nom",
+      "lastNamePlaceholder": "Dupont",
+      "email": "Email",
+      "emailPlaceholder": "votre@email.com",
+      "password": "Mot de passe",
+      "passwordPlaceholder": "••••••••",
+      "createAccount": "Créer mon compte",
+      "accountCreated": "Compte créé avec succès !",
+      "signUpError": "Erreur lors de l'inscription",
+      "sessionError": "Erreur de session. Veuillez réessayer.",
+      "creatingAccount": "Création en cours...",
+      "alreadyHaveAccount": "Déjà un compte ?"
+    }
+  },
+  "brokers": {
+    "form": {
+      "accountNumber": "Numéro de compte",
+      "accountNumberPlaceholder": "Ex: ICM-123456",
+      "password": "Mot de passe de trading",
+      "passwordPlaceholder": "Votre mot de passe de trading",
+      "platform": "Plateforme",
+      "selectPlatform": "Sélectionner une plateforme",
+      "server": "Serveur",
+      "serverPlaceholder": "Ex: ICMarkets-Demo",
+      "serverDescription": "Nom exact du serveur MT4/MT5",
+      "investorPassword": "Mot de passe investisseur",
+      "investorPasswordPlaceholder": "••••••••",
+      "investorPasswordDescription": "Mot de passe investisseur (lecture seule) - Ne sera jamais affiché",
+      "connectBroker": "Connecter",
+      "connectDescription": "Entrez les informations de connexion de votre compte de trading pour le lier à votre profil RendR.",
+      "connectAccount": "Connecter le compte",
+      "connecting": "Connexion...",
+      "platformDescription": "Plateforme de trading utilisée",
+      "security": "Sécurité",
+      "securityDescription": "Vos identifiants sont cryptés et utilisés uniquement pour synchroniser vos trades. Nous ne stockons jamais votre mot de passe en clair.",
+      "accountIdDescription": "Votre identifiant de compte de trading chez",
+      "passwordDescription": "Votre mot de passe de compte de trading (utilisé uniquement pour la synchronisation)",
+      "enterCredentials": "Entrez vos identifiants pour connecter votre compte",
+      "comingSoon": "Bientôt disponible",
+      "howItWorks": "Comment ça marche ?",
+      "step1": "Choisissez un broker partenaire ci-dessous",
+      "step2": "Créez un compte via notre lien d'affiliation",
+      "step4": "Recevez automatiquement du cashback sur chaque trade !"
+    },
+    "status": {
+      "connected": "Connecté",
+      "configuring": "Configuration en cours",
+      "disconnected": "Déconnecté"
+    },
+    "noBrokerConnected": "Aucun broker connecté",
+    "connectFirstAccount": "Connectez votre premier compte de trading pour commencer à recevoir du cashback",
+    "addAccount": "Ajouter un compte",
+    "addTradingAccount": "Ajouter un compte de trading",
+    "perAccount": "par compte",
+    "lotsTraded": "lots tradés",
+    "accounts": "Comptes",
+    "active": "actifs",
+    "others": "autres",
+    "trades": "Trades",
+    "volumeTraded": "Volume Tradé",
+    "lastActivity": "Dernière activité",
+    "deleteTradingAccount": "Supprimer le compte de trading",
+    "deletePermanently": "Supprimer définitivement",
+    "errors": {
+      "connectionError": "Erreur lors de la connexion du compte",
+      "loadError": "Erreur lors du chargement des comptes",
+      "deleteError": "Erreur lors de la suppression du compte",
+      "deleteSuccess": "Compte supprimé avec succès"
+    },
+    "howItWorks": {
+      "title": "Comment ça marche ?",
+      "step1": "Choisissez un broker partenaire ci-dessous",
+      "step2": "Créez un compte via notre lien d'affiliation",
+      "step3": "Entrez vos identifiants pour connecter votre compte",
+      "step4": "Recevez automatiquement du cashback sur chaque trade !"
+    },
+    "vpsRetry": "Le VPS va réessayer automatiquement. Si le problème persiste, vérifiez vos identifiants."
+  },
+  "table": {
+    "pagination": {
+      "goToFirst": "Aller à la première page",
+      "goToPrevious": "Aller à la page précédente",
+      "goToNext": "Aller à la page suivante",
+      "goToLast": "Aller à la dernière page",
+      "rowsPerPage": "Lignes par page",
+      "page": "Page",
+      "of": "sur",
+      "selected": "ligne(s) sélectionnée(s)",
+      "total": "ligne(s) au total"
+    }
+  },
+  "modal": {
+    "confirm": {
+      "title": "Êtes-vous sûr ?",
+      "description": "Cette action est irréversible."
+    }
+  },
+  "contact": {
+    "name": "Votre nom",
+    "email": "Email",
+    "emailPlaceholder": "votre@email.com",
+    "subject": "Sujet de votre message",
+    "subjectPlaceholder": "Sujet de votre message",
+    "message": "Votre message",
+    "messagePlaceholder": "Votre message...",
+    "sendError": "Erreur lors de l'envoi"
+  },
   "access": {
     "noAccess": "Vous n'avez pas accès à cette page."
   }
 }
-
