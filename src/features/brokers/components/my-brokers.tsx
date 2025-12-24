@@ -587,8 +587,7 @@ export function MyBrokers() {
                       Connecté{' '}
                       {formatDistanceToNow(new Date(broker.linked_at), {
                         locale: dateLocale,
-                        addSuffix: true,
-                        locale: fr
+                        addSuffix: true
                       })}
                     </p>
                   </div>
