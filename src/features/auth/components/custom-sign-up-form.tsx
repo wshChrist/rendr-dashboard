@@ -27,16 +27,13 @@ import {
 } from '@tabler/icons-react';
 import Link from 'next/link';
 
-const signUpSchema = z.object({
-  email: z.string().email('Adresse email invalide'),
-  password: z
-    .string()
-    .min(8, 'Le mot de passe doit contenir au moins 8 caractères'),
-  firstName: z.string().min(1, 'Le prénom est requis'),
-  lastName: z.string().min(1, 'Le nom est requis')
-});
-
-type SignUpFormValues = z.infer<typeof signUpSchema>;
+const getSignUpSchema = (t: any) =>
+  z.object({
+    email: z.string().email(t('auth.signUp.validation.invalidEmail')),
+    password: z.string().min(8, t('auth.signUp.validation.passwordMin')),
+    firstName: z.string().min(1, t('auth.signUp.validation.firstNameRequired')),
+    lastName: z.string().min(1, t('auth.signUp.validation.lastNameRequired'))
+  });
 
 export function CustomSignUpForm() {
   const t = useTranslations();
@@ -44,6 +41,9 @@ export function CustomSignUpForm() {
   const supabase = createSupabaseClient();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  const signUpSchema = getSignUpSchema(t);
+  type SignUpFormValues = z.infer<typeof signUpSchema>;
 
   const form = useForm<SignUpFormValues>({
     resolver: zodResolver(signUpSchema),
@@ -100,8 +100,7 @@ export function CustomSignUpForm() {
         }, 500);
       }
     } catch (err: any) {
-      const errorMessage =
-        err.message || 'Une erreur est survenue lors de la création du compte';
+      const errorMessage = err.message || t('auth.signUp.accountCreationError');
       toast.error(errorMessage);
       form.setError('root', { message: errorMessage });
     } finally {
@@ -236,7 +235,9 @@ export function CustomSignUpForm() {
       </Button>
 
       <div className='text-center text-sm'>
-        <span className='text-muted-foreground'>{t('auth.signUp.alreadyHaveAccount')} </span>
+        <span className='text-muted-foreground'>
+          {t('auth.signUp.alreadyHaveAccount')}{' '}
+        </span>
         <Link
           href='/auth/sign-in'
           className='text-primary hover:text-primary/80 font-medium underline-offset-4 transition-colors hover:underline'
@@ -248,4 +249,3 @@ export function CustomSignUpForm() {
     </Form>
   );
 }
-

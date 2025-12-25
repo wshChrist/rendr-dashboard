@@ -285,7 +285,9 @@
   "auth": {
     "signIn": {
       "title": "Sign in to your RendR account",
+      "pageTitle": "Sign in",
       "description": "Sign in to your RendR account to access your trading dashboard with cashback.",
+      "pageDescription": "Sign in to your account to continue",
       "email": "Email",
       "emailPlaceholder": "your@email.com",
       "password": "Password",
@@ -299,10 +301,18 @@
       "signingIn": "Signing in...",
       "forgotPassword": "Forgot password?",
       "noAccountYet": "Don't have an account yet? ",
-      "signingInProgress": "Signing in..."
+      "signingInProgress": "Signing in...",
+      "createAccount": "Create an account",
+      "connectionError": "An error occurred while signing in",
+      "validation": {
+        "invalidEmail": "Invalid email address",
+        "passwordMin": "Password must contain at least 8 characters"
+      }
     },
     "signUp": {
       "title": "Create an account",
+      "pageTitle": "Create an account",
+      "pageDescription": "Create your account to start trading with cashback",
       "firstName": "First Name",
       "firstNamePlaceholder": "John",
       "lastName": "Last Name",
@@ -317,7 +327,57 @@
       "sessionError": "Session error. Please try again.",
       "creatingAccount": "Creating account...",
       "alreadyHaveAccount": "Already have an account?",
-      "signingUpProgress": "Signing up..."
+      "signingUpProgress": "Signing up...",
+      "accountCreationError": "An error occurred while creating the account",
+      "validation": {
+        "invalidEmail": "Invalid email address",
+        "passwordMin": "Password must contain at least 8 characters",
+        "firstNameRequired": "First name is required",
+        "lastNameRequired": "Last name is required"
+      }
+    },
+    "welcome": {
+      "title": "Welcome to RendR",
+      "description": "The trading platform with cashback that rewards every transaction. Maximize your gains while trading.",
+      "joinTitle": "Join RendR",
+      "joinDescription": "Create your account and start earning cashback on every transaction. Join a community of traders who maximize their gains.",
+      "features": {
+        "cashback": {
+          "title": "Cashback on every trade",
+          "description": "Receive a percentage of cashback on all your successful transactions."
+        },
+        "analytics": {
+          "title": "Advanced Analytics",
+          "description": "Track your performance in real-time with detailed dashboards."
+        },
+        "security": {
+          "title": "Maximum Security",
+          "description": "Your data and transactions are protected by the best security practices."
+        }
+      },
+      "footer": "Join thousands of traders who trust RendR"
+    },
+    "terms": {
+      "text": "By continuing, you accept our",
+      "termsOfService": "Terms of Service",
+      "and": "and our",
+      "privacyPolicy": "Privacy Policy",
+      "period": "."
+    },
+    "oauth": {
+      "google": {
+        "continueWith": "Continue with Google",
+        "signingIn": "Signing in...",
+        "signingUp": "Signing up...",
+        "error": "An error occurred while signing in with Google"
+      },
+      "github": {
+        "continueWith": "Continue with GitHub",
+        "signingIn": "Signing in...",
+        "signingUp": "Signing up...",
+        "error": "An error occurred while signing in with GitHub",
+        "signUpError": "An error occurred while signing up with GitHub"
+      }
     }
   },
   "brokers": {
@@ -416,7 +476,19 @@
     "messagePlaceholder": "Your message...",
     "sendError": "Error sending message",
     "socialNetworks": "Our social networks",
-    "sending": "Sending..."
+    "sending": "Sending...",
+    "contactUs": "Contact us",
+    "sendMessageOrFollow": "Send us a message or follow us on our social networks",
+    "orSendMessage": "Or send us a message",
+    "sendMessage": "Send message",
+    "success": {
+      "title": "Message sent successfully!",
+      "description": "We will get back to you as soon as possible."
+    },
+    "error": {
+      "title": "Error sending",
+      "description": "Please try again later."
+    }
   },
   "access": {
     "noAccess": "You do not have access to this page."
@@ -478,7 +550,24 @@
       "passwordsDoNotMatch": "Passwords do not match"
     },
     "profileUpdatedSuccess": "Profile updated successfully",
-    "profileUpdateError": "Error updating profile"
+    "profileUpdateError": "Error updating profile",
+    "bankInfoUpdated": "Bank information updated",
+    "notifications": {
+      "title": "Notification Preferences",
+      "description": "Choose how you want to be notified",
+      "emailNotifications": "Email Notifications",
+      "emailDescription": "Receive an email for each new cashback credited"
+    },
+    "personalInfo": {
+      "title": "Update your personal information"
+    },
+    "password": {
+      "title": "Enter your current password and choose a new password",
+      "confirm": "Confirm the new password"
+    },
+    "bankInfo": {
+      "title": "Update your bank transfer information"
+    }
   },
   "overview": {
     "recentSales": {
@@ -492,7 +581,15 @@
   },
   "transactions": {
     "allTime": "All time",
-    "allStatuses": "All statuses"
+    "allStatuses": "All statuses",
+    "status": {
+      "confirmed": "Confirmed",
+      "pending": "Pending"
+    },
+    "stats": {
+      "confirmed": "confirmed",
+      "pending": "pending"
+    }
   },
   "admin": {
     "pendingWithdrawals": "Pending withdrawals",
@@ -514,6 +611,12 @@
       "serverRequired": "Server is required",
       "accountNumberRequired": "Account number is required",
       "investorPasswordRequired": "Investor password is required"
+    },
+    "withdrawals": {
+      "pending": "Pending"
+    },
+    "overview": {
+      "pendingWithdrawals": "Pending withdrawals"
     }
   },
   "forms": {
@@ -530,13 +633,7 @@
   },
   "updates": {
     "noUpdates": "No updates",
-    "noUpdatesFilter": "No updates match this filter. Try another filter or come back later."
-  },
-  "tradingAccount": {
-    "mustBeConnected": "You must be logged in",
-    "pleaseConnect": "Please connect with Supabase Auth"
-  },
-  "updates": {
+    "noUpdatesFilter": "No updates match this filter. Try another filter or come back later.",
     "types": {
       "feature": "Feature",
       "improvement": "Improvement",
@@ -573,61 +670,8 @@
     "seeAll": "See all",
     "latestUpdates": "Latest platform updates"
   },
-  "contact": {
-    "contactUs": "Contact us",
-    "sendMessageOrFollow": "Send us a message or follow us on our social networks",
-    "orSendMessage": "Or send us a message",
-    "name": "Name",
-    "email": "Email",
-    "subject": "Subject",
-    "message": "Message",
-    "sendMessage": "Send message",
-    "success": {
-      "title": "Message sent successfully!",
-      "description": "We will get back to you as soon as possible."
-    },
-    "error": {
-      "title": "Error sending",
-      "description": "Please try again later."
-    }
+  "tradingAccount": {
+    "mustBeConnected": "You must be logged in",
+    "pleaseConnect": "Please connect with Supabase Auth"
   },
-  "profile": {
-    "bankInfoUpdated": "Bank information updated"
-  },
-  "transactions": {
-    "status": {
-      "confirmed": "Confirmed",
-      "pending": "Pending"
-    },
-    "stats": {
-      "confirmed": "confirmed",
-      "pending": "pending"
-    }
-  },
-  "profile": {
-    "notifications": {
-      "title": "Notification Preferences",
-      "description": "Choose how you want to be notified",
-      "emailNotifications": "Email Notifications",
-      "emailDescription": "Receive an email for each new cashback credited"
-    },
-    "personalInfo": {
-      "title": "Update your personal information"
-    },
-    "password": {
-      "title": "Enter your current password and choose a new password",
-      "confirm": "Confirm the new password"
-    },
-    "bankInfo": {
-      "title": "Update your bank transfer information"
-    }
-  },
-  "admin": {
-    "withdrawals": {
-      "pending": "Pending"
-    },
-    "overview": {
-      "pendingWithdrawals": "Pending withdrawals"
-    }
-  }
 }

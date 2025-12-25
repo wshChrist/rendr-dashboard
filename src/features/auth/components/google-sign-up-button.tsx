@@ -7,8 +7,10 @@ import { useState } from 'react';
 import { IconLoader2 } from '@tabler/icons-react';
 import { toast } from 'sonner';
 import { createSupabaseClient } from '@/lib/supabase/client';
+import { useTranslations } from 'next-intl';
 
 export default function GoogleSignUpButton() {
+  const t = useTranslations();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl') || '/dashboard/overview';
   const [isLoading, setIsLoading] = useState(false);
@@ -30,9 +32,7 @@ export default function GoogleSignUpButton() {
       // La redirection se fait automatiquement
     } catch (error: any) {
       console.error("Erreur lors de l'inscription Google:", error);
-      const errorMessage =
-        error?.message ||
-        "Une erreur est survenue lors de l'inscription avec Google";
+      const errorMessage = error?.message || t('auth.oauth.google.signUpError');
       toast.error(errorMessage);
       setIsLoading(false);
     }
@@ -49,12 +49,12 @@ export default function GoogleSignUpButton() {
       {isLoading ? (
         <>
           <IconLoader2 className='mr-2 h-4 w-4 animate-spin' />
-          Inscription...
+          {t('auth.oauth.google.signingUp')}
         </>
       ) : (
         <>
           <Icons.google className='mr-2 h-4 w-4' />
-          Continuer avec Google
+          {t('auth.oauth.google.continueWith')}
         </>
       )}
     </Button>

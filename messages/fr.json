@@ -263,7 +263,9 @@
   "auth": {
     "signIn": {
       "title": "Connectez-vous à votre compte RendR",
+      "pageTitle": "Connexion",
       "description": "Connectez-vous à votre compte RendR pour accéder à votre dashboard de trading avec cashback.",
+      "pageDescription": "Connectez-vous à votre compte pour continuer",
       "email": "Email",
       "emailPlaceholder": "votre@email.com",
       "password": "Mot de passe",
@@ -275,10 +277,20 @@
       "sessionError": "Erreur de session. Veuillez réessayer.",
       "signInButton": "Se connecter",
       "signingIn": "Connexion en cours...",
-      "forgotPassword": "Mot de passe oublié ?"
+      "forgotPassword": "Mot de passe oublié ?",
+      "noAccountYet": "Pas encore de compte ? ",
+      "signingInProgress": "Connexion en cours...",
+      "createAccount": "Créer un compte",
+      "connectionError": "Une erreur est survenue lors de la connexion",
+      "validation": {
+        "invalidEmail": "Adresse email invalide",
+        "passwordMin": "Le mot de passe doit contenir au moins 8 caractères"
+      }
     },
     "signUp": {
       "title": "Créer un compte",
+      "pageTitle": "Créer un compte",
+      "pageDescription": "Créez votre compte pour commencer à trader avec cashback",
       "firstName": "Prénom",
       "firstNamePlaceholder": "Jean",
       "lastName": "Nom",
@@ -292,7 +304,59 @@
       "signUpError": "Erreur lors de l'inscription",
       "sessionError": "Erreur de session. Veuillez réessayer.",
       "creatingAccount": "Création en cours...",
-      "alreadyHaveAccount": "Déjà un compte ?"
+      "alreadyHaveAccount": "Déjà un compte ?",
+      "signingUpProgress": "Inscription en cours...",
+      "accountCreationError": "Une erreur est survenue lors de la création du compte",
+      "validation": {
+        "invalidEmail": "Adresse email invalide",
+        "passwordMin": "Le mot de passe doit contenir au moins 8 caractères",
+        "firstNameRequired": "Le prénom est requis",
+        "lastNameRequired": "Le nom est requis"
+      }
+    },
+    "welcome": {
+      "title": "Bienvenue sur RendR",
+      "description": "La plateforme de trading avec cashback qui récompense chaque transaction. Maximisez vos gains tout en tradant.",
+      "joinTitle": "Rejoignez RendR",
+      "joinDescription": "Créez votre compte et commencez à gagner du cashback sur chaque transaction. Rejoignez une communauté de traders qui maximisent leurs gains.",
+      "features": {
+        "cashback": {
+          "title": "Cashback sur chaque trade",
+          "description": "Recevez un pourcentage de cashback sur toutes vos transactions réussies."
+        },
+        "analytics": {
+          "title": "Analytics avancés",
+          "description": "Suivez vos performances en temps réel avec des tableaux de bord détaillés."
+        },
+        "security": {
+          "title": "Sécurité maximale",
+          "description": "Vos données et transactions sont protégées par les meilleures pratiques de sécurité."
+        }
+      },
+      "footer": "Rejoignez des milliers de traders qui font confiance à RendR"
+    },
+    "terms": {
+      "text": "En continuant, vous acceptez nos",
+      "termsOfService": "Conditions d'utilisation",
+      "and": "et notre",
+      "privacyPolicy": "Politique de confidentialité",
+      "period": "."
+    },
+    "oauth": {
+      "google": {
+        "continueWith": "Continuer avec Google",
+        "signingIn": "Connexion...",
+        "signingUp": "Inscription...",
+        "error": "Une erreur est survenue lors de la connexion avec Google",
+        "signUpError": "Une erreur est survenue lors de l'inscription avec Google"
+      },
+      "github": {
+        "continueWith": "Continuer avec GitHub",
+        "signingIn": "Connexion...",
+        "signingUp": "Inscription...",
+        "error": "Une erreur est survenue lors de la connexion avec GitHub",
+        "signUpError": "Une erreur est survenue lors de l'inscription avec GitHub"
+      }
     }
   },
   "brokers": {

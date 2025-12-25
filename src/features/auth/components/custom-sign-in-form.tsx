@@ -27,14 +27,11 @@ import {
 } from '@tabler/icons-react';
 import Link from 'next/link';
 
-const signInSchema = z.object({
-  email: z.string().email('Adresse email invalide'),
-  password: z
-    .string()
-    .min(8, 'Le mot de passe doit contenir au moins 8 caractères')
-});
-
-type SignInFormValues = z.infer<typeof signInSchema>;
+const getSignInSchema = (t: any) =>
+  z.object({
+    email: z.string().email(t('auth.signIn.validation.invalidEmail')),
+    password: z.string().min(8, t('auth.signIn.validation.passwordMin'))
+  });
 
 export function CustomSignInForm() {
   const t = useTranslations();
@@ -42,6 +39,9 @@ export function CustomSignInForm() {
   const supabase = createSupabaseClient();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  const signInSchema = getSignInSchema(t);
+  type SignInFormValues = z.infer<typeof signInSchema>;
 
   const form = useForm<SignInFormValues>({
     resolver: zodResolver(signInSchema),
@@ -65,7 +65,7 @@ export function CustomSignInForm() {
       }
 
       if (authData.user && authData.session) {
-        toast.success('Connexion réussie !');
+        toast.success(t('auth.signIn.signInSuccess'));
         // Attendre un court instant pour que les cookies soient sauvegardés
         await new Promise((resolve) => setTimeout(resolve, 200));
         // Rafraîchir le routeur pour que le middleware détecte la session
@@ -74,7 +74,7 @@ export function CustomSignInForm() {
         router.push('/dashboard/overview');
       } else if (authData.user) {
         // Si pas de session immédiatement, attendre un peu
-        toast.success('Connexion réussie !');
+        toast.success(t('auth.signIn.signInSuccess'));
         setTimeout(async () => {
           const {
             data: { session }
@@ -88,8 +88,7 @@ export function CustomSignInForm() {
         }, 500);
       }
     } catch (err: any) {
-      const errorMessage =
-        err.message || 'Une erreur est survenue lors de la connexion';
+      const errorMessage = err.message || t('auth.signIn.connectionError');
       toast.error(errorMessage);
       form.setError('root', { message: errorMessage });
     } finally {
@@ -192,16 +191,17 @@ export function CustomSignInForm() {
       </Button>
 
       <div className='text-center text-sm'>
-        <span className='text-muted-foreground'>{t('auth.signIn.noAccountYet')}</span>
+        <span className='text-muted-foreground'>
+          {t('auth.signIn.noAccountYet')}
+        </span>
         <Link
           href='/auth/sign-up'
           className='text-primary hover:text-primary/80 font-medium underline-offset-4 transition-colors hover:underline'
           style={{ viewTransitionName: 'auth-link' } as React.CSSProperties}
         >
-          Créer un compte
+          {t('auth.signIn.createAccount')}
         </Link>
       </div>
     </Form>
   );
 }
-

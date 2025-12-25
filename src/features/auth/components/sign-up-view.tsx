@@ -7,8 +7,10 @@ import { InteractiveGridPattern } from './interactive-grid';
 import { CustomSignUpForm } from './custom-sign-up-form';
 import { motion } from 'motion/react';
 import { ReferralRegistrationHandler } from '@/components/referral-registration-handler';
+import { useTranslations } from 'next-intl';
 
 export default function SignUpViewPage({ stars }: { stars: number }) {
+  const t = useTranslations();
   return (
     <>
       <ReferralRegistrationHandler />
@@ -79,12 +81,11 @@ export default function SignUpViewPage({ stars }: { stars: number }) {
                 <div className='flex-1 space-y-10'>
                   <div className='space-y-4'>
                     <h2 className='text-4xl leading-tight font-bold tracking-tight'>
-                      Rejoignez <span className='text-primary'>RendR</span>
+                      {t('auth.welcome.joinTitle').replace('RendR', '').trim()}{' '}
+                      <span className='text-primary'>RendR</span>
                     </h2>
                     <p className='text-muted-foreground max-w-md text-lg leading-relaxed'>
-                      Créez votre compte et commencez à gagner du cashback sur
-                      chaque transaction. Rejoignez une communauté de traders
-                      qui maximisent leurs gains.
+                      {t('auth.welcome.joinDescription')}
                     </p>
                   </div>
 
@@ -97,11 +98,10 @@ export default function SignUpViewPage({ stars }: { stars: number }) {
                         </div>
                         <div className='flex-1 space-y-1'>
                           <h3 className='text-base font-semibold'>
-                            Cashback sur chaque trade
+                            {t('auth.welcome.features.cashback.title')}
                           </h3>
                           <p className='text-muted-foreground text-sm leading-relaxed'>
-                            Recevez un pourcentage de cashback sur toutes vos
-                            transactions réussies.
+                            {t('auth.welcome.features.cashback.description')}
                           </p>
                         </div>
                       </div>
@@ -114,11 +114,10 @@ export default function SignUpViewPage({ stars }: { stars: number }) {
                         </div>
                         <div className='flex-1 space-y-1'>
                           <h3 className='text-base font-semibold'>
-                            Analytics avancés
+                            {t('auth.welcome.features.analytics.title')}
                           </h3>
                           <p className='text-muted-foreground text-sm leading-relaxed'>
-                            Suivez vos performances en temps réel avec des
-                            tableaux de bord détaillés.
+                            {t('auth.welcome.features.analytics.description')}
                           </p>
                         </div>
                       </div>
@@ -131,11 +130,10 @@ export default function SignUpViewPage({ stars }: { stars: number }) {
                         </div>
                         <div className='flex-1 space-y-1'>
                           <h3 className='text-base font-semibold'>
-                            Sécurité maximale
+                            {t('auth.welcome.features.security.title')}
                           </h3>
                           <p className='text-muted-foreground text-sm leading-relaxed'>
-                            Vos données et transactions sont protégées par les
-                            meilleures pratiques de sécurité.
+                            {t('auth.welcome.features.security.description')}
                           </p>
                         </div>
                       </div>
@@ -146,7 +144,7 @@ export default function SignUpViewPage({ stars }: { stars: number }) {
                 {/* Footer */}
                 <div className='border-border/50 relative z-10 border-t pt-8'>
                   <p className='text-muted-foreground text-sm font-medium'>
-                    Rejoignez des milliers de traders qui font confiance à RendR
+                    {t('auth.welcome.footer')}
                   </p>
                 </div>
               </div>
@@ -188,10 +186,10 @@ export default function SignUpViewPage({ stars }: { stars: number }) {
                 <div className='space-y-6'>
                   <div className='text-center lg:text-left'>
                     <h1 className='text-center text-3xl font-bold tracking-tight lg:text-left'>
-                      Créer un compte
+                      {t('auth.signUp.pageTitle')}
                     </h1>
                     <p className='text-muted-foreground mt-2 text-center lg:text-left'>
-                      Créez votre compte pour commencer à trader avec cashback
+                      {t('auth.signUp.pageDescription')}
                     </p>
                   </div>
 
@@ -201,21 +199,21 @@ export default function SignUpViewPage({ stars }: { stars: number }) {
 
                   {/* Terms */}
                   <p className='text-muted-foreground text-center text-xs'>
-                    En continuant, vous acceptez nos{' '}
+                    {t('auth.terms.text')}{' '}
                     <Link
                       href='/terms'
                       className='hover:text-primary underline underline-offset-4'
                     >
-                      Conditions d&apos;utilisation
+                      {t('auth.terms.termsOfService')}
                     </Link>{' '}
-                    et notre{' '}
+                    {t('auth.terms.and')}{' '}
                     <Link
                       href='/privacy'
                       className='hover:text-primary underline underline-offset-4'
                     >
-                      Politique de confidentialité
+                      {t('auth.terms.privacyPolicy')}
                     </Link>
-                    .
+                    {t('auth.terms.period')}
                   </p>
                 </div>
               </motion.div>
