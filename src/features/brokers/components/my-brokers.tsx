@@ -464,7 +464,7 @@ export function MyBrokers() {
               <IconCash className='h-5 w-5 text-[#c5d13f]' />
             </div>
             <span className='text-muted-foreground text-sm'>
-              Cashback Total
+              {t('stats.totalCashback')}
             </span>
           </div>
           <p className='stat-number text-3xl font-bold text-[#c5d13f]'>
@@ -656,7 +656,9 @@ export function MyBrokers() {
                 <p className='stat-number text-2xl font-bold'>
                   {broker.total_volume.toFixed(1)}
                 </p>
-                <p className='text-muted-foreground/60 mt-1 text-xs'>lots</p>
+                <p className='text-muted-foreground/60 mt-1 text-xs'>
+                  {t('stats.lots')}
+                </p>
               </div>
             </div>
 

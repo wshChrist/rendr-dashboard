@@ -167,8 +167,8 @@ export function StatsCards() {
           primary:
             stats.pending_cashback > 0 ? (
               <span className='flex items-center gap-1'>
-                +<AnimatedNumber value={stats.pending_cashback} suffix='€' /> en
-                attente
+                +<AnimatedNumber value={stats.pending_cashback} suffix='€' />{' '}
+                {t('stats.pending')}
               </span>
             ) : (
               t('stats.noPendingCashback')
@@ -211,7 +211,7 @@ export function StatsCards() {
           <AnimatedNumber
             value={stats.total_volume}
             decimals={1}
-            suffix=' lots'
+            suffix={` ${t('stats.lots')}`}
           />
         }
         badge={{ text: '+8.2%', variant: 'default' }}

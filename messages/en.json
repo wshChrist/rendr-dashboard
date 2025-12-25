@@ -283,14 +283,18 @@
     "activeBrokers": "Active Brokers",
     "withdrawable": "Withdrawable",
     "noPendingCashback": "No pending cashback",
+    "pending": "pending",
     "requestWithdrawal": "Request withdrawal",
     "performanceRising": "Performance rising",
     "withdrawn": "Withdrawn",
     "tradesExecuted": "trades executed",
+    "trades": "trades",
     "viewTransactions": "View transactions",
     "accountsSynced": "Accounts synced",
     "manageBrokers": "Manage my brokers",
-    "connected": "Connected"
+    "connected": "Connected",
+    "lots": "lots",
+    "lotsTraded": "lots traded"
   },
   "auth": {
     "signIn": {
@@ -631,6 +635,10 @@
   "transactions": {
     "allTime": "All time",
     "allStatuses": "All statuses",
+    "last7Days": "Last 7 days",
+    "last30Days": "Last 30 days",
+    "last90Days": "Last 90 days",
+    "perTrade": "per trade",
     "status": {
       "confirmed": "Confirmed",
       "pending": "Pending"

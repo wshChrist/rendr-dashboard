@@ -222,14 +222,15 @@ export function TransactionListing() {
               <IconCash className='h-5 w-5 text-[#c5d13f]' />
             </div>
             <span className='text-muted-foreground text-sm'>
-              Total Cashback
+              {t('stats.totalCashback')}
             </span>
           </div>
           <p className='stat-number text-3xl font-bold text-[#c5d13f]'>
             +{stats.totalCashback.toFixed(2)}€
           </p>
           <p className='text-muted-foreground/60 mt-1 text-sm'>
-            ~{stats.avgCashbackPerTrade.toFixed(2)}€ par trade
+            ~{stats.avgCashbackPerTrade.toFixed(2)}€{' '}
+            {t('transactions.perTrade')}
           </p>
         </div>
 
@@ -249,12 +250,16 @@ export function TransactionListing() {
             <div className='rounded-xl border border-white/5 bg-white/5 p-2'>
               <IconChartBar className='h-5 w-5' />
             </div>
-            <span className='text-muted-foreground text-sm'>Volume Total</span>
+            <span className='text-muted-foreground text-sm'>
+              {t('stats.totalVolume')}
+            </span>
           </div>
           <p className='stat-number text-3xl font-bold'>
             {stats.totalVolume.toFixed(2)}
           </p>
-          <p className='text-muted-foreground/60 mt-1 text-sm'>lots tradés</p>
+          <p className='text-muted-foreground/60 mt-1 text-sm'>
+            {t('stats.lotsTraded')}
+          </p>
         </div>
 
         {/* Nombre de Trades */}
@@ -362,9 +367,15 @@ export function TransactionListing() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value='all'>{t('transactions.allTime')}</SelectItem>
-                <SelectItem value='7d'>7 derniers jours</SelectItem>
-                <SelectItem value='30d'>30 derniers jours</SelectItem>
-                <SelectItem value='90d'>90 derniers jours</SelectItem>
+                <SelectItem value='7d'>
+                  {t('transactions.last7Days')}
+                </SelectItem>
+                <SelectItem value='30d'>
+                  {t('transactions.last30Days')}
+                </SelectItem>
+                <SelectItem value='90d'>
+                  {t('transactions.last90Days')}
+                </SelectItem>
               </SelectContent>
             </Select>
 
@@ -409,7 +420,7 @@ export function TransactionListing() {
               Résultats filtrés:
             </span>
             <RendRBadge variant='accent'>
-              {filteredStats.count} trades
+              {filteredStats.count} {t('stats.trades')}
             </RendRBadge>
             <span className='text-muted-foreground text-sm'>•</span>
             <span className='text-sm text-[#c5d13f]'>
@@ -417,7 +428,7 @@ export function TransactionListing() {
             </span>
             <span className='text-muted-foreground text-sm'>•</span>
             <span className='text-muted-foreground text-sm'>
-              {filteredStats.totalVolume.toFixed(2)} lots
+              {filteredStats.totalVolume.toFixed(2)} {t('stats.lots')}
             </span>
             <Button
               variant='ghost'
