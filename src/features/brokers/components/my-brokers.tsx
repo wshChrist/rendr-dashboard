@@ -784,7 +784,7 @@ export function MyBrokers() {
                 }}
               >
                 <IconRefresh className='mr-2 h-4 w-4' />
-                {t('brokers.refresh')}
+                {t('common.actions.refresh')}
               </Button>
               <Button variant='ghost' size='sm' className='hover:bg-white/5'>
                 <IconExternalLink className='h-4 w-4' />

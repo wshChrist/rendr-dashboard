@@ -24,33 +24,42 @@
     "loading": "Chargement...",
     "error": "Erreur",
     "success": "Succès",
-    "save": "Enregistrer",
-    "cancel": "Annuler",
-    "delete": "Supprimer",
-    "edit": "Modifier",
-    "create": "Créer",
-    "search": "Rechercher",
+    "actions": {
+      "save": "Enregistrer",
+      "cancel": "Annuler",
+      "delete": "Supprimer",
+      "edit": "Modifier",
+      "create": "Créer",
+      "add": "Ajouter",
+      "refresh": "Actualiser",
+      "export": "Exporter",
+      "search": "Rechercher",
+      "continue": "Continuer",
+      "goBack": "Retour",
+      "backToHome": "Retour à l'accueil"
+    },
+    "status": {
+      "loading": "Chargement...",
+      "error": "Erreur",
+      "success": "Succès",
+      "processing": "Traitement...",
+      "unknown": "Inconnu"
+    },
     "platform": "Platform",
     "addBroker": "Ajouter un broker",
     "all": "Tous",
     "allBrokers": "Tous les brokers",
     "period": "Période",
-    "status": "Statut",
-    "unknown": "Inconnu",
-    "goBack": "Retour",
-    "backToHome": "Retour à l'accueil",
     "somethingMissing": "Quelque chose manque",
     "pageNotFound": "Désolé, la page que vous recherchez n'existe pas ou a été déplacée.",
     "chooseTheme": "Choisir un thème",
     "resetFilters": "Réinitialiser les filtres",
     "searchColumn": "Rechercher une colonne...",
     "toggleColumns": "Basculer les colonnes",
-    "continue": "Continuer",
     "theme": "Thème",
     "default": "Par défaut",
     "fillAllFields": "Veuillez remplir tous les champs",
     "loadError": "Erreur lors du chargement des données",
-    "processing": "Traitement...",
     "compact": "Compact",
     "time": "Heure",
     "tradeId": "ID Trade",
@@ -78,171 +87,193 @@
     }
   },
   "pages": {
+    "billing": {
+      "title": "Facturation et Plans",
+      "description": "Gérez votre abonnement et vos limites d'utilisation",
+      "info": "La fonctionnalité de facturation sera implémentée ici. Vous pouvez intégrer Stripe, Paddle ou un autre fournisseur de paiement.",
+      "availablePlans": "Plans Disponibles",
+      "choosePlan": "Choisissez un plan qui correspond à vos besoins",
+      "comingSoon": "Intégration de facturation bientôt disponible"
+    },
+    "workspaces": {
+      "title": "Espaces de travail",
+      "description": "Gérez vos espaces de travail et basculez entre eux",
+      "info": "La fonctionnalité d'espace de travail sera implémentée ici. Vous pouvez créer une gestion personnalisée d'organisation/espace de travail en utilisant les tables Supabase.",
+      "createAndManage": "Créer et gérer vos espaces de travail",
+      "comingSoon": "Gestion des espaces de travail bientôt disponible"
+    },
+    "exclusive": {
+      "message": "Passez une excellente journée !"
+    },
+    "dashboard": {
+      "title": "Next Shadcn Dashboard Starter",
+      "description": "Tableau de bord de base avec Next.js et Shadcn"
+    },
     "overview": {
-      "title": "Aperçu",
-      "stats": "Statistiques"
+      "title": "Overview",
+      "stats": "Statistics"
     },
     "transactions": {
-      "title": "Historique des transactions",
-      "description": "Chaque trade vous rapporte. Voici le détail.",
-      "searchPlaceholder": "Rechercher une paire, broker...",
+      "title": "Transaction History",
+      "description": "Every trade earns you money. Here are the details.",
+      "searchPlaceholder": "Search for a pair, broker...",
       "columns": {
         "date": "Date",
         "broker": "Broker",
-        "pair": "Paire",
+        "pair": "Pair",
         "volume": "Volume",
         "commission": "Commission",
         "cashback": "Cashback",
-        "status": "Statut"
+        "status": "Status"
       },
       "status": {
-        "confirmed": "Confirmé",
-        "pending": "En attente"
+        "confirmed": "Confirmed",
+        "pending": "Pending"
       },
       "transaction": "transaction",
-      "noTransactionsFound": "Aucune transaction trouvée",
-      "connectBrokerToSeeTrades": "Connectez un broker pour voir vos trades ici",
+      "noTransactionsFound": "No transactions found",
+      "connectBrokerToSeeTrades": "Connect a broker to see your trades here",
       "lots": "lots"
     },
     "brokers": {
       "title": "Brokers",
       "myAccounts": {
-        "title": "Vos comptes connectés",
-        "description": "Suivez la performance de chacun de vos comptes de trading."
+        "title": "Your Connected Accounts",
+        "description": "Track the performance of each of your trading accounts."
       },
       "available": {
-        "title": "Nos brokers partenaires",
-        "description": "Connectez votre compte et commencez à gagner du cashback immédiatement."
+        "title": "Our Partner Brokers",
+        "description": "Connect your account and start earning cashback immediately."
       }
     },
     "withdrawals": {
-      "title": "Vos retraits",
-      "description": "Récupérez votre cashback quand vous le souhaitez.",
-      "searchPlaceholder": "Rechercher un retrait...",
+      "title": "Your Withdrawals",
+      "description": "Withdraw your cashback whenever you want.",
+      "searchPlaceholder": "Search for a withdrawal...",
       "columns": {
-        "paymentMethod": "Méthode de paiement",
-        "amount": "Montant",
-        "status": "Statut",
-        "requestDate": "Date de demande",
-        "processedDate": "Date de traitement",
-        "details": "Détails",
-        "reference": "Référence"
+        "paymentMethod": "Payment Method",
+        "amount": "Amount",
+        "status": "Status",
+        "requestDate": "Request Date",
+        "processedDate": "Processed Date",
+        "details": "Details",
+        "reference": "Reference"
       },
       "status": {
-        "completed": "Complété",
-        "processing": "En cours",
-        "pending": "En attente",
-        "rejected": "Rejeté"
+        "completed": "Completed",
+        "processing": "Processing",
+        "pending": "Pending",
+        "rejected": "Rejected"
       },
       "paymentMethods": {
-        "all": "Toutes",
-        "bankTransfer": "Virement bancaire",
+        "all": "All",
+        "bankTransfer": "Bank Transfer",
         "paypal": "PayPal",
         "crypto": "Crypto (USDT)"
       },
       "form": {
-        "amount": "Montant",
+        "amount": "Amount",
         "amountPlaceholder": "50.00",
-        "paymentMethod": "Méthode de paiement",
-        "chooseMethod": "Choisir une méthode"
+        "paymentMethod": "Payment Method",
+        "chooseMethod": "Choose a method"
       },
-      "availableBalance": "Solde Disponible",
-      "requestWithdrawal": "Demander un retrait",
-      "amount": "Montant (€)",
+      "availableBalance": "Available Balance",
+      "requestWithdrawal": "Request a withdrawal",
+      "amount": "Amount (€)",
       "minimum": "Minimum",
       "maximum": "Maximum",
-      "paymentMethod": "Méthode de paiement",
-      "chooseMethod": "Choisir une méthode",
-      "bankTransfer": "Virement bancaire",
+      "paymentMethod": "Payment method",
+      "chooseMethod": "Choose a method",
+      "bankTransfer": "Bank transfer",
       "paypal": "PayPal",
       "crypto": "Crypto (USDT)",
       "iban": "IBAN",
-      "paypalEmail": "Email PayPal",
-      "cryptoAddress": "Adresse crypto (USDT)",
-      "pending": "En attente",
-      "withdrawalsInProgress": "retrait(s) en cours",
-      "totalWithdrawn": "Total retiré",
-      "completed": "retrait(s) complété(s)",
-      "history": "Historique des retraits",
-      "confirmWithdrawal": "Confirmer le retrait",
-      "amountRange": "Le montant doit être entre 20€ et {max}€",
+      "paypalEmail": "PayPal Email",
+      "cryptoAddress": "Crypto address (USDT)",
+      "pending": "Pending",
+      "withdrawalsInProgress": "withdrawal(s) in progress",
+      "totalWithdrawn": "Total withdrawn",
+      "completed": "completed withdrawal(s)",
+      "history": "Withdrawal history",
+      "confirmWithdrawal": "Confirm withdrawal",
+      "amountRange": "Amount must be between €20 and €{max}",
       "errors": {
-        "createError": "Erreur lors de la création du retrait"
+        "createError": "Error creating withdrawal"
       },
       "success": {
-        "createSuccess": "Demande de retrait créée avec succès"
+        "createSuccess": "Withdrawal request created successfully"
       },
-      "withdrawal": "retrait",
-      "noWithdrawalsFound": "Aucun retrait trouvé",
-      "withdrawalsWillAppear": "Vos retraits apparaîtront ici une fois effectués"
+      "withdrawal": "withdrawal",
+      "noWithdrawalsFound": "No withdrawals found",
+      "withdrawalsWillAppear": "Your withdrawals will appear here once made"
     },
     "referral": {
-      "title": "Parrainez, gagnez plus",
-      "description": "Invitez vos amis traders et recevez un bonus sur chacun de leurs trades.",
-      "searchPlaceholder": "Rechercher un filleul...",
+      "title": "Refer and Earn More",
+      "description": "Invite your trader friends and receive a bonus on each of their trades.",
+      "searchPlaceholder": "Search for a referral...",
       "columns": {
-        "referred": "Filleul",
-        "joinDate": "Date d'inscription",
-        "status": "Statut",
-        "earnings": "Gains"
+        "referred": "Referred",
+        "joinDate": "Join Date",
+        "status": "Status",
+        "earnings": "Earnings"
       },
       "status": {
-        "active": "Actif",
-        "pending": "En attente"
+        "active": "Active",
+        "pending": "Pending"
       },
-      "codePlaceholder": "EXEMPLE-CODE",
-      "createCode": "Créer",
-      "yourCode": "Votre code de parrainage",
-      "yourLink": "Votre lien de parrainage",
-      "createYourCode": "Créer votre code de parrainage",
-      "share": "Partager",
-      "copy": "Copier",
-      "totalReferrals": "Filleuls Total",
-      "totalEarnings": "Gains totaux",
-      "pendingEarnings": "Gains en attente",
-      "commissionRate": "Taux de commission",
-      "linkCopied": "Lien copié dans le presse-papier",
+      "codePlaceholder": "EXAMPLE-CODE",
+      "createCode": "Create",
+      "yourCode": "Your referral code",
+      "yourLink": "Your referral link",
+      "createYourCode": "Create your referral code",
+      "share": "Share",
+      "copy": "Copy",
+      "totalReferrals": "Total Referrals",
+      "totalEarnings": "Total earnings",
+      "pendingEarnings": "Pending earnings",
+      "commissionRate": "Commission rate",
+      "linkCopied": "Link copied to clipboard",
       "errors": {
-        "loadError": "Erreur lors du chargement des données de parrainage",
-        "loadUsersError": "Erreur lors du chargement des filleuls",
-        "createError": "Erreur lors de la création du code"
+        "loadError": "Error loading referral data",
+        "loadUsersError": "Error loading referred users",
+        "createError": "Error creating code"
       },
       "success": {
-        "codeCreated": "Code de parrainage créé avec succès !"
+        "codeCreated": "Referral code created successfully!"
       },
-      "codeRequired": "Le code est requis",
-      "createCodeFirst": "Veuillez d'abord créer un code de parrainage",
-      "active": "actifs",
-      "pending": "en attente",
-      "fromReferrals": "Du cashback de vos filleuls",
-      "averageEarnings": "Gain Moyen",
-      "perActiveReferral": "Par filleul actif",
-      "chooseUniqueCode": "Choisissez un code unique pour commencer à parrainer vos amis",
-      "codeRules": "Le code doit contenir entre 3 et 20 caractères (lettres majuscules, chiffres et tirets uniquement). Il doit être unique.",
-      "shareLinkDescription": "Partagez ce lien pour gagner {rate}% du cashback de vos filleuls",
-      "referredUser": "filleul",
-      "noReferralsFound": "Aucun filleul trouvé",
-      "shareLinkToStart": "Partagez votre lien pour commencer à gagner !"
+      "codeRequired": "Code is required",
+      "createCodeFirst": "Please create a referral code first",
+      "active": "active",
+      "pending": "pending",
+      "fromReferrals": "From your referrals' cashback",
+      "averageEarnings": "Average Earnings",
+      "perActiveReferral": "Per active referral",
+      "chooseUniqueCode": "Choose a unique code to start referring your friends",
+      "codeRules": "Code must contain between 3 and 20 characters (uppercase letters, numbers and hyphens only). It must be unique.",
+      "shareLinkDescription": "Share this link to earn {rate}% of your referrals' cashback",
+      "referredUser": "referral",
+      "noReferralsFound": "No referrals found",
+      "shareLinkToStart": "Share your link to start earning!"
     },
     "updates": {
-      "title": "Quoi de neuf ?",
-      "description": "On bosse dur pour vous. Voici nos dernières améliorations."
+      "title": "What's New?",
+      "description": "We're working hard for you. Here are our latest improvements."
     },
     "profile": {
-      "title": "Votre espace personnel",
-      "description": "Gérez votre compte, vos préférences et vos méthodes de paiement."
+      "title": "Your Personal Space",
+      "description": "Manage your account, preferences and payment methods."
     },
     "admin": {
       "title": "Administration",
-      "searchPlaceholder": "Rechercher un email, statut, montant…"
+      "searchPlaceholder": "Search for an email, status, amount…"
     },
     "error": {
-      "title": "Erreur",
-      "description": "Une erreur s'est produite lors du chargement des données.",
-      "statsLoadError": "Impossible de charger les statistiques",
-      "activityLoadError": "Impossible de charger les données d'activité",
-      "statsDisplayError": "Impossible d'afficher les statistiques pour le moment",
-      "retry": "Réessayer"
+      "title": "Error",
+      "description": "An error occurred while loading the data.",
+      "statsLoadError": "Unable to load statistics",
+      "activityLoadError": "Unable to load activity data",
+      "statsDisplayError": "Unable to display statistics at the moment",
+      "retry": "Retry"
     }
   },
   "stats": {
@@ -263,100 +294,99 @@
   },
   "auth": {
     "signIn": {
-      "title": "Connectez-vous à votre compte RendR",
-      "pageTitle": "Connexion",
-      "description": "Connectez-vous à votre compte RendR pour accéder à votre dashboard de trading avec cashback.",
-      "pageDescription": "Connectez-vous à votre compte pour continuer",
-      "email": "Email",
-      "emailPlaceholder": "votre@email.com",
-      "password": "Mot de passe",
-      "passwordPlaceholder": "••••••••",
-      "continueWithEmail": "Continuer avec l'email",
-      "orContinueWith": "Ou continuer avec",
-      "signInSuccess": "Connexion réussie !",
-      "signInError": "Erreur lors de la connexion",
-      "sessionError": "Erreur de session. Veuillez réessayer.",
-      "signInButton": "Se connecter",
-      "signingIn": "Connexion en cours...",
-      "forgotPassword": "Mot de passe oublié ?",
       "noAccountYet": "Pas encore de compte ? ",
       "signingInProgress": "Connexion en cours...",
-      "createAccount": "Créer un compte",
-      "connectionError": "Une erreur est survenue lors de la connexion",
+      "title": "Sign in to your RendR account",
+      "pageTitle": "Sign in",
+      "description": "Sign in to your RendR account to access your trading dashboard with cashback.",
+      "pageDescription": "Sign in to your account to continue",
+      "email": "Email",
+      "emailPlaceholder": "your@email.com",
+      "password": "Password",
+      "passwordPlaceholder": "••••••••",
+      "continueWithEmail": "Continue With Email",
+      "orContinueWith": "Or continue with",
+      "signInSuccess": "Signed In Successfully!",
+      "signInError": "Error signing in",
+      "sessionError": "Session error. Please try again.",
+      "signInButton": "Sign in",
+      "signingIn": "Signing in...",
+      "forgotPassword": "Forgot password?",
+      "createAccount": "Create an account",
+      "connectionError": "An error occurred while signing in",
       "validation": {
-        "invalidEmail": "Adresse email invalide",
-        "passwordMin": "Le mot de passe doit contenir au moins 8 caractères"
+        "invalidEmail": "Invalid email address",
+        "passwordMin": "Password must contain at least 8 characters"
       }
     },
     "signUp": {
-      "title": "Créer un compte",
-      "pageTitle": "Créer un compte",
-      "pageDescription": "Créez votre compte pour commencer à trader avec cashback",
-      "firstName": "Prénom",
-      "firstNamePlaceholder": "Jean",
-      "lastName": "Nom",
-      "lastNamePlaceholder": "Dupont",
-      "email": "Email",
-      "emailPlaceholder": "votre@email.com",
-      "password": "Mot de passe",
-      "passwordPlaceholder": "••••••••",
-      "createAccount": "Créer mon compte",
-      "accountCreated": "Compte créé avec succès !",
-      "signUpError": "Erreur lors de l'inscription",
-      "sessionError": "Erreur de session. Veuillez réessayer.",
-      "creatingAccount": "Création en cours...",
-      "alreadyHaveAccount": "Déjà un compte ?",
       "signingUpProgress": "Inscription en cours...",
-      "accountCreationError": "Une erreur est survenue lors de la création du compte",
+      "title": "Create an account",
+      "pageTitle": "Create an account",
+      "pageDescription": "Create your account to start trading with cashback",
+      "firstName": "First Name",
+      "firstNamePlaceholder": "John",
+      "lastName": "Last Name",
+      "lastNamePlaceholder": "Doe",
+      "email": "Email",
+      "emailPlaceholder": "your@email.com",
+      "password": "Password",
+      "passwordPlaceholder": "••••••••",
+      "createAccount": "Create my account",
+      "accountCreated": "Account created successfully!",
+      "signUpError": "Error signing up",
+      "sessionError": "Session error. Please try again.",
+      "creatingAccount": "Creating account...",
+      "alreadyHaveAccount": "Already have an account?",
+      "accountCreationError": "An error occurred while creating the account",
       "validation": {
-        "invalidEmail": "Adresse email invalide",
-        "passwordMin": "Le mot de passe doit contenir au moins 8 caractères",
-        "firstNameRequired": "Le prénom est requis",
-        "lastNameRequired": "Le nom est requis"
+        "invalidEmail": "Invalid email address",
+        "passwordMin": "Password must contain at least 8 characters",
+        "firstNameRequired": "First name is required",
+        "lastNameRequired": "Last name is required"
       }
     },
     "welcome": {
-      "title": "Bienvenue sur RendR",
-      "description": "La plateforme de trading avec cashback qui récompense chaque transaction. Maximisez vos gains tout en tradant.",
-      "joinTitle": "Rejoignez RendR",
-      "joinDescription": "Créez votre compte et commencez à gagner du cashback sur chaque transaction. Rejoignez une communauté de traders qui maximisent leurs gains.",
+      "title": "Welcome to RendR",
+      "description": "The trading platform with cashback that rewards every transaction. Maximize your gains while trading.",
+      "joinTitle": "Join RendR",
+      "joinDescription": "Create your account and start earning cashback on every transaction. Join a community of traders who maximize their gains.",
       "features": {
         "cashback": {
-          "title": "Cashback sur chaque trade",
-          "description": "Recevez un pourcentage de cashback sur toutes vos transactions réussies."
+          "title": "Cashback on every trade",
+          "description": "Receive a percentage of cashback on all your successful transactions."
         },
         "analytics": {
-          "title": "Analytics avancés",
-          "description": "Suivez vos performances en temps réel avec des tableaux de bord détaillés."
+          "title": "Advanced Analytics",
+          "description": "Track your performance in real-time with detailed dashboards."
         },
         "security": {
-          "title": "Sécurité maximale",
-          "description": "Vos données et transactions sont protégées par les meilleures pratiques de sécurité."
+          "title": "Maximum Security",
+          "description": "Your data and transactions are protected by the best security practices."
         }
       },
-      "footer": "Rejoignez des milliers de traders qui font confiance à RendR"
+      "footer": "Join thousands of traders who trust RendR"
     },
     "terms": {
-      "text": "En continuant, vous acceptez nos",
-      "termsOfService": "Conditions d'utilisation",
-      "and": "et notre",
-      "privacyPolicy": "Politique de confidentialité",
+      "text": "By continuing, you accept our",
+      "termsOfService": "Terms of Service",
+      "and": "and our",
+      "privacyPolicy": "Privacy Policy",
       "period": "."
     },
     "oauth": {
       "google": {
-        "continueWith": "Continuer avec Google",
-        "signingIn": "Connexion...",
-        "signingUp": "Inscription...",
-        "error": "Une erreur est survenue lors de la connexion avec Google",
-        "signUpError": "Une erreur est survenue lors de l'inscription avec Google"
+        "continueWith": "Continue with Google",
+        "signingIn": "Signing in...",
+        "signingUp": "Signing up...",
+        "error": "An error occurred while signing in with Google"
       },
       "github": {
-        "continueWith": "Continuer avec GitHub",
-        "signingIn": "Connexion...",
-        "signingUp": "Inscription...",
-        "error": "Une erreur est survenue lors de la connexion avec GitHub",
-        "signUpError": "Une erreur est survenue lors de l'inscription avec GitHub"
+        "continueWith": "Continue with GitHub",
+        "signingIn": "Signing in...",
+        "signingUp": "Signing up...",
+        "error": "An error occurred while signing in with GitHub",
+        "signUpError": "An error occurred while signing up with GitHub"
       }
     }
   },
@@ -423,22 +453,24 @@
       "step4": "Recevez automatiquement du cashback sur chaque trade !"
     },
     "vpsRetry": "Le VPS va réessayer automatiquement. Si le problème persiste, vérifiez vos identifiants.",
-    "refresh": "Actualiser",
     "refreshAccount": "Actualiser le compte",
     "accountRefreshed": "Les informations du compte ont été mises à jour.",
     "connectNewAccount": "Connectez un nouveau compte de trading MT4/MT5 pour commencer à recevoir du cashback"
   },
   "table": {
+    "searchColumn": "Rechercher une colonne...",
+    "noColumnsFound": "Aucune colonne trouvée.",
+    "noResultsFound": "Aucun résultat trouvé.",
     "pagination": {
-      "goToFirst": "Aller à la première page",
-      "goToPrevious": "Aller à la page précédente",
-      "goToNext": "Aller à la page suivante",
-      "goToLast": "Aller à la dernière page",
-      "rowsPerPage": "Lignes par page",
+      "goToFirst": "Go to first page",
+      "goToPrevious": "Go to previous page",
+      "goToNext": "Go to next page",
+      "goToLast": "Go to last page",
+      "rowsPerPage": "Rows per page",
       "page": "Page",
-      "of": "sur",
-      "selected": "ligne(s) sélectionnée(s)",
-      "total": "ligne(s) au total"
+      "of": "of",
+      "selected": "row(s) selected",
+      "total": "row(s) total"
     }
   },
   "modal": {
@@ -448,14 +480,28 @@
     }
   },
   "contact": {
-    "name": "Votre nom",
+    "contactUs": "Contactez-nous",
+    "sendMessageOrFollow": "Envoyez-nous un message ou suivez-nous sur nos réseaux sociaux",
+    "orSendMessage": "Ou envoyez-nous un message",
+    "name": "Nom",
     "email": "Email",
-    "emailPlaceholder": "votre@email.com",
-    "subject": "Sujet de votre message",
-    "subjectPlaceholder": "Sujet de votre message",
-    "message": "Votre message",
-    "messagePlaceholder": "Votre message...",
-    "sendError": "Erreur lors de l'envoi"
+    "subject": "Sujet",
+    "message": "Message",
+    "sendMessage": "Envoyer le message",
+    "success": {
+      "title": "Message envoyé avec succès !",
+      "description": "Nous vous répondrons dans les plus brefs délais."
+    },
+    "error": {
+      "title": "Erreur lors de l'envoi",
+      "description": "Veuillez réessayer plus tard."
+    },
+    "emailPlaceholder": "your@email.com",
+    "subjectPlaceholder": "Subject of your message",
+    "messagePlaceholder": "Your message...",
+    "sendError": "Error sending message",
+    "socialNetworks": "Our social networks",
+    "sending": "Sending..."
   },
   "access": {
     "noAccess": "Vous n'avez pas accès à cette page."
@@ -478,30 +524,6 @@
     "changeTheme": "Changer le thème",
     "deleteFile": "Supprimer le fichier"
   },
-  "pages": {
-    "billing": {
-      "title": "Facturation et Plans",
-      "description": "Gérez votre abonnement et vos limites d'utilisation",
-      "info": "La fonctionnalité de facturation sera implémentée ici. Vous pouvez intégrer Stripe, Paddle ou un autre fournisseur de paiement.",
-      "availablePlans": "Plans Disponibles",
-      "choosePlan": "Choisissez un plan qui correspond à vos besoins",
-      "comingSoon": "Intégration de facturation bientôt disponible"
-    },
-    "workspaces": {
-      "title": "Espaces de travail",
-      "description": "Gérez vos espaces de travail et basculez entre eux",
-      "info": "La fonctionnalité d'espace de travail sera implémentée ici. Vous pouvez créer une gestion personnalisée d'organisation/espace de travail en utilisant les tables Supabase.",
-      "createAndManage": "Créer et gérer vos espaces de travail",
-      "comingSoon": "Gestion des espaces de travail bientôt disponible"
-    },
-    "exclusive": {
-      "message": "Passez une excellente journée !"
-    },
-    "dashboard": {
-      "title": "Next Shadcn Dashboard Starter",
-      "description": "Tableau de bord de base avec Next.js et Shadcn"
-    }
-  },
   "referral": {
     "shareTitle": "Rejoins RendR",
     "yourReferrals": "Vos filleuls",
@@ -514,115 +536,143 @@
     "whatsapp": "WhatsApp"
   },
   "profile": {
-    "memberSince": "Membre depuis",
-    "bankTransfer": "Virement bancaire",
-    "lastWithdrawals": "Derniers retraits",
-    "loginEmail": "Email de connexion",
-    "changePassword": "Changer le mot de passe",
-    "notActivated": "Non activé",
-    "activeSessions": "Sessions actives",
-    "deleteAccount": "Supprimer le compte",
-    "editProfile": "Modifier le profil",
-    "currentPassword": "Mot de passe actuel",
-    "newPassword": "Nouveau mot de passe",
-    "modifyBankAccount": "Modifier le compte bancaire",
-    "bankName": "Nom de la banque",
-    "paypalEmailAddress": "Adresse email PayPal",
-    "addCryptoAddress": "Ajouter une adresse crypto (USDT)",
-    "currentDevice": "Appareil actuel",
-    "deleteAccountWarning": "Cela supprimera définitivement :",
-    "deleteAccountWarning1": "Votre profil et vos informations personnelles",
-    "deleteAccountWarning2": "Votre historique de transactions",
-    "deleteAccountWarning3": "Vos cashbacks et récompenses",
-    "deleteAccountWarning4": "Toutes les données associées à votre compte",
+    "bankInfoUpdated": "Informations bancaires mises à jour",
+    "notifications": {
+      "title": "Préférences de notification",
+      "description": "Choisissez comment vous souhaitez être informé",
+      "emailNotifications": "Notifications par email",
+      "emailDescription": "Recevez un email pour chaque nouveau cashback crédité"
+    },
+    "personalInfo": {
+      "title": "Mettez à jour vos informations personnelles"
+    },
+    "password": {
+      "title": "Entrez votre mot de passe actuel et choisissez un nouveau mot de passe",
+      "confirm": "Confirmer le nouveau mot de passe"
+    },
+    "bankInfo": {
+      "title": "Mettez à jour vos informations de virement bancaire"
+    },
+    "memberSince": "Member since",
+    "bankTransfer": "Bank Transfer",
+    "lastWithdrawals": "Last withdrawals",
+    "loginEmail": "Login Email",
+    "changePassword": "Change password",
+    "notActivated": "Not activated",
+    "activeSessions": "Active sessions",
+    "deleteAccount": "Delete account",
+    "editProfile": "Edit profile",
+    "currentPassword": "Current password",
+    "newPassword": "New password",
+    "modifyBankAccount": "Modify bank account",
+    "bankName": "Bank name",
+    "paypalEmailAddress": "PayPal email address",
+    "addCryptoAddress": "Add crypto address (USDT)",
+    "currentDevice": "Current device",
+    "deleteAccountWarning": "This will permanently delete:",
+    "deleteAccountWarning1": "Your profile and personal information",
+    "deleteAccountWarning2": "Your transaction history",
+    "deleteAccountWarning3": "Your cashbacks and rewards",
+    "deleteAccountWarning4": "All data associated with your account",
     "validation": {
-      "firstNameMin": "Le prénom doit contenir au moins 2 caractères",
-      "lastNameMin": "Le nom doit contenir au moins 2 caractères",
-      "invalidEmail": "Adresse email invalide",
-      "currentPasswordRequired": "Le mot de passe actuel est requis",
-      "newPasswordMin": "Le nouveau mot de passe doit contenir au moins 8 caractères",
-      "confirmPasswordRequired": "La confirmation est requise",
-      "passwordsDoNotMatch": "Les mots de passe ne correspondent pas"
+      "firstNameMin": "First name must contain at least 2 characters",
+      "lastNameMin": "Last name must contain at least 2 characters",
+      "invalidEmail": "Invalid email address",
+      "currentPasswordRequired": "Current password is required",
+      "newPasswordMin": "New password must contain at least 8 characters",
+      "confirmPasswordRequired": "Confirmation is required",
+      "passwordsDoNotMatch": "Passwords do not match"
     },
-    "profileUpdatedSuccess": "Profil mis à jour avec succès",
-    "profileUpdateError": "Erreur lors de la mise à jour du profil",
+    "profileUpdatedSuccess": "Profile updated successfully",
+    "profileUpdateError": "Error updating profile",
     "tabs": {
-      "payments": "Paiements",
+      "payments": "Payments",
       "notifications": "Notifications",
-      "security": "Sécurité"
+      "security": "Security"
     },
-    "add": "Ajouter",
-    "addPaypal": "Ajouter PayPal",
-    "addPaypalDescription": "Associez votre compte PayPal pour les retraits",
-    "addCrypto": "Ajouter Crypto",
-    "addCryptoDescription": "Associez votre adresse crypto (USDT) pour les retraits",
-    "accountSecurity": "Sécurité du compte",
-    "accountSecurityDescription": "Gérez la sécurité et l'accès à votre compte",
-    "addSecurityLayer": "Ajoutez une couche de sécurité supplémentaire",
-    "securitySettings": "Paramètres de sécurité",
-    "accountSecurityDescription2": "de sécurité de votre compte."
+    "add": "Add",
+    "addPaypal": "Add PayPal",
+    "addPaypalDescription": "Link your PayPal account for withdrawals",
+    "addCrypto": "Add Crypto",
+    "addCryptoDescription": "Link your crypto address (USDT) for withdrawals",
+    "accountSecurity": "Account Security",
+    "accountSecurityDescription": "Manage the security and access to your account",
+    "addSecurityLayer": "Add an additional layer of security",
+    "securitySettings": "Security settings",
+    "accountSecurityDescription2": "of your account."
   },
   "overview": {
-    "recentSales": {
-      "title": "Ventes récentes",
-      "description": "Vous avez effectué 265 ventes ce mois-ci."
-    },
     "volumeTrading": "Volume de Trading",
     "browserDistribution": "Répartition des navigateurs",
-    "noUpdates": "Aucune mise à jour",
-    "seeAll": "Tout voir",
-    "contactUs": "Nous contacter",
-    "tradingVolume": "Volume de Trading",
+    "totalVisitorsByBrowser": "Total des visiteurs par navigateur pour les 6 derniers mois",
+    "recentSales": {
+      "title": "Recent Sales",
+      "description": "You made 265 sales this month."
+    },
+    "noUpdates": "No updates",
+    "seeAll": "See all",
+    "contactUs": "Contact us",
+    "tradingVolume": "Trading Volume",
     "trade": "Trade",
     "recentActivity": {
-      "title": "Activité Récente",
-      "description": "Vos dernières actions sur la plateforme",
-      "loading": "Chargement...",
-      "noActivity": "Aucune activité récente pour le moment",
-      "tradeDescription": "Trade {pair} sur {broker}",
+      "title": "Recent Activity",
+      "description": "Your latest actions on the platform",
+      "loading": "Loading...",
+      "noActivity": "No recent activity at the moment",
+      "tradeDescription": "Trade {pair} on {broker}",
       "badges": {
         "trade": "Trade",
-        "withdrawal": "Retrait",
+        "withdrawal": "Withdrawal",
         "broker": "Broker",
-        "other": "Autre"
+        "other": "Other"
       }
     }
   },
-  "auth": {
-    "signIn": {
-      "noAccountYet": "Pas encore de compte ? ",
-      "signingInProgress": "Connexion en cours..."
-    },
-    "signUp": {
-      "signingUpProgress": "Inscription en cours..."
-    }
-  },
   "transactions": {
-    "allTime": "Tout le temps",
-    "allStatuses": "Tous statuts",
-    "export": "Exporter",
+    "status": {
+      "confirmed": "Confirmés",
+      "pending": "En attente"
+    },
+    "stats": {
+      "confirmed": "confirmés",
+      "pending": "en attente"
+    },
     "noTransactionsToExport": "Aucune transaction à exporter",
-    "refresh": "Actualiser"
+    "allTime": "All time",
+    "allStatuses": "All statuses"
   },
   "admin": {
-    "pendingWithdrawals": "Retraits en attente",
-    "maintenancePlaceholder": "Ex: Maintenance planifiée jusqu'à 14:00 UTC",
-    "maintenanceActivatePlaceholder": "Activez la maintenance pour définir un message",
+    "withdrawals": {
+      "pending": "En attente"
+    },
+    "overview": {
+      "pendingWithdrawals": "Retraits en attente"
+    },
+    "pendingWithdrawals": "Pending withdrawals",
+    "maintenancePlaceholder": "Ex: Scheduled maintenance until 14:00 UTC",
+    "maintenanceActivatePlaceholder": "Activate maintenance to set a message",
+    "cashbackForecast": "Forecast",
+    "cashback30d": "Cashback (30d)",
+    "cashback30dForecast": "Cashback (30d) + forecast",
+    "forecastDescription": "Simple forecast: average of the last 14 days.",
+    "withdrawals30d": "Withdrawals (30d)",
+    "requestsVsCompleted": "Requests vs completed withdrawals.",
+    "requests": "Requests",
+    "completed": "Completed",
+    "calculatedFromTrades": "Calculated from trades",
+    "amount": "Amount",
     "form": {
-      "brokerRequired": "Le broker est requis",
-      "platformRequired": "La plateforme est requise",
-      "serverRequired": "Le serveur est requis",
-      "accountNumberRequired": "Le numéro de compte est requis",
-      "investorPasswordRequired": "Le mot de passe investisseur est requis"
+      "brokerRequired": "Broker is required",
+      "platformRequired": "Platform is required",
+      "serverRequired": "Server is required",
+      "accountNumberRequired": "Account number is required",
+      "investorPasswordRequired": "Investor password is required"
     }
   },
-  "contact": {
-    "socialNetworks": "Nos réseaux sociaux",
-    "sending": "Envoi en cours..."
-  },
   "forms": {
-    "firstName": "Votre prénom",
-    "lastName": "Votre nom"
+    "selectOption": "Sélectionner une option",
+    "firstName": "First name",
+    "lastName": "Last name"
   },
   "org": {
     "createOrganization": "Créer une organisation"
@@ -630,39 +680,6 @@
   "sidebar": {
     "toggleSidebar": "Basculer la barre latérale",
     "displaysMobileSidebar": "Affiche la barre latérale mobile."
-  },
-  "table": {
-    "searchColumn": "Rechercher une colonne...",
-    "noColumnsFound": "Aucune colonne trouvée.",
-    "noResultsFound": "Aucun résultat trouvé."
-  },
-  "forms": {
-    "selectOption": "Sélectionner une option"
-  },
-  "overview": {
-    "volumeTrading": "Volume de Trading",
-    "browserDistribution": "Répartition des navigateurs",
-    "totalVisitorsByBrowser": "Total des visiteurs par navigateur pour les 6 derniers mois"
-  },
-  "updates": {
-    "noUpdates": "Aucune mise à jour",
-    "noUpdatesFilter": "Aucune mise à jour ne correspond à ce filtre. Essayez un autre filtre ou revenez plus tard."
-  },
-  "tradingAccount": {
-    "mustBeConnected": "Vous devez être connecté",
-    "pleaseConnect": "Veuillez vous connecter avec Supabase Auth"
-  },
-  "admin": {
-    "cashbackForecast": "Prévision",
-    "cashback30d": "Cashback (30j)",
-    "cashback30dForecast": "Cashback (30j) + prévision",
-    "forecastDescription": "Prévision simple : moyenne des 14 derniers jours.",
-    "withdrawals30d": "Retraits (30j)",
-    "requestsVsCompleted": "Demandes vs retraits complétés.",
-    "requests": "Demandes",
-    "completed": "Complétés",
-    "calculatedFromTrades": "Calculé depuis les trades",
-    "amount": "Montant"
   },
   "updates": {
     "types": {
@@ -703,65 +720,13 @@
     "newCount": {
       "one": "nouveau",
       "other": "nouveaux"
-    }
+    },
+    "noUpdates": "No updates",
+    "noUpdatesFilter": "No updates match this filter. Try another filter or come back later."
   },
-  "contact": {
-    "contactUs": "Contactez-nous",
-    "sendMessageOrFollow": "Envoyez-nous un message ou suivez-nous sur nos réseaux sociaux",
-    "orSendMessage": "Ou envoyez-nous un message",
-    "name": "Nom",
-    "email": "Email",
-    "subject": "Sujet",
-    "message": "Message",
-    "sendMessage": "Envoyer le message",
-    "success": {
-      "title": "Message envoyé avec succès !",
-      "description": "Nous vous répondrons dans les plus brefs délais."
-    },
-    "error": {
-      "title": "Erreur lors de l'envoi",
-      "description": "Veuillez réessayer plus tard."
-    }
-  },
-  "profile": {
-    "bankInfoUpdated": "Informations bancaires mises à jour",
-    "notifications": {
-      "title": "Préférences de notification",
-      "description": "Choisissez comment vous souhaitez être informé",
-      "emailNotifications": "Notifications par email",
-      "emailDescription": "Recevez un email pour chaque nouveau cashback crédité"
-    },
-    "personalInfo": {
-      "title": "Mettez à jour vos informations personnelles"
-    },
-    "password": {
-      "title": "Entrez votre mot de passe actuel et choisissez un nouveau mot de passe",
-      "confirm": "Confirmer le nouveau mot de passe"
-    },
-    "bankInfo": {
-      "title": "Mettez à jour vos informations de virement bancaire"
-    }
-  },
-  "transactions": {
-    "status": {
-      "confirmed": "Confirmés",
-      "pending": "En attente"
-    },
-    "stats": {
-      "confirmed": "confirmés",
-      "pending": "en attente"
-    },
-    "export": "Exporter",
-    "noTransactionsToExport": "Aucune transaction à exporter",
-    "refresh": "Actualiser"
-  },
-  "admin": {
-    "withdrawals": {
-      "pending": "En attente"
-    },
-    "overview": {
-      "pendingWithdrawals": "Retraits en attente"
-    }
+  "tradingAccount": {
+    "mustBeConnected": "Vous devez être connecté",
+    "pleaseConnect": "Veuillez vous connecter avec Supabase Auth"
   },
   "breadcrumbs": {
     "dashboard": "Dashboard",

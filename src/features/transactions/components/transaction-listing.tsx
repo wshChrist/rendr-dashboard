@@ -395,7 +395,7 @@ export function TransactionListing() {
               disabled={filteredData.length === 0}
             >
               <IconDownload className='mr-2 h-4 w-4' />
-              {t('transactions.export')}
+              {t('common.actions.export')}
             </Button>
           </div>
         </div>

@@ -794,7 +794,7 @@ export default function ProfileViewPage() {
                   size='sm'
                   className='border-white/10 bg-white/5'
                 >
-                  {t('profile.add')}
+                  {t('common.actions.add')}
                 </Button>
               </div>
 
