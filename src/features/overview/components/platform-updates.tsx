@@ -17,6 +17,7 @@ import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { ContactDialog } from './contact-dialog';
 import { useGitHubUpdates } from '@/hooks/use-github-updates';
+import { useTranslations } from 'next-intl';
 
 const getUpdateIcon = (type: PlatformUpdate['type']) => {
   switch (type) {
@@ -33,42 +34,43 @@ const getUpdateIcon = (type: PlatformUpdate['type']) => {
   }
 };
 
-const getUpdateBadge = (type: PlatformUpdate['type']) => {
+const getUpdateBadge = (type: PlatformUpdate['type'], t: any) => {
   switch (type) {
     case 'feature':
       return (
         <RendRBadge variant='accent' size='sm'>
-          Nouveauté
+          {t('updates.types.feature')}
         </RendRBadge>
       );
     case 'improvement':
       return (
         <RendRBadge variant='default' size='sm'>
-          Amélioration
+          {t('updates.types.improvement')}
         </RendRBadge>
       );
     case 'fix':
       return (
         <RendRBadge variant='muted' size='sm'>
-          Correction
+          {t('updates.types.fix')}
         </RendRBadge>
       );
     case 'announcement':
       return (
         <RendRBadge variant='solid' size='sm'>
-          Annonce
+          {t('updates.types.announcement')}
         </RendRBadge>
       );
     default:
       return (
         <RendRBadge variant='outline' size='sm'>
-          Info
+          {t('updates.types.info')}
         </RendRBadge>
       );
   }
 };
 
 export function PlatformUpdates() {
+  const t = useTranslations();
   const [contactDialogOpen, setContactDialogOpen] = useState(false);
   const { updates: platformUpdates, isLoading } = useGitHubUpdates();
 
@@ -111,7 +113,9 @@ export function PlatformUpdates() {
               <span className='rounded-xl border border-white/5 bg-white/5 p-2'>
                 <IconBell className='h-4 w-4' />
               </span>
-              <h3 className='text-lg font-semibold'>Nouveautés</h3>
+              <h3 className='text-lg font-semibold'>
+                {t('updates.filters.features')}
+              </h3>
               {newUpdatesCount > 0 && (
                 <RendRBadge
                   variant='solid'
@@ -119,17 +123,19 @@ export function PlatformUpdates() {
                   className='animate-pulse-subtle'
                 >
                   {newUpdatesCount}{' '}
-                  {newUpdatesCount === 1 ? 'nouveau' : 'nouveaux'}
+                  {newUpdatesCount === 1
+                    ? t('updates.newCount.one')
+                    : t('updates.newCount.other')}
                 </RendRBadge>
               )}
             </div>
             <p className='text-muted-foreground text-sm'>
-              Les dernières mises à jour de la plateforme
+              {t('updates.latestUpdates')}
             </p>
           </div>
           <Link href='/dashboard/updates'>
             <RendRButton variant='ghost' size='sm' icon='arrow'>
-              Tout voir
+              {t('updates.seeAll')}
             </RendRButton>
           </Link>
         </div>
@@ -177,11 +183,11 @@ export function PlatformUpdates() {
                         dot
                         dotColor='green'
                       >
-                        NOUVEAU
+                        {t('updates.new')}
                       </RendRBadge>
                     )}
                   </div>
-                  {getUpdateBadge(update.type)}
+                  {getUpdateBadge(update.type, t)}
                 </div>
                 <p className='text-muted-foreground mt-1.5 line-clamp-2 text-xs'>
                   {update.description}
@@ -201,13 +207,13 @@ export function PlatformUpdates() {
         <div className='mt-5 border-t border-white/5 pt-4'>
           <div className='flex items-center justify-between text-sm'>
             <span className='text-muted-foreground'>
-              Vous avez une suggestion ?
+              {t('updates.contact.haveSuggestion')}
             </span>
             <button
               onClick={() => setContactDialogOpen(true)}
               className='text-foreground flex cursor-pointer items-center gap-1 transition-colors hover:text-white'
             >
-              Nous contacter
+              {t('updates.contact.contactUs')}
               <IconSparkles className='h-3 w-3' />
             </button>
           </div>

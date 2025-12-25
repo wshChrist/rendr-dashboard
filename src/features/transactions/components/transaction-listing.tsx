@@ -158,7 +158,9 @@ export function TransactionListing() {
       const formattedDate = format(date, 'dd/MM/yyyy', { locale: dateLocale });
       const formattedTime = format(date, 'HH:mm', { locale: dateLocale });
       const status =
-        transaction.status === 'confirmed' ? t('pages.transactions.status.confirmed') : t('pages.transactions.status.pending');
+        transaction.status === 'confirmed'
+          ? t('pages.transactions.status.confirmed')
+          : t('pages.transactions.status.pending');
 
       return [
         formattedDate,
@@ -276,11 +278,11 @@ export function TransactionListing() {
           <p className='stat-number text-3xl font-bold'>{stats.totalTrades}</p>
           <div className='mt-1 flex items-center gap-2'>
             <RendRBadge variant='success' size='sm' dot dotColor='green'>
-              {stats.confirmedTrades} confirmés
+              {stats.confirmedTrades} {t('transactions.stats.confirmed')}
             </RendRBadge>
             {stats.pendingTrades > 0 && (
               <RendRBadge variant='outline' size='sm' dot dotColor='yellow'>
-                {stats.pendingTrades} en attente
+                {stats.pendingTrades} {t('transactions.stats.pending')}
               </RendRBadge>
             )}
           </div>
@@ -372,9 +374,15 @@ export function TransactionListing() {
                 <SelectValue placeholder={t('common.status')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value='all'>{t('transactions.allStatuses')}</SelectItem>
-                <SelectItem value='confirmed'>Confirmés</SelectItem>
-                <SelectItem value='pending'>En attente</SelectItem>
+                <SelectItem value='all'>
+                  {t('transactions.allStatuses')}
+                </SelectItem>
+                <SelectItem value='confirmed'>
+                  {t('transactions.status.confirmed')}
+                </SelectItem>
+                <SelectItem value='pending'>
+                  {t('transactions.status.pending')}
+                </SelectItem>
               </SelectContent>
             </Select>
 

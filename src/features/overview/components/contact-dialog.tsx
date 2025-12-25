@@ -105,15 +105,15 @@ export function ContactDialog({ open, onOpenChange }: ContactDialogProps) {
       // Simulation d'envoi
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      toast.success('Message envoyé avec succès !', {
-        description: 'Nous vous répondrons dans les plus brefs délais.'
+      toast.success(t('contact.success.title'), {
+        description: t('contact.success.description')
       });
 
       form.reset();
       onOpenChange(false);
     } catch (error) {
-      toast.error("Erreur lors de l'envoi", {
-        description: 'Veuillez réessayer plus tard.'
+      toast.error(t('contact.error.title'), {
+        description: t('contact.error.description')
       });
     } finally {
       setIsSubmitting(false);
@@ -124,16 +124,18 @@ export function ContactDialog({ open, onOpenChange }: ContactDialogProps) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className='sm:max-w-[600px]'>
         <DialogHeader>
-          <DialogTitle>Contactez-nous</DialogTitle>
+          <DialogTitle>{t('contact.contactUs')}</DialogTitle>
           <DialogDescription>
-            Envoyez-nous un message ou suivez-nous sur nos réseaux sociaux
+            {t('contact.sendMessageOrFollow')}
           </DialogDescription>
         </DialogHeader>
 
         <div className='space-y-6'>
           {/* Réseaux sociaux */}
           <div>
-            <h3 className='mb-3 text-sm font-medium'>{t('contact.socialNetworks')}</h3>
+            <h3 className='mb-3 text-sm font-medium'>
+              {t('contact.socialNetworks')}
+            </h3>
             <div className='flex flex-wrap gap-3'>
               {socialLinks.map((social) => {
                 const Icon = social.icon;
@@ -166,7 +168,7 @@ export function ContactDialog({ open, onOpenChange }: ContactDialogProps) {
             </div>
             <div className='relative flex justify-center text-xs uppercase'>
               <span className='bg-background text-muted-foreground px-2'>
-                Ou envoyez-nous un message
+                {t('contact.orSendMessage')}
               </span>
             </div>
           </div>
@@ -183,7 +185,7 @@ export function ContactDialog({ open, onOpenChange }: ContactDialogProps) {
                 name='name'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Nom</FormLabel>
+                    <FormLabel>{t('contact.name')}</FormLabel>
                     <FormControl>
                       <Input placeholder={t('forms.firstName')} {...field} />
                     </FormControl>
@@ -196,11 +198,11 @@ export function ContactDialog({ open, onOpenChange }: ContactDialogProps) {
                 name='email'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>{t('contact.email')}</FormLabel>
                     <FormControl>
                       <Input
                         type='email'
-                        placeholder='votre@email.com'
+                        placeholder={t('contact.emailPlaceholder')}
                         {...field}
                       />
                     </FormControl>
@@ -215,9 +217,12 @@ export function ContactDialog({ open, onOpenChange }: ContactDialogProps) {
               name='subject'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Sujet</FormLabel>
+                  <FormLabel>{t('contact.subject')}</FormLabel>
                   <FormControl>
-                    <Input placeholder={t('contact.subjectPlaceholder')} {...field} />
+                    <Input
+                      placeholder={t('contact.subjectPlaceholder')}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -229,7 +234,7 @@ export function ContactDialog({ open, onOpenChange }: ContactDialogProps) {
               name='message'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Message</FormLabel>
+                  <FormLabel>{t('contact.message')}</FormLabel>
                   <FormControl>
                     <Textarea
                       placeholder={t('contact.messagePlaceholder')}
@@ -249,7 +254,7 @@ export function ContactDialog({ open, onOpenChange }: ContactDialogProps) {
               ) : (
                 <>
                   <IconSend className='mr-2 h-4 w-4' />
-                  Envoyer le message
+                  {t('contact.sendMessage')}
                 </>
               )}
             </Button>

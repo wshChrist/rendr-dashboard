@@ -40,18 +40,18 @@ const getUpdateIcon = (type: PlatformUpdate['type']) => {
   }
 };
 
-const getUpdateTypeLabel = (type: PlatformUpdate['type']) => {
+const getUpdateTypeLabel = (type: PlatformUpdate['type'], t: any) => {
   switch (type) {
     case 'feature':
-      return 'Nouveauté';
+      return t('updates.types.feature');
     case 'improvement':
-      return 'Amélioration';
+      return t('updates.types.improvement');
     case 'fix':
-      return 'Correction';
+      return t('updates.types.fix');
     case 'announcement':
-      return 'Annonce';
+      return t('updates.types.announcement');
     default:
-      return 'Info';
+      return t('updates.types.info');
   }
 };
 
@@ -142,23 +142,31 @@ export function AllUpdates() {
     label: string;
     icon: React.ReactNode;
   }[] = [
-    { type: 'all', label: 'Tout', icon: <IconBell className='h-4 w-4' /> },
+    {
+      type: 'all',
+      label: t('updates.filters.all'),
+      icon: <IconBell className='h-4 w-4' />
+    },
     {
       type: 'feature',
-      label: 'Nouveautés',
+      label: t('updates.filters.features'),
       icon: <IconRocket className='h-4 w-4' />
     },
     {
       type: 'improvement',
-      label: 'Améliorations',
+      label: t('updates.filters.improvements'),
       icon: <IconSparkles className='h-4 w-4' />
     },
     {
       type: 'announcement',
-      label: 'Annonces',
+      label: t('updates.filters.announcements'),
       icon: <IconSpeakerphone className='h-4 w-4' />
     },
-    { type: 'fix', label: 'Corrections', icon: <IconBug className='h-4 w-4' /> }
+    {
+      type: 'fix',
+      label: t('updates.filters.fixes'),
+      icon: <IconBug className='h-4 w-4' />
+    }
   ];
 
   return (
@@ -186,13 +194,15 @@ export function AllUpdates() {
               <div className='rounded-xl border border-white/5 bg-white/5 p-2'>
                 <IconBell className='h-5 w-5' />
               </div>
-              <span className='text-muted-foreground text-sm'>Total</span>
+              <span className='text-muted-foreground text-sm'>
+                {t('updates.stats.total')}
+              </span>
             </div>
             <p className='stat-number text-3xl font-bold'>
               {stats.totalUpdates}
             </p>
             <p className='text-muted-foreground/60 mt-1 text-sm'>
-              mises à jour
+              {t('updates.stats.updates')}
             </p>
           </div>
 
@@ -212,13 +222,15 @@ export function AllUpdates() {
               <div className='rounded-xl border border-[#c5d13f]/20 bg-[#c5d13f]/10 p-2'>
                 <IconRocket className='h-5 w-5 text-[#c5d13f]' />
               </div>
-              <span className='text-muted-foreground text-sm'>Nouvelles</span>
+              <span className='text-muted-foreground text-sm'>
+                {t('updates.stats.new')}
+              </span>
             </div>
             <p className='stat-number text-3xl font-bold text-[#c5d13f]'>
               {stats.newUpdates}
             </p>
             <p className='text-muted-foreground/60 mt-1 text-sm'>
-              récemment ajoutées
+              {t('updates.stats.recentlyAdded')}
             </p>
           </div>
 
@@ -239,12 +251,12 @@ export function AllUpdates() {
                 <IconSparkles className='h-5 w-5' />
               </div>
               <span className='text-muted-foreground text-sm'>
-                Fonctionnalités
+                {t('updates.filters.features')}
               </span>
             </div>
             <p className='stat-number text-3xl font-bold'>{stats.features}</p>
             <p className='text-muted-foreground/60 mt-1 text-sm'>
-              nouvelles features
+              {t('updates.stats.newFeatures')}
             </p>
           </div>
 
@@ -264,7 +276,9 @@ export function AllUpdates() {
               <div className='rounded-xl border border-white/5 bg-white/5 p-2'>
                 <IconCalendar className='h-5 w-5' />
               </div>
-              <span className='text-muted-foreground text-sm'>Dernière</span>
+              <span className='text-muted-foreground text-sm'>
+                {t('updates.stats.last')}
+              </span>
             </div>
             <p className='line-clamp-1 text-sm font-semibold'>
               {stats.latestUpdate?.title}
@@ -291,7 +305,7 @@ export function AllUpdates() {
         >
           <div className='mb-4 flex items-center gap-2'>
             <IconFilter className='text-muted-foreground h-4 w-4' />
-            <span className='text-sm font-medium'>Filtres</span>
+            <span className='text-sm font-medium'>{t('common.filters')}</span>
           </div>
           <div className='flex flex-wrap items-center gap-2'>
             {filterButtons.map((btn) => (
@@ -373,7 +387,7 @@ export function AllUpdates() {
                               dot
                               dotColor='green'
                             >
-                              NOUVEAU
+                              {t('updates.new')}
                             </RendRBadge>
                           )}
                         </div>
@@ -387,7 +401,7 @@ export function AllUpdates() {
                         <RendRBadge
                           variant={getUpdateBadgeVariant(update.type)}
                         >
-                          {getUpdateTypeLabel(update.type)}
+                          {getUpdateTypeLabel(update.type, t)}
                         </RendRBadge>
                         <div className='text-muted-foreground/60 flex items-center gap-1 text-xs whitespace-nowrap'>
                           <IconCalendar className='h-3 w-3' />
@@ -417,7 +431,7 @@ export function AllUpdates() {
                             target='_blank'
                             rel='noopener noreferrer'
                           >
-                            En savoir plus
+                            {t('updates.learnMore')}
                             <IconArrowRight className='ml-2 h-4 w-4' />
                           </a>
                         </Button>
@@ -445,7 +459,9 @@ export function AllUpdates() {
               <div className='mb-4 rounded-2xl border border-white/5 bg-white/5 p-4'>
                 <IconBell className='text-muted-foreground h-10 w-10' />
               </div>
-              <h3 className='mb-2 text-lg font-semibold'>{t('updates.noUpdates')}</h3>
+              <h3 className='mb-2 text-lg font-semibold'>
+                {t('updates.noUpdates')}
+              </h3>
               <p className='text-muted-foreground max-w-md text-center'>
                 {t('updates.noUpdatesFilter')}
               </p>
@@ -475,13 +491,11 @@ export function AllUpdates() {
                   <IconSpeakerphone className='h-5 w-5 text-[#c5d13f]' />
                 </div>
                 <h3 className='text-lg font-semibold'>
-                  Vous avez une idée d'amélioration ?
+                  {t('updates.feedback.title')}
                 </h3>
               </div>
               <p className='text-muted-foreground max-w-md text-sm'>
-                Nous adorons recevoir vos suggestions pour améliorer RendR.
-                Partagez vos idées et aidez-nous à construire une meilleure
-                plateforme.
+                {t('updates.feedback.description')}
               </p>
             </div>
             <Button
@@ -489,7 +503,7 @@ export function AllUpdates() {
               className='border border-[#c5d13f]/20 bg-[#c5d13f]/10 text-[#c5d13f] hover:border-[#c5d13f]/30 hover:bg-[#c5d13f]/20'
             >
               <IconSpeakerphone className='mr-2 h-4 w-4' />
-              Envoyer une suggestion
+              {t('updates.feedback.sendSuggestion')}
             </Button>
           </div>
         </div>

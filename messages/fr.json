@@ -555,5 +555,103 @@
     "completed": "Complétés",
     "calculatedFromTrades": "Calculé depuis les trades",
     "amount": "Montant"
+  },
+  "updates": {
+    "types": {
+      "feature": "Nouveauté",
+      "improvement": "Amélioration",
+      "fix": "Correction",
+      "announcement": "Annonce",
+      "info": "Info"
+    },
+    "filters": {
+      "all": "Tout",
+      "features": "Nouveautés",
+      "improvements": "Améliorations",
+      "announcements": "Annonces",
+      "fixes": "Corrections"
+    },
+    "stats": {
+      "total": "Total",
+      "updates": "mises à jour",
+      "new": "Nouvelles",
+      "recentlyAdded": "récemment ajoutées",
+      "newFeatures": "nouvelles features",
+      "last": "Dernière"
+    },
+    "new": "NOUVEAU",
+    "learnMore": "En savoir plus",
+    "feedback": {
+      "title": "Vous avez une idée d'amélioration ?",
+      "description": "Nous adorons recevoir vos suggestions pour améliorer RendR. Partagez vos idées et aidez-nous à construire une meilleure plateforme.",
+      "sendSuggestion": "Envoyer une suggestion"
+    },
+    "contact": {
+      "haveSuggestion": "Vous avez une suggestion ?",
+      "contactUs": "Nous contacter"
+    },
+    "seeAll": "Tout voir",
+    "latestUpdates": "Les dernières mises à jour de la plateforme",
+    "newCount": {
+      "one": "nouveau",
+      "other": "nouveaux"
+    }
+  },
+  "contact": {
+    "contactUs": "Contactez-nous",
+    "sendMessageOrFollow": "Envoyez-nous un message ou suivez-nous sur nos réseaux sociaux",
+    "orSendMessage": "Ou envoyez-nous un message",
+    "name": "Nom",
+    "email": "Email",
+    "subject": "Sujet",
+    "message": "Message",
+    "sendMessage": "Envoyer le message",
+    "success": {
+      "title": "Message envoyé avec succès !",
+      "description": "Nous vous répondrons dans les plus brefs délais."
+    },
+    "error": {
+      "title": "Erreur lors de l'envoi",
+      "description": "Veuillez réessayer plus tard."
+    }
+  },
+  "profile": {
+    "bankInfoUpdated": "Informations bancaires mises à jour"
+  },
+  "transactions": {
+    "status": {
+      "confirmed": "Confirmés",
+      "pending": "En attente"
+    },
+    "stats": {
+      "confirmed": "confirmés",
+      "pending": "en attente"
+    }
+  },
+  "profile": {
+    "notifications": {
+      "title": "Préférences de notification",
+      "description": "Choisissez comment vous souhaitez être informé",
+      "emailNotifications": "Notifications par email",
+      "emailDescription": "Recevez un email pour chaque nouveau cashback crédité"
+    },
+    "personalInfo": {
+      "title": "Mettez à jour vos informations personnelles"
+    },
+    "password": {
+      "title": "Entrez votre mot de passe actuel et choisissez un nouveau mot de passe",
+      "confirm": "Confirmer le nouveau mot de passe"
+    },
+    "bankInfo": {
+      "title": "Mettez à jour vos informations de virement bancaire"
+    }
+  },
+  "admin": {
+    "withdrawals": {
+      "pending": "En attente"
+    },
+    "overview": {
+      "pendingWithdrawals": "Retraits en attente"
+    }
   }
 }

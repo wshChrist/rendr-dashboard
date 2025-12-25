@@ -88,8 +88,7 @@ export function AdminOverviewView() {
       }))
     ].map((row) => ({
       ...row,
-      cashbackForecast:
-        row.cashbackForecast ?? (forecastMap.get(row.day) ?? null)
+      cashbackForecast: row.cashbackForecast ?? forecastMap.get(row.day) ?? null
     }));
   }, [data]);
 
@@ -127,9 +126,12 @@ export function AdminOverviewView() {
           )}
         >
           <p className='text-muted-foreground text-sm'>Utilisateurs</p>
-          <p className='stat-number text-3xl font-bold'>{data.kpis.totalUsers}</p>
+          <p className='stat-number text-3xl font-bold'>
+            {data.kpis.totalUsers}
+          </p>
           <p className='text-muted-foreground/70 text-xs'>
-            Comptes: {data.kpis.totalAccounts} (connectés: {data.kpis.connectedAccounts})
+            Comptes: {data.kpis.totalAccounts} (connectés:{' '}
+            {data.kpis.connectedAccounts})
           </p>
         </div>
         <div
@@ -140,7 +142,9 @@ export function AdminOverviewView() {
           )}
         >
           <p className='text-muted-foreground text-sm'>Trades (30j)</p>
-          <p className='stat-number text-3xl font-bold'>{data.kpis.tradesLast30d}</p>
+          <p className='stat-number text-3xl font-bold'>
+            {data.kpis.tradesLast30d}
+          </p>
           <p className='text-muted-foreground/70 text-xs'>
             Volume & cashback agrégés (voir graphique)
           </p>
@@ -152,11 +156,15 @@ export function AdminOverviewView() {
             'border border-[#c5d13f]/20'
           )}
         >
-          <p className='text-muted-foreground text-sm'>{t('admin.cashback30d')}</p>
+          <p className='text-muted-foreground text-sm'>
+            {t('admin.cashback30d')}
+          </p>
           <p className='stat-number text-3xl font-bold text-[#c5d13f]'>
             {data.kpis.cashbackLast30d.toFixed(2)}€
           </p>
-          <p className='text-muted-foreground/70 text-xs'>{t('admin.calculatedFromTrades')}</p>
+          <p className='text-muted-foreground/70 text-xs'>
+            {t('admin.calculatedFromTrades')}
+          </p>
         </div>
         <div
           className={cn(
@@ -165,12 +173,15 @@ export function AdminOverviewView() {
             'border border-white/5'
           )}
         >
-          <p className='text-muted-foreground text-sm'>Retraits en attente</p>
+          <p className='text-muted-foreground text-sm'>
+            {t('admin.overview.pendingWithdrawals')}
+          </p>
           <p className='stat-number text-3xl font-bold'>
             {data.kpis.pendingWithdrawalsCount}
           </p>
           <p className='text-muted-foreground/70 text-xs'>
-            {t('admin.amount')}: {data.kpis.pendingWithdrawalsAmount.toFixed(2)}€
+            {t('admin.amount')}: {data.kpis.pendingWithdrawalsAmount.toFixed(2)}
+            €
           </p>
         </div>
       </div>
@@ -185,7 +196,9 @@ export function AdminOverviewView() {
           )}
         >
           <div className='mb-4'>
-            <h3 className='text-lg font-semibold'>{t('admin.cashback30dForecast')}</h3>
+            <h3 className='text-lg font-semibold'>
+              {t('admin.cashback30dForecast')}
+            </h3>
             <p className='text-muted-foreground text-sm'>
               {t('admin.forecastDescription')}
             </p>
@@ -193,7 +206,10 @@ export function AdminOverviewView() {
           <ChartContainer config={chartConfig} className='h-[220px] w-full'>
             <ResponsiveContainer width='100%' height='100%'>
               <LineChart data={mergedSeries}>
-                <CartesianGrid vertical={false} stroke='rgba(255,255,255,0.06)' />
+                <CartesianGrid
+                  vertical={false}
+                  stroke='rgba(255,255,255,0.06)'
+                />
                 <XAxis dataKey='day' hide />
                 <YAxis hide />
                 <ChartTooltip
@@ -238,21 +254,32 @@ export function AdminOverviewView() {
           )}
         >
           <div className='mb-4'>
-            <h3 className='text-lg font-semibold'>{t('admin.withdrawals30d')}</h3>
+            <h3 className='text-lg font-semibold'>
+              {t('admin.withdrawals30d')}
+            </h3>
             <p className='text-muted-foreground text-sm'>
               {t('admin.requestsVsCompleted')}
             </p>
           </div>
           <ChartContainer
             config={{
-              withdrawalsRequested: { label: t('admin.requests'), color: '#c5d13f' },
-              withdrawalsCompleted: { label: t('admin.completed'), color: '#a5b028' }
+              withdrawalsRequested: {
+                label: t('admin.requests'),
+                color: '#c5d13f'
+              },
+              withdrawalsCompleted: {
+                label: t('admin.completed'),
+                color: '#a5b028'
+              }
             }}
             className='h-[220px] w-full'
           >
             <ResponsiveContainer width='100%' height='100%'>
               <LineChart data={data.series}>
-                <CartesianGrid vertical={false} stroke='rgba(255,255,255,0.06)' />
+                <CartesianGrid
+                  vertical={false}
+                  stroke='rgba(255,255,255,0.06)'
+                />
                 <XAxis dataKey='day' hide />
                 <YAxis hide />
                 <ChartTooltip
@@ -282,4 +309,3 @@ export function AdminOverviewView() {
     </div>
   );
 }
-

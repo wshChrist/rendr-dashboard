@@ -14,13 +14,9 @@ import {
 } from '@tanstack/react-table';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import {
-  IconCheck,
-  IconClock,
-  IconSearch,
-  IconX
-} from '@tabler/icons-react';
+import { IconCheck, IconClock, IconSearch, IconX } from '@tabler/icons-react';
 import { toast } from 'sonner';
+import { useTranslations } from 'next-intl';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -51,31 +47,34 @@ type AdminWithdrawal = {
 };
 
 function StatusBadge({ status }: { status: WithdrawalStatus }) {
+  const t = useTranslations();
   switch (status) {
     case 'completed':
       return (
         <RendRBadge variant='success' dot dotColor='green'>
-          Complété
+          {t('pages.withdrawals.status.completed')}
         </RendRBadge>
       );
     case 'processing':
       return (
         <RendRBadge variant='accent' dot dotColor='yellow'>
-          En cours
+          {t('pages.withdrawals.status.processing')}
         </RendRBadge>
       );
     case 'pending':
       return (
         <RendRBadge variant='outline' dot dotColor='white'>
-          En attente
+          {t('admin.withdrawals.pending')}
         </RendRBadge>
       );
     case 'rejected':
       return (
         <RendRBadge variant='warning' dot dotColor='red'>
-          Rejeté
+          {t('pages.withdrawals.status.rejected')}
         </RendRBadge>
       );
+    default:
+      return null;
   }
 }
 
@@ -266,7 +265,8 @@ export function AdminWithdrawalsView() {
             }
           };
 
-          const showActions = w.status === 'pending' || w.status === 'processing';
+          const showActions =
+            w.status === 'pending' || w.status === 'processing';
 
           return (
             <div className='flex items-center justify-end gap-2'>
@@ -396,7 +396,10 @@ export function AdminWithdrawalsView() {
                   className='border-white/5 hover:bg-transparent'
                 >
                   {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id} className='text-muted-foreground'>
+                    <TableHead
+                      key={header.id}
+                      className='text-muted-foreground'
+                    >
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -444,4 +447,3 @@ export function AdminWithdrawalsView() {
     </div>
   );
 }
-

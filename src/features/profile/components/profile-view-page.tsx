@@ -166,25 +166,37 @@ export default function ProfileViewPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Créer les schémas de validation avec les traductions
-  const profileFormSchema = useMemo(() => z.object({
-    firstName: z.string().min(2, t('profile.validation.firstNameMin')),
-    lastName: z.string().min(2, t('profile.validation.lastNameMin')),
-    email: z.string().email(t('profile.validation.invalidEmail')),
-    avatar: z.string().optional()
-  }), [t]);
+  const profileFormSchema = useMemo(
+    () =>
+      z.object({
+        firstName: z.string().min(2, t('profile.validation.firstNameMin')),
+        lastName: z.string().min(2, t('profile.validation.lastNameMin')),
+        email: z.string().email(t('profile.validation.invalidEmail')),
+        avatar: z.string().optional()
+      }),
+    [t]
+  );
 
-  const passwordFormSchema = useMemo(() => z
-    .object({
-      currentPassword: z.string().min(1, t('profile.validation.currentPasswordRequired')),
-      newPassword: z
-        .string()
-        .min(8, t('profile.validation.newPasswordMin')),
-      confirmPassword: z.string().min(1, t('profile.validation.confirmPasswordRequired'))
-    })
-    .refine((data) => data.newPassword === data.confirmPassword, {
-      message: t('profile.validation.passwordsDoNotMatch'),
-      path: ['confirmPassword']
-    }), [t]);
+  const passwordFormSchema = useMemo(
+    () =>
+      z
+        .object({
+          currentPassword: z
+            .string()
+            .min(1, t('profile.validation.currentPasswordRequired')),
+          newPassword: z
+            .string()
+            .min(8, t('profile.validation.newPasswordMin')),
+          confirmPassword: z
+            .string()
+            .min(1, t('profile.validation.confirmPasswordRequired'))
+        })
+        .refine((data) => data.newPassword === data.confirmPassword, {
+          message: t('profile.validation.passwordsDoNotMatch'),
+          path: ['confirmPassword']
+        }),
+    [t]
+  );
 
   // Formulaires react-hook-form
   const profileForm = useForm<ProfileFormValues>({
@@ -397,7 +409,7 @@ export default function ProfileViewPage() {
 
   const handleSaveBankAccount = () => {
     // Ici vous pouvez ajouter la logique pour sauvegarder les informations bancaires
-    toast.success('Informations bancaires mises à jour');
+    toast.success(t('profile.bankInfoUpdated'));
     setEditBankDialogOpen(false);
   };
 
@@ -551,7 +563,9 @@ export default function ProfileViewPage() {
                 </span>
                 <span className='flex items-center gap-2'>
                   <IconCalendar className='h-4 w-4' />
-                  <span className='text-sm'>{t('profile.memberSince')} {memberSince}</span>
+                  <span className='text-sm'>
+                    {t('profile.memberSince')} {memberSince}
+                  </span>
                 </span>
               </div>
             </div>
@@ -832,7 +846,9 @@ export default function ProfileViewPage() {
                 <IconHistory className='h-4 w-4' />
               </div>
               <div>
-                <h3 className='text-lg font-semibold'>{t('profile.lastWithdrawals')}</h3>
+                <h3 className='text-lg font-semibold'>
+                  {t('profile.lastWithdrawals')}
+                </h3>
                 <p className='text-muted-foreground text-sm'>
                   Historique de vos retraits récents
                 </p>
@@ -887,10 +903,10 @@ export default function ProfileViewPage() {
               </div>
               <div>
                 <h3 className='text-lg font-semibold'>
-                  Préférences de notification
+                  {t('profile.notifications.title')}
                 </h3>
                 <p className='text-muted-foreground text-sm'>
-                  Choisissez comment vous souhaitez être informé
+                  {t('profile.notifications.description')}
                 </p>
               </div>
             </div>
@@ -910,10 +926,10 @@ export default function ProfileViewPage() {
                     htmlFor='email-notifications'
                     className='text-base font-medium'
                   >
-                    Notifications par email
+                    {t('profile.notifications.emailNotifications')}
                   </Label>
                   <p className='text-muted-foreground text-sm'>
-                    Recevez un email pour chaque nouveau cashback crédité
+                    {t('profile.notifications.emailDescription')}
                   </p>
                 </div>
                 <Switch
@@ -1068,7 +1084,9 @@ export default function ProfileViewPage() {
                       Ajoutez une couche de sécurité supplémentaire
                     </p>
                   </div>
-                  <RendRBadge variant='outline'>{t('profile.notActivated')}</RendRBadge>
+                  <RendRBadge variant='outline'>
+                    {t('profile.notActivated')}
+                  </RendRBadge>
                 </div>
 
                 <div
@@ -1085,7 +1103,9 @@ export default function ProfileViewPage() {
                       <IconDeviceDesktop className='h-4 w-4' />
                     </div>
                     <div>
-                      <p className='font-medium'>{t('profile.activeSessions')}</p>
+                      <p className='font-medium'>
+                        {t('profile.activeSessions')}
+                      </p>
                       <p className='text-muted-foreground text-sm'>
                         1 appareil connecté
                       </p>
@@ -1165,7 +1185,7 @@ export default function ProfileViewPage() {
           <DialogHeader>
             <DialogTitle>{t('profile.editProfile')}</DialogTitle>
             <DialogDescription>
-              Mettez à jour vos informations personnelles
+              {t('profile.personalInfo.title')}
             </DialogDescription>
           </DialogHeader>
           <form
@@ -1295,17 +1315,16 @@ export default function ProfileViewPage() {
         <DialogContent className='border-white/5 bg-zinc-900'>
           <DialogHeader>
             <DialogTitle>{t('profile.changePassword')}</DialogTitle>
-            <DialogDescription>
-              Entrez votre mot de passe actuel et choisissez un nouveau mot de
-              passe sécurisé
-            </DialogDescription>
+            <DialogDescription>{t('profile.password.title')}</DialogDescription>
           </DialogHeader>
           <form
             onSubmit={passwordForm.handleSubmit(handleSavePassword)}
             className='space-y-4'
           >
             <div className='space-y-2'>
-              <Label htmlFor='currentPassword'>{t('profile.currentPassword')}</Label>
+              <Label htmlFor='currentPassword'>
+                {t('profile.currentPassword')}
+              </Label>
               <Input
                 id='currentPassword'
                 type='password'
@@ -1341,7 +1360,7 @@ export default function ProfileViewPage() {
 
             <div className='space-y-2'>
               <Label htmlFor='confirmPassword'>
-                Confirmer le nouveau mot de passe
+                {t('profile.password.confirm')}
               </Label>
               <Input
                 id='confirmPassword'
@@ -1385,9 +1404,7 @@ export default function ProfileViewPage() {
         <DialogContent className='border-white/5 bg-zinc-900'>
           <DialogHeader>
             <DialogTitle>{t('profile.modifyBankAccount')}</DialogTitle>
-            <DialogDescription>
-              Mettez à jour vos informations de virement bancaire
-            </DialogDescription>
+            <DialogDescription>{t('profile.bankInfo.title')}</DialogDescription>
           </DialogHeader>
           <div className='space-y-4 py-4'>
             <div className='space-y-2'>
@@ -1438,7 +1455,9 @@ export default function ProfileViewPage() {
           </DialogHeader>
           <div className='space-y-4 py-4'>
             <div className='space-y-2'>
-              <Label htmlFor='paypal-email'>{t('profile.paypalEmailAddress')}</Label>
+              <Label htmlFor='paypal-email'>
+                {t('profile.paypalEmailAddress')}
+              </Label>
               <Input
                 id='paypal-email'
                 type='email'
@@ -1586,7 +1605,8 @@ export default function ProfileViewPage() {
               {t('profile.deleteAccount')}
             </AlertDialogTitle>
             <AlertDialogDescription className='text-muted-foreground'>
-              {t('modal.confirm.description')} {t('profile.deleteAccountWarning')}
+              {t('modal.confirm.description')}{' '}
+              {t('profile.deleteAccountWarning')}
               <ul className='mt-4 list-inside list-disc space-y-2 text-sm'>
                 <li>{t('profile.deleteAccountWarning1')}</li>
                 <li>{t('profile.deleteAccountWarning2')}</li>
