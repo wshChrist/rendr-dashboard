@@ -258,7 +258,8 @@
     "tradesExecuted": "trades exécutés",
     "viewTransactions": "Voir les transactions",
     "accountsSynced": "Comptes synchronisés",
-    "manageBrokers": "Gérer mes brokers"
+    "manageBrokers": "Gérer mes brokers",
+    "connected": "Connectés"
   },
   "auth": {
     "signIn": {
@@ -421,7 +422,11 @@
       "step3": "Entrez vos identifiants pour connecter votre compte",
       "step4": "Recevez automatiquement du cashback sur chaque trade !"
     },
-    "vpsRetry": "Le VPS va réessayer automatiquement. Si le problème persiste, vérifiez vos identifiants."
+    "vpsRetry": "Le VPS va réessayer automatiquement. Si le problème persiste, vérifiez vos identifiants.",
+    "refresh": "Actualiser",
+    "refreshAccount": "Actualiser le compte",
+    "accountRefreshed": "Les informations du compte ont été mises à jour.",
+    "connectNewAccount": "Connectez un nouveau compte de trading MT4/MT5 pour commencer à recevoir du cashback"
   },
   "table": {
     "pagination": {
@@ -502,7 +507,11 @@
     "yourReferrals": "Vos filleuls",
     "shareLink": "Partagez votre lien",
     "theySignUp": "Ils s'inscrivent",
-    "youEarn": "Vous gagnez"
+    "youEarn": "Vous gagnez",
+    "share": "Partager",
+    "twitter": "Twitter",
+    "telegram": "Telegram",
+    "whatsapp": "WhatsApp"
   },
   "profile": {
     "memberSince": "Membre depuis",
@@ -536,7 +545,22 @@
       "passwordsDoNotMatch": "Les mots de passe ne correspondent pas"
     },
     "profileUpdatedSuccess": "Profil mis à jour avec succès",
-    "profileUpdateError": "Erreur lors de la mise à jour du profil"
+    "profileUpdateError": "Erreur lors de la mise à jour du profil",
+    "tabs": {
+      "payments": "Paiements",
+      "notifications": "Notifications",
+      "security": "Sécurité"
+    },
+    "add": "Ajouter",
+    "addPaypal": "Ajouter PayPal",
+    "addPaypalDescription": "Associez votre compte PayPal pour les retraits",
+    "addCrypto": "Ajouter Crypto",
+    "addCryptoDescription": "Associez votre adresse crypto (USDT) pour les retraits",
+    "accountSecurity": "Sécurité du compte",
+    "accountSecurityDescription": "Gérez la sécurité et l'accès à votre compte",
+    "addSecurityLayer": "Ajoutez une couche de sécurité supplémentaire",
+    "securitySettings": "Paramètres de sécurité",
+    "accountSecurityDescription2": "de sécurité de votre compte."
   },
   "overview": {
     "recentSales": {
@@ -545,7 +569,24 @@
     },
     "volumeTrading": "Volume de Trading",
     "browserDistribution": "Répartition des navigateurs",
-    "noUpdates": "Aucune mise à jour"
+    "noUpdates": "Aucune mise à jour",
+    "seeAll": "Tout voir",
+    "contactUs": "Nous contacter",
+    "tradingVolume": "Volume de Trading",
+    "trade": "Trade",
+    "recentActivity": {
+      "title": "Activité Récente",
+      "description": "Vos dernières actions sur la plateforme",
+      "loading": "Chargement...",
+      "noActivity": "Aucune activité récente pour le moment",
+      "tradeDescription": "Trade {pair} sur {broker}",
+      "badges": {
+        "trade": "Trade",
+        "withdrawal": "Retrait",
+        "broker": "Broker",
+        "other": "Autre"
+      }
+    }
   },
   "auth": {
     "signIn": {
@@ -558,7 +599,10 @@
   },
   "transactions": {
     "allTime": "Tout le temps",
-    "allStatuses": "Tous statuts"
+    "allStatuses": "Tous statuts",
+    "export": "Exporter",
+    "noTransactionsToExport": "Aucune transaction à exporter",
+    "refresh": "Actualiser"
   },
   "admin": {
     "pendingWithdrawals": "Retraits en attente",
@@ -680,19 +724,7 @@
     }
   },
   "profile": {
-    "bankInfoUpdated": "Informations bancaires mises à jour"
-  },
-  "transactions": {
-    "status": {
-      "confirmed": "Confirmés",
-      "pending": "En attente"
-    },
-    "stats": {
-      "confirmed": "confirmés",
-      "pending": "en attente"
-    }
-  },
-  "profile": {
+    "bankInfoUpdated": "Informations bancaires mises à jour",
     "notifications": {
       "title": "Préférences de notification",
       "description": "Choisissez comment vous souhaitez être informé",
@@ -710,6 +742,19 @@
       "title": "Mettez à jour vos informations de virement bancaire"
     }
   },
+  "transactions": {
+    "status": {
+      "confirmed": "Confirmés",
+      "pending": "En attente"
+    },
+    "stats": {
+      "confirmed": "confirmés",
+      "pending": "en attente"
+    },
+    "export": "Exporter",
+    "noTransactionsToExport": "Aucune transaction à exporter",
+    "refresh": "Actualiser"
+  },
   "admin": {
     "withdrawals": {
       "pending": "En attente"
@@ -717,5 +762,22 @@
     "overview": {
       "pendingWithdrawals": "Retraits en attente"
     }
+  },
+  "breadcrumbs": {
+    "dashboard": "Dashboard",
+    "overview": "Vue d'ensemble",
+    "transactions": "Transactions",
+    "brokers": "Brokers",
+    "myBrokers": "Mes Brokers",
+    "withdrawals": "Retraits",
+    "referral": "Parrainage",
+    "profile": "Profil",
+    "updates": "Nouveautés"
+  },
+  "theme": {
+    "changeTheme": "Changer le thème",
+    "lightMode": "Mode clair",
+    "darkMode": "Mode sombre",
+    "theme": "Thème"
   }
 }

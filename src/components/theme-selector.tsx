@@ -35,7 +35,7 @@ export function ThemeSelector() {
   return (
     <div className='flex items-center gap-2' suppressHydrationWarning>
       <Label htmlFor='theme-selector' className='sr-only'>
-        Thème
+        {t('theme.theme')}
       </Label>
       <Select value={activeTheme} onValueChange={setActiveTheme}>
         <SelectTrigger
@@ -45,7 +45,9 @@ export function ThemeSelector() {
           <span className='text-muted-foreground hidden sm:block'>
             {t('common.chooseTheme')} :
           </span>
-          <span className='text-muted-foreground block sm:hidden'>{t('common.theme')}</span>
+          <span className='text-muted-foreground block sm:hidden'>
+            {t('common.theme')}
+          </span>
           <SelectValue placeholder={t('common.chooseTheme')} />
         </SelectTrigger>
         <SelectContent align='end'>

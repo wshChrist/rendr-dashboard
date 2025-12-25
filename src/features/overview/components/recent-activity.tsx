@@ -9,8 +9,10 @@ import {
 } from '@tabler/icons-react';
 import { RendRBadge } from '@/components/ui/rendr-badge';
 import { useTradingData } from '@/hooks/use-trading-data';
+import { useTranslations } from 'next-intl';
 import { formatDistanceToNow } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { fr, enUS } from 'date-fns/locale';
+import { useLocale } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { useMemo } from 'react';
 
@@ -27,37 +29,40 @@ const getActivityIcon = (type: string) => {
   }
 };
 
-const getActivityBadge = (type: string) => {
-  switch (type) {
-    case 'trade':
-      return (
-        <RendRBadge variant='accent' size='sm'>
-          Trade
-        </RendRBadge>
-      );
-    case 'withdrawal':
-      return (
-        <RendRBadge variant='default' size='sm'>
-          Retrait
-        </RendRBadge>
-      );
-    case 'broker_linked':
-      return (
-        <RendRBadge variant='outline' size='sm'>
-          Broker
-        </RendRBadge>
-      );
-    default:
-      return (
-        <RendRBadge variant='muted' size='sm'>
-          Autre
-        </RendRBadge>
-      );
-  }
-};
-
 export function RecentActivity() {
+  const t = useTranslations();
+  const locale = useLocale();
+  const dateLocale = locale === 'en' ? enUS : fr;
   const { transactions, accounts, isLoading } = useTradingData();
+
+  const getActivityBadge = (type: string) => {
+    switch (type) {
+      case 'trade':
+        return (
+          <RendRBadge variant='accent' size='sm'>
+            {t('overview.recentActivity.badges.trade')}
+          </RendRBadge>
+        );
+      case 'withdrawal':
+        return (
+          <RendRBadge variant='default' size='sm'>
+            {t('overview.recentActivity.badges.withdrawal')}
+          </RendRBadge>
+        );
+      case 'broker_linked':
+        return (
+          <RendRBadge variant='outline' size='sm'>
+            {t('overview.recentActivity.badges.broker')}
+          </RendRBadge>
+        );
+      default:
+        return (
+          <RendRBadge variant='muted' size='sm'>
+            {t('overview.recentActivity.badges.other')}
+          </RendRBadge>
+        );
+    }
+  };
 
   // Transformer les transactions récentes en format d'activité
   const recentActivities = useMemo(() => {
@@ -68,7 +73,10 @@ export function RecentActivity() {
       return {
         id: transaction.id,
         type: 'trade' as const,
-        description: `Trade ${transaction.pair} sur ${transaction.broker.name}`,
+        description: t('overview.recentActivity.tradeDescription', {
+          pair: transaction.pair,
+          broker: transaction.broker.name
+        }),
         broker: transaction.broker.name,
         date: transaction.trade_date,
         amount: transaction.cashback_amount,
@@ -93,22 +101,26 @@ export function RecentActivity() {
           <span className='rounded-xl border border-white/5 bg-white/5 p-2'>
             <IconActivity className='h-4 w-4' />
           </span>
-          <h3 className='text-lg font-semibold'>Activité Récente</h3>
+          <h3 className='text-lg font-semibold'>
+            {t('overview.recentActivity.title')}
+          </h3>
         </div>
         <p className='text-muted-foreground text-sm'>
-          Vos dernières actions sur la plateforme
+          {t('overview.recentActivity.description')}
         </p>
       </div>
 
       {/* Activities list */}
       {isLoading ? (
         <div className='flex items-center justify-center p-8'>
-          <p className='text-muted-foreground'>Chargement...</p>
+          <p className='text-muted-foreground'>
+            {t('overview.recentActivity.loading')}
+          </p>
         </div>
       ) : recentActivities.length === 0 ? (
         <div className='flex items-center justify-center p-8'>
           <p className='text-muted-foreground'>
-            Aucune activité récente pour le moment
+            {t('overview.recentActivity.noActivity')}
           </p>
         </div>
       ) : (
@@ -157,7 +169,7 @@ export function RecentActivity() {
                     )}
                     {formatDistanceToNow(new Date(activity.date), {
                       addSuffix: true,
-                      locale: fr
+                      locale: dateLocale
                     })}
                   </p>
                   {activity.amount && (

@@ -218,7 +218,8 @@ export function StatsCards() {
         footer={{
           primary: (
             <span>
-              <AnimatedInteger value={stats.total_trades} /> {t('stats.tradesExecuted')}
+              <AnimatedInteger value={stats.total_trades} />{' '}
+              {t('stats.tradesExecuted')}
             </span>
           ),
           secondary: t('stats.viewTransactions')
@@ -232,7 +233,7 @@ export function StatsCards() {
         icon={<IconUsers className='h-5 w-5' />}
         label={t('stats.activeBrokers')}
         value={<AnimatedInteger value={stats.active_brokers} />}
-        badge={{ text: 'Connectés', dot: true }}
+        badge={{ text: t('stats.connected'), dot: true }}
         footer={{
           primary: t('stats.accountsSynced'),
           secondary: t('stats.manageBrokers')

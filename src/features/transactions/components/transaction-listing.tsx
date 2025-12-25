@@ -135,7 +135,7 @@ export function TransactionListing() {
   // Fonction d'export CSV
   const exportToCSV = () => {
     if (filteredData.length === 0) {
-      alert('Aucune transaction à exporter');
+      alert(t('transactions.noTransactionsToExport'));
       return;
     }
 
@@ -395,7 +395,7 @@ export function TransactionListing() {
               disabled={filteredData.length === 0}
             >
               <IconDownload className='mr-2 h-4 w-4' />
-              Exporter
+              {t('transactions.export')}
             </Button>
           </div>
         </div>

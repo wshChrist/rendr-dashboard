@@ -280,7 +280,8 @@
     "tradesExecuted": "trades executed",
     "viewTransactions": "View transactions",
     "accountsSynced": "Accounts synced",
-    "manageBrokers": "Manage my brokers"
+    "manageBrokers": "Manage my brokers",
+    "connected": "Connected"
   },
   "auth": {
     "signIn": {
@@ -442,7 +443,11 @@
       "step3": "Enter your credentials to connect your account",
       "step4": "Automatically receive cashback on every trade!"
     },
-    "vpsRetry": "The VPS will automatically retry. If the problem persists, check your credentials."
+    "vpsRetry": "The VPS will automatically retry. If the problem persists, check your credentials.",
+    "refresh": "Refresh",
+    "refreshAccount": "Refresh account",
+    "accountRefreshed": "Account information has been updated.",
+    "connectNewAccount": "Connect a new MT4/MT5 trading account to start receiving cashback"
   },
   "table": {
     "pagination": {
@@ -516,7 +521,11 @@
     "yourReferrals": "Your referrals",
     "shareLink": "Share your link",
     "theySignUp": "They sign up",
-    "youEarn": "You earn"
+    "youEarn": "You earn",
+    "share": "Share",
+    "twitter": "Twitter",
+    "telegram": "Telegram",
+    "whatsapp": "WhatsApp"
   },
   "profile": {
     "memberSince": "Member since",
@@ -567,7 +576,22 @@
     },
     "bankInfo": {
       "title": "Update your bank transfer information"
-    }
+    },
+    "tabs": {
+      "payments": "Payments",
+      "notifications": "Notifications",
+      "security": "Security"
+    },
+    "add": "Add",
+    "addPaypal": "Add PayPal",
+    "addPaypalDescription": "Link your PayPal account for withdrawals",
+    "addCrypto": "Add Crypto",
+    "addCryptoDescription": "Link your crypto address (USDT) for withdrawals",
+    "accountSecurity": "Account Security",
+    "accountSecurityDescription": "Manage the security and access to your account",
+    "addSecurityLayer": "Add an additional layer of security",
+    "securitySettings": "Security settings",
+    "accountSecurityDescription2": "of your account."
   },
   "overview": {
     "recentSales": {
@@ -577,7 +601,24 @@
     "volumeTrading": "Trading Volume",
     "browserDistribution": "Browser distribution",
     "noUpdates": "No updates",
-    "totalVisitorsByBrowser": "Total visitors by browser for the last 6 months"
+    "totalVisitorsByBrowser": "Total visitors by browser for the last 6 months",
+    "seeAll": "See all",
+    "contactUs": "Contact us",
+    "tradingVolume": "Trading Volume",
+    "trade": "Trade",
+    "recentActivity": {
+      "title": "Recent Activity",
+      "description": "Your latest actions on the platform",
+      "loading": "Loading...",
+      "noActivity": "No recent activity at the moment",
+      "tradeDescription": "Trade {pair} on {broker}",
+      "badges": {
+        "trade": "Trade",
+        "withdrawal": "Withdrawal",
+        "broker": "Broker",
+        "other": "Other"
+      }
+    }
   },
   "transactions": {
     "allTime": "All time",
@@ -589,7 +630,10 @@
     "stats": {
       "confirmed": "confirmed",
       "pending": "pending"
-    }
+    },
+    "export": "Export",
+    "noTransactionsToExport": "No transactions to export",
+    "refresh": "Refresh"
   },
   "admin": {
     "pendingWithdrawals": "Pending withdrawals",
@@ -673,5 +717,22 @@
   "tradingAccount": {
     "mustBeConnected": "You must be logged in",
     "pleaseConnect": "Please connect with Supabase Auth"
+  },
+  "breadcrumbs": {
+    "dashboard": "Dashboard",
+    "overview": "Overview",
+    "transactions": "Transactions",
+    "brokers": "Brokers",
+    "myBrokers": "My Brokers",
+    "withdrawals": "Withdrawals",
+    "referral": "Referral",
+    "profile": "Profile",
+    "updates": "Updates"
+  },
+  "theme": {
+    "changeTheme": "Change theme",
+    "lightMode": "Light mode",
+    "darkMode": "Dark mode",
+    "theme": "Theme"
   }
 }

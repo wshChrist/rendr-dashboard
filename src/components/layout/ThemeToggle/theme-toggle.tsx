@@ -2,12 +2,14 @@
 
 import { IconBrightness } from '@tabler/icons-react';
 import { useTheme } from 'next-themes';
+import { useTranslations } from 'next-intl';
 import * as React from 'react';
 
 import { Button } from '@/components/ui/button';
 
 export function ModeToggle() {
   const { setTheme, resolvedTheme } = useTheme();
+  const t = useTranslations();
 
   const handleThemeToggle = React.useCallback(
     (e?: React.MouseEvent) => {
@@ -40,7 +42,7 @@ export function ModeToggle() {
       onClick={handleThemeToggle}
     >
       <IconBrightness />
-      <span className='sr-only'>Changer le thème</span>
+      <span className='sr-only'>{t('theme.changeTheme')}</span>
     </Button>
   );
 }

@@ -689,21 +689,21 @@ export default function ProfileViewPage() {
             className='data-[state=active]:text-foreground rounded-lg data-[state=active]:bg-white/10'
           >
             <IconWallet className='mr-2 h-4 w-4' />
-            Paiements
+            {t('profile.tabs.payments')}
           </TabsTrigger>
           <TabsTrigger
             value='notifications'
             className='data-[state=active]:text-foreground rounded-lg data-[state=active]:bg-white/10'
           >
             <IconBell className='mr-2 h-4 w-4' />
-            Notifications
+            {t('profile.tabs.notifications')}
           </TabsTrigger>
           <TabsTrigger
             value='security'
             className='data-[state=active]:text-foreground rounded-lg data-[state=active]:bg-white/10'
           >
             <IconLock className='mr-2 h-4 w-4' />
-            Sécurité
+            {t('profile.tabs.security')}
           </TabsTrigger>
         </TabsList>
 
@@ -794,7 +794,7 @@ export default function ProfileViewPage() {
                   size='sm'
                   className='border-white/10 bg-white/5'
                 >
-                  Ajouter
+                  {t('profile.add')}
                 </Button>
               </div>
 
@@ -1012,9 +1012,11 @@ export default function ProfileViewPage() {
                 <IconLock className='h-4 w-4' />
               </div>
               <div>
-                <h3 className='text-lg font-semibold'>Sécurité du compte</h3>
+                <h3 className='text-lg font-semibold'>
+                  {t('profile.accountSecurity')}
+                </h3>
                 <p className='text-muted-foreground text-sm'>
-                  Gérez la sécurité et l'accès à votre compte
+                  {t('profile.accountSecurityDescription')}
                 </p>
               </div>
             </div>
@@ -1081,7 +1083,7 @@ export default function ProfileViewPage() {
                       Authentification à deux facteurs
                     </p>
                     <p className='text-muted-foreground text-sm'>
-                      Ajoutez une couche de sécurité supplémentaire
+                      {t('profile.addSecurityLayer')}
                     </p>
                   </div>
                   <RendRBadge variant='outline'>
@@ -1448,9 +1450,9 @@ export default function ProfileViewPage() {
       <Dialog open={addPaypalDialogOpen} onOpenChange={setAddPaypalDialogOpen}>
         <DialogContent className='border-white/5 bg-zinc-900'>
           <DialogHeader>
-            <DialogTitle>Ajouter PayPal</DialogTitle>
+            <DialogTitle>{t('profile.addPaypal')}</DialogTitle>
             <DialogDescription>
-              Associez votre compte PayPal pour les retraits
+              {t('profile.addPaypalDescription')}
             </DialogDescription>
           </DialogHeader>
           <div className='space-y-4 py-4'>
@@ -1569,8 +1571,8 @@ export default function ProfileViewPage() {
               </RendRBadge>
             </div>
             <p className='text-muted-foreground text-sm'>
-              Pour une gestion complète de vos sessions, visitez les paramètres
-              de sécurité de votre compte.
+              {t('profile.securitySettings')}{' '}
+              {t('profile.accountSecurityDescription2')}
             </p>
           </div>
           <DialogFooter>

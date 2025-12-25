@@ -240,13 +240,16 @@ export function ReferralView() {
             <span className='rounded-xl border border-white/5 bg-white/5 p-2'>
               <IconGift className='h-4 w-4' />
             </span>
-            <span className='text-muted-foreground text-sm'>{t('referral.totalEarnings')}</span>
+            <span className='text-muted-foreground text-sm'>
+              {t('referral.totalEarnings')}
+            </span>
           </div>
           <p className='text-foreground stat-number text-3xl font-bold'>
             {referralData.totalEarnings?.toFixed(2) || '0.00'}€
           </p>
           <p className='mt-1 text-sm text-[#c5d13f]'>
-            +{referralData.pendingEarnings?.toFixed(2) || '0.00'}€ {t('referral.pending')}
+            +{referralData.pendingEarnings?.toFixed(2) || '0.00'}€{' '}
+            {t('referral.pending')}
           </p>
         </div>
 
@@ -294,7 +297,9 @@ export function ReferralView() {
             <span className='rounded-xl border border-white/5 bg-white/5 p-2'>
               <IconChartBar className='h-4 w-4' />
             </span>
-            <span className='text-muted-foreground text-sm'>{t('referral.averageEarnings')}</span>
+            <span className='text-muted-foreground text-sm'>
+              {t('referral.averageEarnings')}
+            </span>
           </div>
           <p className='stat-number text-3xl font-bold'>
             {referralData.activeReferrals > 0 && referralData.totalEarnings > 0
@@ -388,7 +393,9 @@ export function ReferralView() {
                   {t('referral.yourLink')}
                 </h3>
                 <p className='text-muted-foreground text-sm'>
-                  {t('referral.shareLinkDescription', { rate: referralData.commissionRate })}
+                  {t('referral.shareLinkDescription', {
+                    rate: referralData.commissionRate
+                  })}
                 </p>
               </div>
             </div>
@@ -443,7 +450,7 @@ export function ReferralView() {
                   onClick={() => shareLink('twitter')}
                 >
                   <IconBrandTwitter className='mr-2 h-4 w-4' />
-                  Twitter
+                  {t('referral.twitter')}
                 </Button>
                 <Button
                   variant='outline'
@@ -451,7 +458,7 @@ export function ReferralView() {
                   onClick={() => shareLink('telegram')}
                 >
                   <IconBrandTelegram className='mr-2 h-4 w-4' />
-                  Telegram
+                  {t('referral.telegram')}
                 </Button>
                 <Button
                   variant='outline'
@@ -459,7 +466,7 @@ export function ReferralView() {
                   onClick={() => shareLink('whatsapp')}
                 >
                   <IconBrandWhatsapp className='mr-2 h-4 w-4' />
-                  WhatsApp
+                  {t('referral.whatsapp')}
                 </Button>
               </div>
             </div>
@@ -522,7 +529,9 @@ export function ReferralView() {
             <IconUsers className='h-4 w-4' />
           </span>
           <div>
-            <h3 className='text-lg font-semibold'>{t('referral.yourReferrals')}</h3>
+            <h3 className='text-lg font-semibold'>
+              {t('referral.yourReferrals')}
+            </h3>
             <p className='text-muted-foreground text-sm'>
               Gérez et suivez tous vos filleuls en un seul endroit
             </p>

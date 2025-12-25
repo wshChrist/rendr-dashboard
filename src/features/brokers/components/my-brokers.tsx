@@ -84,7 +84,11 @@ function BrokerLogoDisplay({
   );
 }
 
-const getStatusBadge = (status: string, errorMessage: string | undefined, t: ReturnType<typeof useTranslations>) => {
+const getStatusBadge = (
+  status: string,
+  errorMessage: string | undefined,
+  t: ReturnType<typeof useTranslations>
+) => {
   switch (status) {
     case 'active':
     case 'connected':
@@ -108,7 +112,11 @@ const getStatusBadge = (status: string, errorMessage: string | undefined, t: Ret
       );
     case 'inactive':
     case 'disconnected':
-      return <RendRBadge variant='muted'>{t('brokers.status.disconnected')}</RendRBadge>;
+      return (
+        <RendRBadge variant='muted'>
+          {t('brokers.status.disconnected')}
+        </RendRBadge>
+      );
     default:
       return <RendRBadge variant='outline'>{t('common.unknown')}</RendRBadge>;
   }
@@ -463,7 +471,8 @@ export function MyBrokers() {
             +{globalStats.totalCashback.toFixed(2)}€
           </p>
           <p className='text-muted-foreground/60 mt-1 text-sm'>
-            ~{globalStats.avgCashbackPerBroker.toFixed(2)}€ {t('brokers.perAccount')}
+            ~{globalStats.avgCashbackPerBroker.toFixed(2)}€{' '}
+            {t('brokers.perAccount')}
           </p>
         </div>
 
@@ -483,12 +492,16 @@ export function MyBrokers() {
             <div className='rounded-xl border border-white/5 bg-white/5 p-2'>
               <IconChartBar className='h-5 w-5' />
             </div>
-            <span className='text-muted-foreground text-sm'>{t('stats.totalVolume')}</span>
+            <span className='text-muted-foreground text-sm'>
+              {t('stats.totalVolume')}
+            </span>
           </div>
           <p className='stat-number text-3xl font-bold'>
             {globalStats.totalVolume.toFixed(2)}
           </p>
-          <p className='text-muted-foreground/60 mt-1 text-sm'>{t('brokers.lotsTraded')}</p>
+          <p className='text-muted-foreground/60 mt-1 text-sm'>
+            {t('brokers.lotsTraded')}
+          </p>
         </div>
 
         {/* Comptes Actifs */}
@@ -507,7 +520,9 @@ export function MyBrokers() {
             <div className='rounded-xl border border-white/5 bg-white/5 p-2'>
               <IconWallet className='h-5 w-5' />
             </div>
-            <span className='text-muted-foreground text-sm'>{t('brokers.accounts')}</span>
+            <span className='text-muted-foreground text-sm'>
+              {t('brokers.accounts')}
+            </span>
           </div>
           <p className='stat-number text-3xl font-bold'>
             {globalStats.activeBrokers}
@@ -518,7 +533,8 @@ export function MyBrokers() {
             </RendRBadge>
             {userBrokersData.length - globalStats.activeBrokers > 0 && (
               <RendRBadge variant='outline' size='sm'>
-                {userBrokersData.length - globalStats.activeBrokers} {t('brokers.others')}
+                {userBrokersData.length - globalStats.activeBrokers}{' '}
+                {t('brokers.others')}
               </RendRBadge>
             )}
           </div>
@@ -540,7 +556,9 @@ export function MyBrokers() {
             <div className='rounded-xl border border-white/5 bg-white/5 p-2'>
               <IconActivity className='h-5 w-5' />
             </div>
-            <span className='text-muted-foreground text-sm'>{t('brokers.trades')}</span>
+            <span className='text-muted-foreground text-sm'>
+              {t('brokers.trades')}
+            </span>
           </div>
           <p className='stat-number text-3xl font-bold'>
             {globalStats.totalTrades}
@@ -645,7 +663,9 @@ export function MyBrokers() {
             {/* Métriques détaillées */}
             <div className='mb-6 grid grid-cols-3 gap-3'>
               <div className='text-center'>
-                <p className='text-muted-foreground mb-1 text-xs'>{t('brokers.trades')}</p>
+                <p className='text-muted-foreground mb-1 text-xs'>
+                  {t('brokers.trades')}
+                </p>
                 <p className='stat-number text-lg font-bold'>
                   {broker.tradeCount}
                 </p>
@@ -673,7 +693,9 @@ export function MyBrokers() {
               <div className='mb-6'>
                 <div className='mb-3 flex items-center gap-2'>
                   <IconActivity className='text-muted-foreground h-4 w-4' />
-                  <span className='text-sm font-medium'>{t('brokers.lastActivity')}</span>
+                  <span className='text-sm font-medium'>
+                    {t('brokers.lastActivity')}
+                  </span>
                 </div>
                 <div className='space-y-2'>
                   {broker.recentTrades.slice(0, 2).map((trade) => (
@@ -752,15 +774,17 @@ export function MyBrokers() {
                 className='flex-1'
                 onClick={() => {
                   loadAccounts();
-                  toast.info(`Actualisation de ${broker.broker.name}`, {
-                    description:
-                      'Les informations du compte ont été mises à jour.',
-                    duration: 3000
-                  });
+                  toast.info(
+                    `${t('brokers.refreshAccount')} ${broker.broker.name}`,
+                    {
+                      description: t('brokers.accountRefreshed'),
+                      duration: 3000
+                    }
+                  );
                 }}
               >
                 <IconRefresh className='mr-2 h-4 w-4' />
-                Actualiser
+                {t('brokers.refresh')}
               </Button>
               <Button variant='ghost' size='sm' className='hover:bg-white/5'>
                 <IconExternalLink className='h-4 w-4' />
@@ -806,8 +830,7 @@ export function MyBrokers() {
                   {t('brokers.addAccount')}
                 </h3>
                 <p className='text-muted-foreground mb-6 max-w-xs text-center text-sm transition-colors'>
-                  Connectez un nouveau compte de trading MT4/MT5 pour commencer
-                  à recevoir du cashback
+                  {t('brokers.connectNewAccount')}
                 </p>
                 <Button
                   variant='outline'
