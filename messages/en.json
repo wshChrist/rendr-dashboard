@@ -673,5 +673,5 @@
   "tradingAccount": {
     "mustBeConnected": "You must be logged in",
     "pleaseConnect": "Please connect with Supabase Auth"
-  },
+  }
 }
