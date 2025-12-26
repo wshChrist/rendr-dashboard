@@ -214,8 +214,10 @@
       "errors": {
         "loadError": "Error loading referral data",
         "loadUsersError": "Error loading referred users",
-        "createError": "Error creating code"
+        "createError": "Error creating code",
+        "codeNotFound": "Referral code not found"
       },
+      "shareText": "Join RendR and get cashback on your trades! {link}",
       "success": {
         "codeCreated": "Referral code created successfully!"
       },
@@ -230,6 +232,7 @@
       "codeRules": "Code must contain between 3 and 20 characters (uppercase letters, numbers and hyphens only). It must be unique.",
       "shareLinkDescription": "Share this link to earn {rate}% of your referrals' cashback",
       "referredUser": "referral",
+      "referredUserPlural": "s",
       "noReferralsFound": "No referrals found",
       "shareLinkToStart": "Share your link to start earning!"
     },
@@ -441,6 +444,9 @@
     "trades": "Trades",
     "volumeTraded": "Volume Traded",
     "lastActivity": "Last activity",
+    "allAccounts": "all accounts",
+    "avgPerTrade": "Avg. / Trade",
+    "rate": "Rate",
     "deleteTradingAccount": "Delete trading account",
     "deletePermanently": "Delete permanently",
     "errors": {
@@ -537,7 +543,37 @@
     "share": "Share",
     "twitter": "Twitter",
     "telegram": "Telegram",
-    "whatsapp": "WhatsApp"
+    "whatsapp": "WhatsApp",
+    "totalReferrals": "Total Referrals",
+    "active": "active",
+    "totalEarnings": "Total Earnings",
+    "pending": "pending",
+    "commissionRate": "Commission Rate",
+    "fromReferrals": "From your referrals' cashback",
+    "averageEarnings": "Average Earnings",
+    "perActiveReferral": "Per active referral",
+    "createYourCode": "Create your referral code",
+    "chooseUniqueCode": "Choose a unique code to start referring your friends",
+    "yourCode": "Your referral code",
+    "codeRules": "Code must contain between 3 and 20 characters (uppercase letters, numbers and hyphens only). It must be unique.",
+    "createCode": "Create Code",
+    "yourLink": "Your referral link",
+    "shareLinkDescription": "Share this link to earn {rate}% of your referrals' cashback",
+    "linkCopied": "Link copied to clipboard",
+    "createCodeFirst": "Please create a referral code first",
+    "howItWorks": "How it works?",
+    "step1Description": "Share your referral link with your trader friends",
+    "step2Description": "Your referrals create their account and connect their brokers",
+    "step3Description": "Earn {rate}% of their cashback for life!",
+    "manageReferrals": "Manage and track all your referrals in one place",
+    "errors": {
+      "loadError": "Error loading referral data",
+      "loadUsersError": "Error loading referred users",
+      "createError": "Error creating code"
+    },
+    "success": {
+      "codeCreated": "Referral code created successfully!"
+    }
   },
   "profile": {
     "memberSince": "Member since",
@@ -614,6 +650,10 @@
     "browserDistribution": "Browser distribution",
     "noUpdates": "No updates",
     "totalVisitorsByBrowser": "Total visitors by browser for the last 6 months",
+    "statsLast6Months": "Statistics for the last 6 months",
+    "last6Months": "Last 6 months",
+    "cashbackLast6Months": "Your cashback over the last 6 months",
+    "cashbackEvolution": "Cashback Evolution",
     "seeAll": "See all",
     "contactUs": "Contact us",
     "tradingVolume": "Trading Volume",

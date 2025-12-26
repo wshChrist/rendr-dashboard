@@ -2,7 +2,10 @@
 
 import * as React from 'react';
 import { useTranslations, useLocale } from 'next-intl';
-import { getReferralColumns, type ReferredUser } from './referral-table-columns';
+import {
+  getReferralColumns,
+  type ReferredUser
+} from './referral-table-columns';
 import {
   useReactTable,
   getCoreRowModel,
@@ -53,7 +56,10 @@ export function ReferralTable({ data }: ReferralTableProps) {
   );
   const [globalFilter, setGlobalFilter] = React.useState('');
 
-  const columns = React.useMemo(() => getReferralColumns(t, locale), [t, locale]);
+  const columns = React.useMemo(
+    () => getReferralColumns(t, locale),
+    [t, locale]
+  );
 
   const table = useReactTable({
     data,
@@ -95,8 +101,11 @@ export function ReferralTable({ data }: ReferralTableProps) {
         </div>
         <div className='flex items-center gap-2'>
           <span className='text-muted-foreground text-sm'>
-            {table.getFilteredRowModel().rows.length} {t('pages.referral.referredUser')}
-            {table.getFilteredRowModel().rows.length > 1 ? 's' : ''}
+            {table.getFilteredRowModel().rows.length}{' '}
+            {t('pages.referral.referredUser')}
+            {table.getFilteredRowModel().rows.length > 1
+              ? t('pages.referral.referredUserPlural')
+              : ''}
           </span>
         </div>
       </div>
@@ -216,8 +225,9 @@ export function ReferralTable({ data }: ReferralTableProps) {
           </div>
           <div className='flex items-center gap-2'>
             <span className='text-muted-foreground text-sm'>
-              {t('table.pagination.page')} {table.getState().pagination.pageIndex + 1} {t('table.pagination.of')}{' '}
-              {table.getPageCount()}
+              {t('table.pagination.page')}{' '}
+              {table.getState().pagination.pageIndex + 1}{' '}
+              {t('table.pagination.of')} {table.getPageCount()}
             </span>
             <div className='flex items-center gap-1'>
               <Button
@@ -245,4 +255,3 @@ export function ReferralTable({ data }: ReferralTableProps) {
     </div>
   );
 }
-

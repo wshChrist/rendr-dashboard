@@ -68,7 +68,7 @@ export function ReferralView() {
       } else {
         const errorData = await referralResponse.json();
         // Si c'est juste un code manquant, ce n'est pas une erreur critique
-        if (errorData.error !== 'Code de parrainage non trouvé') {
+        if (errorData.error !== t('referral.errors.codeNotFound')) {
           toast.error(t('referral.errors.loadError'));
         }
       }
@@ -102,7 +102,7 @@ export function ReferralView() {
     setIsCreatingCode(true);
 
     if (!newCode.trim()) {
-      setCodeError('Le code est requis');
+      setCodeError(t('referral.codeRequired'));
       setIsCreatingCode(false);
       return;
     }
@@ -146,7 +146,7 @@ export function ReferralView() {
       return;
     }
 
-    const text = `Rejoins RendR et reçois du cashback sur tes trades ! ${referralData.link}`;
+    const text = t('referral.shareText', { link: referralData.link });
     const encodedText = encodeURIComponent(text);
     const encodedUrl = encodeURIComponent(referralData.link);
 
@@ -356,7 +356,7 @@ export function ReferralView() {
                       setNewCode(e.target.value.toUpperCase());
                       setCodeError('');
                     }}
-                    placeholder='EXEMPLE-CODE'
+                    placeholder={t('pages.referral.codePlaceholder')}
                     className='border-white/10 bg-white/5 font-mono'
                     maxLength={20}
                     disabled={isCreatingCode}
@@ -484,23 +484,27 @@ export function ReferralView() {
         )}
         style={{ animationDelay: '500ms', animationFillMode: 'forwards' }}
       >
-        <h3 className='mb-6 text-lg font-semibold'>Comment ça marche ?</h3>
+        <h3 className='mb-6 text-lg font-semibold'>
+          {t('referral.howItWorks')}
+        </h3>
         <div className='grid gap-6 md:grid-cols-3'>
           {[
             {
               step: 1,
               title: t('referral.shareLink'),
-              desc: t('pages.referral.description')
+              desc: t('referral.step1Description')
             },
             {
               step: 2,
               title: t('referral.theySignUp'),
-              desc: 'Vos filleuls créent leur compte et connectent leurs brokers'
+              desc: t('referral.step2Description')
             },
             {
               step: 3,
               title: t('referral.youEarn'),
-              desc: `Recevez ${referralData.commissionRate}% de leur cashback à vie !`
+              desc: t('referral.step3Description', {
+                rate: referralData.commissionRate
+              })
             }
           ].map((item) => (
             <div key={item.step} className='space-y-3 text-center'>
@@ -533,7 +537,7 @@ export function ReferralView() {
               {t('referral.yourReferrals')}
             </h3>
             <p className='text-muted-foreground text-sm'>
-              Gérez et suivez tous vos filleuls en un seul endroit
+              {t('referral.manageReferrals')}
             </p>
           </div>
         </div>

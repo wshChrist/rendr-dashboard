@@ -208,52 +208,55 @@
       "withdrawalsWillAppear": "Your withdrawals will appear here once made"
     },
     "referral": {
-      "title": "Refer and Earn More",
-      "description": "Invite your trader friends and receive a bonus on each of their trades.",
-      "searchPlaceholder": "Search for a referral...",
+      "title": "Parrainez et Gagnez Plus",
+      "description": "Invitez vos amis traders et recevez un bonus sur chacun de leurs trades.",
+      "searchPlaceholder": "Rechercher un filleul...",
       "columns": {
-        "referred": "Referred",
-        "joinDate": "Join Date",
-        "status": "Status",
-        "earnings": "Earnings"
+        "referred": "Filleul",
+        "joinDate": "Date d'inscription",
+        "status": "Statut",
+        "earnings": "Gains"
       },
       "status": {
-        "active": "Active",
-        "pending": "Pending"
+        "active": "Actif",
+        "pending": "En attente"
       },
-      "codePlaceholder": "EXAMPLE-CODE",
-      "createCode": "Create",
-      "yourCode": "Your referral code",
-      "yourLink": "Your referral link",
-      "createYourCode": "Create your referral code",
-      "share": "Share",
-      "copy": "Copy",
-      "totalReferrals": "Total Referrals",
-      "totalEarnings": "Total earnings",
-      "pendingEarnings": "Pending earnings",
-      "commissionRate": "Commission rate",
-      "linkCopied": "Link copied to clipboard",
+      "codePlaceholder": "EXEMPLE-CODE",
+      "createCode": "Créer",
+      "yourCode": "Votre code de parrainage",
+      "yourLink": "Votre lien de parrainage",
+      "createYourCode": "Créez votre code de parrainage",
+      "share": "Partager",
+      "copy": "Copier",
+      "totalReferrals": "Filleuls Totaux",
+      "totalEarnings": "Gains totaux",
+      "pendingEarnings": "Gains en attente",
+      "commissionRate": "Taux de commission",
+      "linkCopied": "Lien copié dans le presse-papiers",
       "errors": {
-        "loadError": "Error loading referral data",
-        "loadUsersError": "Error loading referred users",
-        "createError": "Error creating code"
+        "loadError": "Erreur lors du chargement des données de parrainage",
+        "loadUsersError": "Erreur lors du chargement des filleuls",
+        "createError": "Erreur lors de la création du code",
+        "codeNotFound": "Code de parrainage non trouvé"
       },
       "success": {
-        "codeCreated": "Referral code created successfully!"
+        "codeCreated": "Code de parrainage créé avec succès !"
       },
-      "codeRequired": "Code is required",
-      "createCodeFirst": "Please create a referral code first",
-      "active": "active",
-      "pending": "pending",
-      "fromReferrals": "From your referrals' cashback",
-      "averageEarnings": "Average Earnings",
-      "perActiveReferral": "Per active referral",
-      "chooseUniqueCode": "Choose a unique code to start referring your friends",
-      "codeRules": "Code must contain between 3 and 20 characters (uppercase letters, numbers and hyphens only). It must be unique.",
-      "shareLinkDescription": "Share this link to earn {rate}% of your referrals' cashback",
-      "referredUser": "referral",
-      "noReferralsFound": "No referrals found",
-      "shareLinkToStart": "Share your link to start earning!"
+      "shareText": "Rejoins RendR et reçois du cashback sur tes trades ! {link}",
+      "codeRequired": "Le code est requis",
+      "createCodeFirst": "Veuillez d'abord créer un code de parrainage",
+      "active": "actifs",
+      "pending": "en attente",
+      "fromReferrals": "Du cashback de vos filleuls",
+      "averageEarnings": "Gains Moyens",
+      "perActiveReferral": "Par filleul actif",
+      "chooseUniqueCode": "Choisissez un code unique pour commencer à parrainer vos amis",
+      "codeRules": "Le code doit contenir entre 3 et 20 caractères (lettres majuscules, chiffres et tirets uniquement). Il doit être unique.",
+      "shareLinkDescription": "Partagez ce lien pour gagner {rate}% du cashback de vos filleuls",
+      "referredUser": "filleul",
+      "referredUserPlural": "s",
+      "noReferralsFound": "Aucun filleul trouvé",
+      "shareLinkToStart": "Partagez votre lien pour commencer à gagner !"
     },
     "updates": {
       "title": "What's New?",
@@ -441,6 +444,9 @@
     "trades": "Trades",
     "volumeTraded": "Volume Tradé",
     "lastActivity": "Dernière activité",
+    "allAccounts": "tous comptes",
+    "avgPerTrade": "Moy. / Trade",
+    "rate": "Taux",
     "deleteTradingAccount": "Supprimer le compte de trading",
     "deletePermanently": "Supprimer définitivement",
     "errors": {
@@ -537,7 +543,37 @@
     "share": "Partager",
     "twitter": "Twitter",
     "telegram": "Telegram",
-    "whatsapp": "WhatsApp"
+    "whatsapp": "WhatsApp",
+    "totalReferrals": "Filleuls Totaux",
+    "active": "actifs",
+    "totalEarnings": "Gains Totaux",
+    "pending": "en attente",
+    "commissionRate": "Taux de Commission",
+    "fromReferrals": "Du cashback de vos filleuls",
+    "averageEarnings": "Gains Moyens",
+    "perActiveReferral": "Par filleul actif",
+    "createYourCode": "Créez votre code de parrainage",
+    "chooseUniqueCode": "Choisissez un code unique pour commencer à parrainer vos amis",
+    "yourCode": "Votre code de parrainage",
+    "codeRules": "Le code doit contenir entre 3 et 20 caractères (lettres majuscules, chiffres et tirets uniquement). Il doit être unique.",
+    "createCode": "Créer le Code",
+    "yourLink": "Votre lien de parrainage",
+    "shareLinkDescription": "Partagez ce lien pour gagner {rate}% du cashback de vos filleuls",
+    "linkCopied": "Lien copié dans le presse-papiers",
+    "createCodeFirst": "Veuillez d'abord créer un code de parrainage",
+    "howItWorks": "Comment ça marche ?",
+    "step1Description": "Partagez votre lien de parrainage avec vos amis traders",
+    "step2Description": "Vos filleuls créent leur compte et connectent leurs brokers",
+    "step3Description": "Gagnez {rate}% de leur cashback à vie !",
+    "manageReferrals": "Gérez et suivez tous vos filleuls en un seul endroit",
+    "errors": {
+      "loadError": "Erreur lors du chargement des données de parrainage",
+      "loadUsersError": "Erreur lors du chargement des filleuls",
+      "createError": "Erreur lors de la création du code"
+    },
+    "success": {
+      "codeCreated": "Code de parrainage créé avec succès !"
+    }
   },
   "profile": {
     "bankInfoUpdated": "Informations bancaires mises à jour",
@@ -647,7 +683,8 @@
     "last7Days": "7 derniers jours",
     "last30Days": "30 derniers jours",
     "last90Days": "90 derniers jours",
-    "perTrade": "par trade"
+    "perTrade": "par trade",
+    "popularPairs": "Paires populaires"
   },
   "admin": {
     "withdrawals": {
