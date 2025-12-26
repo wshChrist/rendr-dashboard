@@ -580,6 +580,38 @@
       "codeCreated": "Code de parrainage créé avec succès !"
     }
   },
+  "withdrawals": {
+    "availableBalance": "Solde disponible",
+    "requestWithdrawal": "Demander un retrait",
+    "amount": "Montant (€)",
+    "minimum": "Minimum",
+    "maximum": "Maximum",
+    "paymentMethod": "Méthode de paiement",
+    "chooseMethod": "Choisir une méthode",
+    "bankTransfer": "Virement bancaire",
+    "paypal": "PayPal",
+    "crypto": "Crypto (USDT)",
+    "iban": "IBAN",
+    "ibanPlaceholder": "FR76 1234 5678 9012 3456 7890 123",
+    "paypalEmail": "Email PayPal",
+    "paypalEmailPlaceholder": "votre@email.com",
+    "cryptoAddress": "Adresse crypto (USDT)",
+    "cryptoAddressPlaceholder": "0x...",
+    "pending": "En attente",
+    "withdrawalsInProgress": "retrait(s) en cours",
+    "totalWithdrawn": "Total retiré",
+    "completed": "retrait(s) terminé(s)",
+    "history": "Historique des retraits",
+    "confirmWithdrawal": "Confirmer le retrait",
+    "amountRange": "Le montant doit être entre 20€ et {max}€",
+    "manageWithdrawals": "Gérez et suivez tous vos retraits en un seul endroit",
+    "errors": {
+      "createError": "Erreur lors de la création du retrait"
+    },
+    "success": {
+      "createSuccess": "Demande de retrait créée avec succès"
+    }
+  },
   "profile": {
     "bankInfoUpdated": "Informations bancaires mises à jour",
     "notifications": {

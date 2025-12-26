@@ -579,6 +579,38 @@
       "codeCreated": "Referral code created successfully!"
     }
   },
+  "withdrawals": {
+    "availableBalance": "Available Balance",
+    "requestWithdrawal": "Request a withdrawal",
+    "amount": "Amount (€)",
+    "minimum": "Minimum",
+    "maximum": "Maximum",
+    "paymentMethod": "Payment method",
+    "chooseMethod": "Choose a method",
+    "bankTransfer": "Bank transfer",
+    "paypal": "PayPal",
+    "crypto": "Crypto (USDT)",
+    "iban": "IBAN",
+    "ibanPlaceholder": "FR76 1234 5678 9012 3456 7890 123",
+    "paypalEmail": "PayPal Email",
+    "paypalEmailPlaceholder": "your@email.com",
+    "cryptoAddress": "Crypto address (USDT)",
+    "cryptoAddressPlaceholder": "0x...",
+    "pending": "Pending",
+    "withdrawalsInProgress": "withdrawal(s) in progress",
+    "totalWithdrawn": "Total withdrawn",
+    "completed": "completed withdrawal(s)",
+    "history": "Withdrawal history",
+    "confirmWithdrawal": "Confirm withdrawal",
+    "amountRange": "Amount must be between €20 and €{max}",
+    "manageWithdrawals": "Manage and track all your withdrawals in one place",
+    "errors": {
+      "createError": "Error creating withdrawal"
+    },
+    "success": {
+      "createSuccess": "Withdrawal request created successfully"
+    }
+  },
   "profile": {
     "memberSince": "Member since",
     "bankTransfer": "Bank Transfer",
