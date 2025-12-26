@@ -3,6 +3,7 @@
 import { IconTrendingUp, IconTrendingDown } from '@tabler/icons-react';
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 import { useMemo } from 'react';
+import { useTranslations } from 'next-intl';
 
 import {
   ChartConfig,
@@ -25,6 +26,7 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function CashbackStatsGraph() {
+  const t = useTranslations();
   const { transactions, isLoading } = useTradingData();
 
   // Calculer les stats mensuelles depuis les transactions réelles
@@ -124,7 +126,7 @@ export function CashbackStatsGraph() {
       <div className='p-5 pb-0 md:p-6'>
         <h3 className='text-lg font-semibold'>Évolution du Cashback</h3>
         <p className='text-muted-foreground text-sm'>
-          Votre cashback sur les 6 derniers mois
+          {t('overview.cashbackLast6Months')}
         </p>
       </div>
 
