@@ -54,7 +54,10 @@ export function WithdrawalsTable({ data }: WithdrawalsTableProps) {
   );
   const [globalFilter, setGlobalFilter] = React.useState('');
 
-  const columns = React.useMemo(() => getWithdrawalsColumns(t, locale), [t, locale]);
+  const columns = React.useMemo(
+    () => getWithdrawalsColumns(t, locale),
+    [t, locale]
+  );
 
   const table = useReactTable({
     data,
@@ -96,8 +99,11 @@ export function WithdrawalsTable({ data }: WithdrawalsTableProps) {
         </div>
         <div className='flex items-center gap-2'>
           <span className='text-muted-foreground text-sm'>
-            {table.getFilteredRowModel().rows.length} {t('pages.withdrawals.withdrawal')}
-            {table.getFilteredRowModel().rows.length > 1 ? 's' : ''}
+            {table.getFilteredRowModel().rows.length}{' '}
+            {t('pages.withdrawals.withdrawal')}
+            {table.getFilteredRowModel().rows.length > 1
+              ? t('pages.withdrawals.withdrawalPlural')
+              : ''}
           </span>
         </div>
       </div>
@@ -217,8 +223,9 @@ export function WithdrawalsTable({ data }: WithdrawalsTableProps) {
           </div>
           <div className='flex items-center gap-2'>
             <span className='text-muted-foreground text-sm'>
-              {t('table.pagination.page')} {table.getState().pagination.pageIndex + 1} {t('table.pagination.of')}{' '}
-              {table.getPageCount()}
+              {t('table.pagination.page')}{' '}
+              {table.getState().pagination.pageIndex + 1}{' '}
+              {t('table.pagination.of')} {table.getPageCount()}
             </span>
             <div className='flex items-center gap-1'>
               <Button
@@ -246,4 +253,3 @@ export function WithdrawalsTable({ data }: WithdrawalsTableProps) {
     </div>
   );
 }
-

@@ -166,8 +166,11 @@
       "paypal": "PayPal",
       "crypto": "Crypto (USDT)",
       "iban": "IBAN",
+      "ibanPlaceholder": "FR76 1234 5678 9012 3456 7890 123",
       "paypalEmail": "PayPal Email",
+      "paypalEmailPlaceholder": "your@email.com",
       "cryptoAddress": "Crypto address (USDT)",
+      "cryptoAddressPlaceholder": "0x...",
       "pending": "Pending",
       "withdrawalsInProgress": "withdrawal(s) in progress",
       "totalWithdrawn": "Total withdrawn",
@@ -182,6 +185,7 @@
         "createSuccess": "Withdrawal request created successfully"
       },
       "withdrawal": "withdrawal",
+      "withdrawalPlural": "s",
       "noWithdrawalsFound": "No withdrawals found",
       "withdrawalsWillAppear": "Your withdrawals will appear here once made"
     },

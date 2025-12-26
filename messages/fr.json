@@ -147,65 +147,70 @@
       }
     },
     "withdrawals": {
-      "title": "Your Withdrawals",
-      "description": "Withdraw your cashback whenever you want.",
-      "searchPlaceholder": "Search for a withdrawal...",
+      "title": "Vos Retraits",
+      "description": "Retirez votre cashback quand vous voulez.",
+      "searchPlaceholder": "Rechercher un retrait...",
       "columns": {
-        "paymentMethod": "Payment Method",
-        "amount": "Amount",
-        "status": "Status",
-        "requestDate": "Request Date",
-        "processedDate": "Processed Date",
-        "details": "Details",
-        "reference": "Reference"
+        "paymentMethod": "Méthode de paiement",
+        "amount": "Montant",
+        "status": "Statut",
+        "requestDate": "Date de demande",
+        "processedDate": "Date de traitement",
+        "details": "Détails",
+        "reference": "Référence"
       },
       "status": {
-        "completed": "Completed",
-        "processing": "Processing",
-        "pending": "Pending",
-        "rejected": "Rejected"
+        "completed": "Terminé",
+        "processing": "En cours",
+        "pending": "En attente",
+        "rejected": "Rejeté"
       },
       "paymentMethods": {
-        "all": "All",
-        "bankTransfer": "Bank Transfer",
+        "all": "Tous",
+        "bankTransfer": "Virement bancaire",
         "paypal": "PayPal",
         "crypto": "Crypto (USDT)"
       },
       "form": {
-        "amount": "Amount",
+        "amount": "Montant",
         "amountPlaceholder": "50.00",
-        "paymentMethod": "Payment Method",
-        "chooseMethod": "Choose a method"
+        "paymentMethod": "Méthode de paiement",
+        "chooseMethod": "Choisir une méthode"
       },
-      "availableBalance": "Available Balance",
-      "requestWithdrawal": "Request a withdrawal",
-      "amount": "Amount (€)",
+      "availableBalance": "Solde disponible",
+      "requestWithdrawal": "Demander un retrait",
+      "amount": "Montant (€)",
       "minimum": "Minimum",
       "maximum": "Maximum",
-      "paymentMethod": "Payment method",
-      "chooseMethod": "Choose a method",
-      "bankTransfer": "Bank transfer",
+      "paymentMethod": "Méthode de paiement",
+      "chooseMethod": "Choisir une méthode",
+      "bankTransfer": "Virement bancaire",
       "paypal": "PayPal",
       "crypto": "Crypto (USDT)",
       "iban": "IBAN",
-      "paypalEmail": "PayPal Email",
-      "cryptoAddress": "Crypto address (USDT)",
-      "pending": "Pending",
-      "withdrawalsInProgress": "withdrawal(s) in progress",
-      "totalWithdrawn": "Total withdrawn",
-      "completed": "completed withdrawal(s)",
-      "history": "Withdrawal history",
-      "confirmWithdrawal": "Confirm withdrawal",
-      "amountRange": "Amount must be between €20 and €{max}",
+      "ibanPlaceholder": "FR76 1234 5678 9012 3456 7890 123",
+      "paypalEmail": "Email PayPal",
+      "paypalEmailPlaceholder": "votre@email.com",
+      "cryptoAddress": "Adresse crypto (USDT)",
+      "cryptoAddressPlaceholder": "0x...",
+      "pending": "En attente",
+      "withdrawalsInProgress": "retrait(s) en cours",
+      "totalWithdrawn": "Total retiré",
+      "completed": "retrait(s) terminé(s)",
+      "history": "Historique des retraits",
+      "confirmWithdrawal": "Confirmer le retrait",
+      "amountRange": "Le montant doit être entre 20€ et {max}€",
+      "manageWithdrawals": "Gérez et suivez tous vos retraits en un seul endroit",
       "errors": {
-        "createError": "Error creating withdrawal"
+        "createError": "Erreur lors de la création du retrait"
       },
       "success": {
-        "createSuccess": "Withdrawal request created successfully"
+        "createSuccess": "Demande de retrait créée avec succès"
       },
-      "withdrawal": "withdrawal",
-      "noWithdrawalsFound": "No withdrawals found",
-      "withdrawalsWillAppear": "Your withdrawals will appear here once made"
+      "withdrawal": "retrait",
+      "withdrawalPlural": "s",
+      "noWithdrawalsFound": "Aucun retrait trouvé",
+      "withdrawalsWillAppear": "Vos retraits apparaîtront ici une fois effectués"
     },
     "referral": {
       "title": "Parrainez et Gagnez Plus",

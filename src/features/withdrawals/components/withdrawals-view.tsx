@@ -101,7 +101,9 @@ export function WithdrawalsView() {
     const amountNum = parseFloat(amount);
     if (amountNum < 20 || amountNum > stats.available_balance) {
       toast.error(
-        t('withdrawals.amountRange', { max: stats.available_balance.toFixed(2) })
+        t('withdrawals.amountRange', {
+          max: stats.available_balance.toFixed(2)
+        })
       );
       return;
     }
@@ -205,14 +207,14 @@ export function WithdrawalsView() {
                   <Input
                     id='amount'
                     type='number'
-                    placeholder='50.00'
+                    placeholder={t('pages.withdrawals.form.amountPlaceholder')}
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
                     className='border-white/10 bg-white/5 focus:border-white/20'
                   />
                   <p className='text-muted-foreground text-xs'>
-                    {t('withdrawals.minimum')}: 20€ | {t('withdrawals.maximum')}:{' '}
-                    {isLoading ? '...' : stats.available_balance.toFixed(2)}€
+                    {t('withdrawals.minimum')}: 20€ | {t('withdrawals.maximum')}
+                    : {isLoading ? '...' : stats.available_balance.toFixed(2)}€
                   </p>
                 </div>
                 <div className='space-y-2'>
@@ -224,7 +226,9 @@ export function WithdrawalsView() {
                     onValueChange={setPaymentMethod}
                   >
                     <SelectTrigger className='border-white/10 bg-white/5'>
-                      <SelectValue placeholder={t('withdrawals.chooseMethod')} />
+                      <SelectValue
+                        placeholder={t('withdrawals.chooseMethod')}
+                      />
                     </SelectTrigger>
                     <SelectContent className='border-white/10 bg-zinc-900'>
                       <SelectItem
@@ -268,10 +272,10 @@ export function WithdrawalsView() {
                       type='text'
                       placeholder={
                         paymentMethod === 'bank_transfer'
-                          ? 'FR76 1234 5678 9012 3456 7890 123'
+                          ? t('withdrawals.ibanPlaceholder')
                           : paymentMethod === 'paypal'
-                            ? 'votre@email.com'
-                            : '0x...'
+                            ? t('withdrawals.paypalEmailPlaceholder')
+                            : t('withdrawals.cryptoAddressPlaceholder')
                       }
                       value={paymentDetails}
                       onChange={(e) => setPaymentDetails(e.target.value)}
@@ -300,7 +304,9 @@ export function WithdrawalsView() {
                     isSubmitting || !amount || !paymentMethod || !paymentDetails
                   }
                 >
-                  {isSubmitting ? t('common.processing') : t('withdrawals.confirmWithdrawal')}
+                  {isSubmitting
+                    ? t('common.processing')
+                    : t('withdrawals.confirmWithdrawal')}
                 </Button>
               </DialogFooter>
             </DialogContent>
@@ -323,13 +329,16 @@ export function WithdrawalsView() {
             <span className='rounded-xl border border-white/5 bg-white/5 p-2'>
               <IconClock className='h-4 w-4' />
             </span>
-            <span className='text-muted-foreground text-sm'>{t('withdrawals.pending')}</span>
+            <span className='text-muted-foreground text-sm'>
+              {t('withdrawals.pending')}
+            </span>
           </div>
           <p className='text-muted-foreground mb-2 text-2xl font-bold'>
             {isLoading ? '...' : stats.pending_withdrawals_amount.toFixed(2)}€
           </p>
           <p className='text-muted-foreground text-sm'>
-            {isLoading ? '...' : stats.pending_withdrawals_count} {t('withdrawals.withdrawalsInProgress')}
+            {isLoading ? '...' : stats.pending_withdrawals_count}{' '}
+            {t('withdrawals.withdrawalsInProgress')}
           </p>
         </div>
 
@@ -349,13 +358,16 @@ export function WithdrawalsView() {
             <span className='rounded-xl border border-white/5 bg-white/5 p-2'>
               <IconCheck className='h-4 w-4' />
             </span>
-            <span className='text-muted-foreground text-sm'>{t('withdrawals.totalWithdrawn')}</span>
+            <span className='text-muted-foreground text-sm'>
+              {t('withdrawals.totalWithdrawn')}
+            </span>
           </div>
           <p className='text-foreground stat-number mb-2 text-2xl font-bold'>
             {isLoading ? '...' : stats.total_withdrawn.toFixed(2)}€
           </p>
           <p className='text-muted-foreground text-sm'>
-            {isLoading ? '...' : stats.completed_withdrawals_count} {t('withdrawals.completed')}
+            {isLoading ? '...' : stats.completed_withdrawals_count}{' '}
+            {t('withdrawals.completed')}
           </p>
         </div>
       </div>
@@ -377,9 +389,11 @@ export function WithdrawalsView() {
             <IconHistory className='h-4 w-4' />
           </span>
           <div>
-            <h3 className='text-lg font-semibold'>{t('withdrawals.history')}</h3>
+            <h3 className='text-lg font-semibold'>
+              {t('withdrawals.history')}
+            </h3>
             <p className='text-muted-foreground text-sm'>
-              Gérez et suivez tous vos retraits en un seul endroit
+              {t('withdrawals.manageWithdrawals')}
             </p>
           </div>
         </div>
