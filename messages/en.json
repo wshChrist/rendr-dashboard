@@ -52,7 +52,7 @@
     "period": "Period",
     "somethingMissing": "Something's missing",
     "pageNotFound": "Sorry, the page you are looking for doesn't exist or has been moved.",
-    "chooseTheme": "Choose a theme",
+    "chooseTheme": "Choose a language",
     "resetFilters": "Reset filters",
     "searchColumn": "Search for a column...",
     "toggleColumns": "Toggle columns",
@@ -613,6 +613,18 @@
   },
   "profile": {
     "memberSince": "Member since",
+    "recently": "Recently",
+    "defaultName": "Trader",
+    "verified": "Verified",
+    "copiedToClipboard": "Copied to clipboard",
+    "emailPlaceholder": "your@email.com",
+    "cryptoWalletAddress": "USDT Wallet Address",
+    "cryptoAddressWarning": "Make sure the address is correct. Transactions are irreversible.",
+    "manageSessions": "Manage your connected devices and sessions",
+    "browser": "Browser",
+    "connectedNow": "Connected now",
+    "active": "Active",
+    "deletingAccount": "Deleting account...",
     "bankTransfer": "Bank Transfer",
     "lastWithdrawals": "Last withdrawals",
     "loginEmail": "Login Email",
@@ -675,7 +687,25 @@
     "accountSecurityDescription": "Manage the security and access to your account",
     "addSecurityLayer": "Add an additional layer of security",
     "securitySettings": "Security settings",
-    "accountSecurityDescription2": "of your account."
+    "accountSecurityDescription2": "of your account.",
+    "errors": {
+      "imageTooLarge": "Image must not exceed 5MB",
+      "mustBeImage": "File must be an image",
+      "bucketNotExists": "The \"avatars\" bucket does not exist yet. Create it in Supabase Storage to save the image.",
+      "imageUploadError": "Error uploading image",
+      "invalidPaypalEmail": "Please enter a valid PayPal email address",
+      "invalidCryptoAddress": "Please enter a valid crypto address",
+      "passwordChangeError": "Error changing password",
+      "noUserConnected": "No user connected",
+      "deleteAccountError": "Error deleting account"
+    },
+    "success": {
+      "imageUploaded": "Image uploaded successfully",
+      "paypalAdded": "PayPal added successfully",
+      "cryptoAdded": "Crypto address added successfully",
+      "passwordChanged": "Password changed successfully",
+      "accountDeleted": "Account deleted successfully"
+    }
   },
   "overview": {
     "recentSales": {

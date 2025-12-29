@@ -58,12 +58,12 @@ import {
   IconUpload
 } from '@tabler/icons-react';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { fr, enUS } from 'date-fns/locale';
 import { useState, useRef, useEffect, useMemo } from 'react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 
 // Types pour les formulaires
 type ProfileFormValues = {
@@ -81,6 +81,7 @@ type PasswordFormValues = {
 
 export default function ProfileViewPage() {
   const t = useTranslations();
+  const locale = useLocale();
   const [user, setUser] = useState<User | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const supabase = createSupabaseClient();
@@ -259,13 +260,14 @@ export default function ProfileViewPage() {
           user?.email?.[0]?.toUpperCase() ||
           'U';
 
+  const dateLocale = locale === 'en' ? enUS : fr;
   const memberSince = user?.created_at
-    ? format(new Date(user.created_at), 'MMMM yyyy', { locale: fr })
-    : 'Récemment';
+    ? format(new Date(user.created_at), 'MMMM yyyy', { locale: dateLocale })
+    : t('profile.recently');
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
-    toast.success('Copié dans le presse-papier');
+    toast.success(t('profile.copiedToClipboard'));
   };
 
   const handleEditProfile = () => {
@@ -338,12 +340,12 @@ export default function ProfileViewPage() {
     if (!file) return;
 
     if (file.size > 5 * 1024 * 1024) {
-      toast.error("L'image ne doit pas dépasser 5MB");
+      toast.error(t('profile.errors.imageTooLarge'));
       return;
     }
 
     if (!file.type.startsWith('image/')) {
-      toast.error('Le fichier doit être une image');
+      toast.error(t('profile.errors.mustBeImage'));
       return;
     }
 
@@ -378,9 +380,7 @@ export default function ProfileViewPage() {
         const tempUrl = URL.createObjectURL(file);
         setAvatarPreview(tempUrl);
         profileForm.setValue('avatar', tempUrl);
-        toast.warning(
-          'Le bucket "avatars" n\'existe pas encore. Créez-le dans Supabase Storage pour sauvegarder l\'image.'
-        );
+        toast.warning(t('profile.errors.bucketNotExists'));
       } else {
         // Récupérer l'URL publique de l'image
         const {
@@ -390,11 +390,11 @@ export default function ProfileViewPage() {
         setUploadedAvatarUrl(publicUrl);
         setAvatarPreview(publicUrl);
         profileForm.setValue('avatar', publicUrl);
-        toast.success('Image uploadée avec succès');
+        toast.success(t('profile.success.imageUploaded'));
       }
     } catch (error: any) {
       console.error("Erreur lors de l'upload de l'avatar:", error);
-      toast.error("Erreur lors de l'upload de l'image");
+      toast.error(t('profile.errors.imageUploadError'));
       // Créer une URL temporaire pour la prévisualisation en cas d'erreur
       const tempUrl = URL.createObjectURL(file);
       setAvatarPreview(tempUrl);
@@ -419,10 +419,10 @@ export default function ProfileViewPage() {
 
   const handleSavePaypal = () => {
     if (!paypalEmail || !paypalEmail.includes('@')) {
-      toast.error('Veuillez entrer une adresse email PayPal valide');
+      toast.error(t('profile.errors.invalidPaypalEmail'));
       return;
     }
-    toast.success('PayPal ajouté avec succès');
+    toast.success(t('profile.success.paypalAdded'));
     setAddPaypalDialogOpen(false);
     setPaypalEmail('');
   };
@@ -433,10 +433,10 @@ export default function ProfileViewPage() {
 
   const handleSaveCrypto = () => {
     if (!cryptoAddress || cryptoAddress.length < 20) {
-      toast.error('Veuillez entrer une adresse crypto valide');
+      toast.error(t('profile.errors.invalidCryptoAddress'));
       return;
     }
-    toast.success('Adresse crypto ajoutée avec succès');
+    toast.success(t('profile.success.cryptoAdded'));
     setAddCryptoDialogOpen(false);
     setCryptoAddress('');
   };
@@ -460,11 +460,11 @@ export default function ProfileViewPage() {
       //     newPassword: data.newPassword
       //   })
       // });
-      toast.success('Mot de passe changé avec succès');
+      toast.success(t('profile.success.passwordChanged'));
       setChangePasswordDialogOpen(false);
       passwordForm.reset();
     } catch (error) {
-      toast.error('Erreur lors du changement de mot de passe');
+      toast.error(t('profile.errors.passwordChangeError'));
       console.error(error);
     }
   };
@@ -476,13 +476,13 @@ export default function ProfileViewPage() {
   const handleDeleteAccount = async () => {
     try {
       if (!user) {
-        toast.error('Aucun utilisateur connecté');
+        toast.error(t('profile.errors.noUserConnected'));
         setDeleteAccountDialogOpen(false);
         return;
       }
 
       // Afficher un toast de chargement
-      const loadingToast = toast.loading('Suppression du compte en cours...');
+      const loadingToast = toast.loading(t('profile.deletingAccount'));
 
       // Appeler l'API pour supprimer le compte
       const response = await fetch('/api/user/delete', {
@@ -495,13 +495,13 @@ export default function ProfileViewPage() {
       toast.dismiss(loadingToast);
 
       if (!response.ok) {
-        toast.error(data.message || 'Erreur lors de la suppression du compte');
+        toast.error(data.message || t('profile.errors.deleteAccountError'));
         setDeleteAccountDialogOpen(false);
         return;
       }
 
       // Succès
-      toast.success('Compte supprimé avec succès');
+      toast.success(t('profile.success.accountDeleted'));
       setDeleteAccountDialogOpen(false);
 
       // Rediriger vers la page de connexion
@@ -510,7 +510,7 @@ export default function ProfileViewPage() {
         router.refresh();
       }, 1000);
     } catch (error) {
-      toast.error('Erreur lors de la suppression du compte');
+      toast.error(t('profile.errors.deleteAccountError'));
       console.error(error);
       setDeleteAccountDialogOpen(false);
     }
@@ -550,10 +550,10 @@ export default function ProfileViewPage() {
                   {user?.user_metadata?.name ||
                     user?.user_metadata?.full_name ||
                     `${user?.user_metadata?.first_name || ''} ${user?.user_metadata?.last_name || ''}`.trim() ||
-                    'Trader'}
+                    t('profile.defaultName')}
                 </h1>
                 <RendRBadge variant='success' dot dotColor='green'>
-                  Vérifié
+                  {t('profile.verified')}
                 </RendRBadge>
               </div>
               <div className='text-muted-foreground flex flex-wrap items-center gap-4'>
@@ -825,7 +825,7 @@ export default function ProfileViewPage() {
                   className='border-white/10 bg-white/5'
                   onClick={handleAddCrypto}
                 >
-                  Ajouter
+                  {t('profile.add')}
                 </Button>
               </div>
             </div>
@@ -1277,7 +1277,7 @@ export default function ProfileViewPage() {
                   type='email'
                   {...profileForm.register('email')}
                   className='border-white/10 bg-white/5'
-                  placeholder='votre@email.com'
+                  placeholder={t('profile.emailPlaceholder')}
                 />
                 {profileForm.formState.errors.email && (
                   <p className='text-sm text-red-400'>
@@ -1415,7 +1415,7 @@ export default function ProfileViewPage() {
                 id='bank-account'
                 value={bankAccount}
                 onChange={(e) => setBankAccount(e.target.value)}
-                placeholder='FR76 XXXX XXXX XXXX XXXX XXXX'
+                placeholder={t('withdrawals.ibanPlaceholder')}
                 className='border-white/10 bg-white/5'
               />
             </div>
@@ -1482,7 +1482,7 @@ export default function ProfileViewPage() {
               onClick={handleSavePaypal}
               className='bg-[#c5d13f] text-zinc-900 hover:bg-[#c5d13f]/90'
             >
-              Ajouter
+              {t('profile.add')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -1500,18 +1500,17 @@ export default function ProfileViewPage() {
           <div className='space-y-4 py-4'>
             <div className='space-y-2'>
               <Label htmlFor='crypto-address'>
-                Adresse de portefeuille USDT
+                {t('profile.cryptoWalletAddress')}
               </Label>
               <Input
                 id='crypto-address'
                 value={cryptoAddress}
                 onChange={(e) => setCryptoAddress(e.target.value)}
-                placeholder='0x...'
+                placeholder={t('withdrawals.cryptoAddressPlaceholder')}
                 className='border-white/10 bg-white/5'
               />
               <p className='text-muted-foreground text-xs'>
-                Assurez-vous que l'adresse est correcte. Les transactions sont
-                irréversibles.
+                {t('profile.cryptoAddressWarning')}
               </p>
             </div>
           </div>
@@ -1527,7 +1526,7 @@ export default function ProfileViewPage() {
               onClick={handleSaveCrypto}
               className='bg-[#c5d13f] text-zinc-900 hover:bg-[#c5d13f]/90'
             >
-              Ajouter
+              {t('profile.add')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -1538,9 +1537,7 @@ export default function ProfileViewPage() {
         <DialogContent className='border-white/5 bg-zinc-900'>
           <DialogHeader>
             <DialogTitle>{t('profile.activeSessions')}</DialogTitle>
-            <DialogDescription>
-              Gérez vos appareils et sessions connectés
-            </DialogDescription>
+            <DialogDescription>{t('profile.manageSessions')}</DialogDescription>
           </DialogHeader>
           <div className='space-y-4 py-4'>
             <div
@@ -1559,15 +1556,15 @@ export default function ProfileViewPage() {
                   <p className='text-muted-foreground text-sm'>
                     {typeof window !== 'undefined'
                       ? window.navigator.userAgent.split(' ')[0]
-                      : 'Navigateur'}
+                      : t('profile.browser')}
                   </p>
                   <p className='text-muted-foreground text-xs'>
-                    Connecté maintenant
+                    {t('profile.connectedNow')}
                   </p>
                 </div>
               </div>
               <RendRBadge variant='success' size='sm'>
-                Actif
+                {t('profile.active')}
               </RendRBadge>
             </div>
             <p className='text-muted-foreground text-sm'>
