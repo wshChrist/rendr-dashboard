@@ -459,7 +459,8 @@ function verifyJSONStructure(
     warnings: []
   };
 
-  for (const [lang, translationObj] of translations) {
+  for (const lang of Array.from(translations.keys())) {
+    const translationObj = translations.get(lang)!;
     // La structure a déjà été validée lors du parsing, mais on peut vérifier d'autres choses
     const keys = getAllKeys(translationObj);
 
