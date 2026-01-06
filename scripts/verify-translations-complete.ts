@@ -129,7 +129,7 @@ function verifyPlaceholders(
   const placeholderMap = new Map<string, PlaceholderInfo[]>();
 
   // Collecte tous les placeholders pour chaque langue
-  for (const lang of translations.keys()) {
+  for (const lang of Array.from(translations.keys())) {
     const translationObj = translations.get(lang)!;
     const keys = getAllKeys(translationObj);
     const placeholders: PlaceholderInfo[] = [];
@@ -155,7 +155,7 @@ function verifyPlaceholders(
     sourcePlaceholderMap.set(info.key, info.placeholders);
   }
 
-  for (const lang of placeholderMap.keys()) {
+  for (const lang of Array.from(placeholderMap.keys())) {
     const placeholders = placeholderMap.get(lang)!;
     if (lang === sourceLang) continue;
 
@@ -190,7 +190,7 @@ function verifyPlaceholders(
     }
 
     // Vérifie les clés qui ont des placeholders en source mais pas dans la langue cible
-    for (const key of sourcePlaceholderMap.keys()) {
+    for (const key of Array.from(sourcePlaceholderMap.keys())) {
       const sourcePlaces = sourcePlaceholderMap.get(key)!;
       const targetInfo = placeholders.find((p) => p.key === key);
       if (!targetInfo && getValueByKey(translations.get(lang)!, key)) {
@@ -219,7 +219,7 @@ function verifyMissingKeys(
 
   const sourceKeys = getAllKeys(translations.get(sourceLang)!);
 
-  for (const lang of translations.keys()) {
+  for (const lang of Array.from(translations.keys())) {
     if (lang === sourceLang) continue;
     const translationObj = translations.get(lang)!;
 
@@ -270,7 +270,7 @@ function verifyUntranslatedTexts(
 
   const sourceObj = translations.get(sourceLang)!;
 
-  for (const lang of translations.keys()) {
+  for (const lang of Array.from(translations.keys())) {
     if (lang === sourceLang) continue;
     const translationObj = translations.get(lang)!;
 
