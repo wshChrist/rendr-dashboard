@@ -2,13 +2,13 @@ import PageContainer from '@/components/layout/page-container';
 import { PageHeader } from '@/components/layout/page-header';
 import { AdminNav } from '@/features/admin/components/admin-nav';
 import { requireAdmin } from '@/lib/auth/require-admin';
-import { AdminBrokersView } from '@/features/admin/components/admin-brokers-view';
+import { AdminOverviewView } from '@/features/admin/components/admin-overview-view';
 
 export const metadata = {
-  title: 'Dashboard : Administration - Brokers'
+  title: "Dashboard : Administration - Vue d'ensemble"
 };
 
-export default async function AdminBrokersPage() {
+export default async function AdminOverviewPage() {
   await requireAdmin();
 
   return (
@@ -16,14 +16,13 @@ export default async function AdminBrokersPage() {
       <div className='space-y-4'>
         <PageHeader
           title='Administration'
-          description='Activez/désactivez des brokers, mettez-les en maintenance, et gérez leur disponibilité.'
+          description='Pilotez la plateforme: KPIs, retraits, brokers, maintenance.'
         >
           <AdminNav />
         </PageHeader>
 
-        <AdminBrokersView />
+        <AdminOverviewView />
       </div>
     </PageContainer>
   );
 }
-

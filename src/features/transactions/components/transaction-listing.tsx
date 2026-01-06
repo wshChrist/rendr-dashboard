@@ -278,7 +278,9 @@ export function TransactionListing() {
             <div className='rounded-xl border border-white/5 bg-white/5 p-2'>
               <IconReceipt className='h-5 w-5' />
             </div>
-            <span className='text-muted-foreground text-sm'>Trades</span>
+            <span className='text-muted-foreground text-sm'>
+              {t('stats.trades')}
+            </span>
           </div>
           <p className='stat-number text-3xl font-bold'>{stats.totalTrades}</p>
           <div className='mt-1 flex items-center gap-2'>
@@ -310,7 +312,7 @@ export function TransactionListing() {
               <IconTrendingUp className='h-5 w-5' />
             </div>
             <span className='text-muted-foreground text-sm'>
-              Paires populaires
+              {t('transactions.popularPairs')}
             </span>
           </div>
           <div className='flex flex-wrap gap-2'>
@@ -417,7 +419,7 @@ export function TransactionListing() {
           selectedStatus !== 'all') && (
           <div className='mt-4 flex items-center gap-2 border-t border-white/5 pt-4'>
             <span className='text-muted-foreground text-sm'>
-              Résultats filtrés:
+              {t('pages.transactions.filteredResults')}
             </span>
             <RendRBadge variant='accent'>
               {filteredStats.count} {t('stats.trades')}
@@ -440,7 +442,7 @@ export function TransactionListing() {
                 setSelectedStatus('all');
               }}
             >
-              Réinitialiser
+              {t('pages.transactions.resetFilters')}
             </Button>
           </div>
         )}
@@ -450,7 +452,7 @@ export function TransactionListing() {
       {isLoading ? (
         <div className='flex items-center justify-center p-8'>
           <p className='text-muted-foreground'>
-            Chargement des transactions...
+            {t('pages.transactions.loading')}
           </p>
         </div>
       ) : (

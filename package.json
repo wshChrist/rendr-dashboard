@@ -18,6 +18,7 @@
     "prepare": "husky",
     "i18n:sync": "tsx scripts/sync-translations.ts",
     "i18n:check": "tsx scripts/check-translations.ts",
+    "i18n:verify-complete": "tsx scripts/verify-translations-complete.ts",
     "i18n:add-lang": "tsx scripts/add-language.ts"
   },
   "lint-staged": {

@@ -24,6 +24,7 @@
     "loading": "Loading...",
     "error": "Error",
     "success": "Success",
+    "cancel": "Cancel",
     "actions": {
       "save": "Save",
       "cancel": "Cancel",
@@ -38,7 +39,11 @@
       "goBack": "Go back",
       "backToHome": "Back to Home"
     },
-    "status": {
+    "status": "Status",
+    "unknown": "Unknown",
+    "save": "Save",
+    "processing": "Processing...",
+    "statusTypes": {
       "loading": "Loading...",
       "error": "Error",
       "success": "Success",
@@ -52,7 +57,8 @@
     "period": "Period",
     "somethingMissing": "Something's missing",
     "pageNotFound": "Sorry, the page you are looking for doesn't exist or has been moved.",
-    "chooseTheme": "Choose a language",
+    "chooseTheme": "Choose a theme",
+    "chooseLanguage": "Choose a language",
     "resetFilters": "Reset filters",
     "searchColumn": "Search for a column...",
     "toggleColumns": "Toggle columns",
@@ -111,7 +117,10 @@
       "transaction": "transaction",
       "noTransactionsFound": "No transactions found",
       "connectBrokerToSeeTrades": "Connect a broker to see your trades here",
-      "lots": "lots"
+      "lots": "lots",
+      "loading": "Loading transactions...",
+      "filteredResults": "Filtered results:",
+      "resetFilters": "Reset"
     },
     "brokers": {
       "title": "Brokers",
@@ -657,12 +666,6 @@
     "profileUpdatedSuccess": "Profile updated successfully",
     "profileUpdateError": "Error updating profile",
     "bankInfoUpdated": "Bank information updated",
-    "notifications": {
-      "title": "Notification Preferences",
-      "description": "Choose how you want to be notified",
-      "emailNotifications": "Email Notifications",
-      "emailDescription": "Receive an email for each new cashback credited"
-    },
     "personalInfo": {
       "title": "Update your personal information"
     },
@@ -705,7 +708,51 @@
       "cryptoAdded": "Crypto address added successfully",
       "passwordChanged": "Password changed successfully",
       "accountDeleted": "Account deleted successfully"
-    }
+    },
+    "stats": {
+      "totalCashback": "Total cashback",
+      "tradesExecuted": "Trades executed",
+      "activeBrokers": "Active brokers"
+    },
+    "withdrawalMethods": {
+      "title": "Withdrawal Methods",
+      "description": "Configure your preferred payment methods",
+      "default": "Default",
+      "notConfigured": "Not configured",
+      "withdrawalHistory": "Your recent withdrawal history",
+      "historyComingSoon": "Withdrawal history coming soon",
+      "noWithdrawals": "No withdrawals made yet"
+    },
+    "notifications": {
+      "title": "Notification Preferences",
+      "description": "Choose how you want to be notified",
+      "emailNotifications": "Email Notifications",
+      "emailDescription": "Receive an email for each new cashback credited",
+      "tradingAlerts": "Trading Alerts",
+      "tradingAlertsDescription": "Get notified when your trades are synchronized",
+      "weeklyReport": "Weekly Report",
+      "weeklyReportDescription": "Receive a summary of your activity every week"
+    },
+    "security": {
+      "lastModified": "Last modified 3 months ago",
+      "modify": "Modify",
+      "twoFactorAuth": "Two-Factor Authentication",
+      "devicesConnected": "{count} device connected",
+      "devicesConnectedPlural": "{count} devices connected",
+      "viewAll": "View all",
+      "dangerZone": "Danger Zone",
+      "dangerZoneDescription": "Irreversible actions on your account",
+      "deleteAccountDescription": "This action is irreversible. All your data will be lost.",
+      "delete": "Delete"
+    },
+    "avatar": {
+      "clickToChange": "Click the icon to change your profile picture"
+    },
+    "email": "Email",
+    "bankAccountNumber": "Account Number (IBAN)",
+    "addCryptoDescription": "Add your USDT address to receive your withdrawals",
+    "close": "Close",
+    "securitySettingsButton": "Security Settings"
   },
   "overview": {
     "recentSales": {
@@ -736,6 +783,17 @@
         "broker": "Broker",
         "other": "Other"
       }
+    },
+    "brokerDistribution": {
+      "title": "Broker Distribution",
+      "description": "Cashback distribution by partner broker",
+      "noData": "No trading data available"
+    },
+    "cashbackEvolution": {
+      "title": "Cashback Evolution",
+      "upBy": "Up by {value}% this month",
+      "downBy": "Down by {value}% this month",
+      "total": "Total: {amount}€ over 6 months"
     }
   },
   "transactions": {
@@ -753,7 +811,8 @@
       "confirmed": "confirmed",
       "pending": "pending"
     },
-    "noTransactionsToExport": "No transactions to export"
+    "noTransactionsToExport": "No transactions to export",
+    "popularPairs": "Popular Pairs"
   },
   "admin": {
     "pendingWithdrawals": "Pending withdrawals",

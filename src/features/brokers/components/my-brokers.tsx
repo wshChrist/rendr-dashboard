@@ -563,7 +563,9 @@ export function MyBrokers() {
           <p className='stat-number text-3xl font-bold'>
             {globalStats.totalTrades}
           </p>
-          <p className='text-muted-foreground/60 mt-1 text-sm'>tous comptes</p>
+          <p className='text-muted-foreground/60 mt-1 text-sm'>
+            {t('brokers.allAccounts')}
+          </p>
         </div>
       </div>
 
@@ -602,7 +604,7 @@ export function MyBrokers() {
                     </p>
                     <span className='text-muted-foreground/40'>•</span>
                     <p className='text-muted-foreground/60 text-xs'>
-                      Connecté{' '}
+                      {t('brokers.status.connected')}{' '}
                       {formatDistanceToNow(new Date(broker.linked_at), {
                         locale: dateLocale,
                         addSuffix: true
@@ -674,7 +676,7 @@ export function MyBrokers() {
               </div>
               <div className='border-x border-white/5 text-center'>
                 <p className='text-muted-foreground mb-1 text-xs'>
-                  Moy. / Trade
+                  {t('brokers.avgPerTrade')}
                 </p>
                 <p className='stat-number text-lg font-bold text-[#c5d13f]'>
                   {broker.avgCashbackPerTrade > 0
@@ -683,7 +685,9 @@ export function MyBrokers() {
                 </p>
               </div>
               <div className='text-center'>
-                <p className='text-muted-foreground mb-1 text-xs'>Taux</p>
+                <p className='text-muted-foreground mb-1 text-xs'>
+                  {t('brokers.rate')}
+                </p>
                 <p className='text-lg font-bold text-[#c5d13f]'>
                   {(broker.broker.cashback_rate * 100).toFixed(0)}%
                 </p>

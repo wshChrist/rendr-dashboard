@@ -2,7 +2,9 @@
 
 import * as React from 'react';
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
+import { format } from 'date-fns';
+import { fr, enUS } from 'date-fns/locale';
 
 import {
   ChartConfig,
@@ -16,8 +18,10 @@ import { useMemo } from 'react';
 
 export function VolumeChart() {
   const t = useTranslations();
+  const locale = useLocale();
+  const dateLocale = locale === 'en' ? enUS : fr;
   const { trades, isLoading } = useTradingData();
-  
+
   const chartConfig = {
     volume: {
       label: t('overview.volumeTrading'),
@@ -33,21 +37,6 @@ export function VolumeChart() {
 
   // Calculer les stats mensuelles depuis les trades réels
   const monthlyStatsData = useMemo(() => {
-    const monthNames = [
-      'Janvier',
-      'Février',
-      'Mars',
-      'Avril',
-      'Mai',
-      'Juin',
-      'Juillet',
-      'Août',
-      'Septembre',
-      'Octobre',
-      'Novembre',
-      'Décembre'
-    ];
-
     // Grouper les trades par mois
     const tradesByMonth = new Map<string, { volume: number; trades: number }>();
 
@@ -78,14 +67,16 @@ export function VolumeChart() {
       const [year, month] = monthKey.split('-');
       const monthIndex = parseInt(month) - 1;
       const monthData = tradesByMonth.get(monthKey) || { volume: 0, trades: 0 };
+      const date = new Date(parseInt(year), monthIndex, 1);
+      const monthName = format(date, 'MMMM', { locale: dateLocale });
 
       return {
-        month: monthNames[monthIndex],
+        month: monthName,
         volume: monthData.volume,
         trades: monthData.trades
       };
     });
-  }, [trades]);
+  }, [trades, dateLocale]);
 
   const total = useMemo(
     () => ({
@@ -131,12 +122,16 @@ export function VolumeChart() {
       {/* Header */}
       <div className='flex flex-col items-stretch border-b border-white/5 sm:flex-row'>
         <div className='flex flex-1 flex-col justify-center gap-1 p-5 md:p-6'>
-          <h3 className='text-lg font-semibold'>{t('overview.volumeTrading')}</h3>
+          <h3 className='text-lg font-semibold'>
+            {t('overview.volumeTrading')}
+          </h3>
           <p className='text-muted-foreground text-sm'>
             <span className='hidden @[540px]/card:block'>
-              Statistiques sur les 6 derniers mois
+              {t('overview.statsLast6Months')}
             </span>
-            <span className='@[540px]/card:hidden'>6 derniers mois</span>
+            <span className='@[540px]/card:hidden'>
+              {t('overview.last6Months')}
+            </span>
           </p>
         </div>
         <div className='flex border-t border-white/5 sm:border-t-0'>
@@ -161,7 +156,7 @@ export function VolumeChart() {
                 </span>
                 <span className='stat-number text-xl leading-none font-bold sm:text-2xl'>
                   {key === 'volume'
-                    ? `${total[key].toFixed(1)} lots`
+                    ? `${total[key].toFixed(1)} ${t('stats.lots')}`
                     : total[key].toLocaleString()}
                 </span>
               </button>
@@ -220,8 +215,8 @@ export function VolumeChart() {
                   formatter={(value) => (
                     <span>
                       {activeChart === 'volume'
-                        ? `${value} lots`
-                        : `${value} trades`}
+                        ? `${value} ${t('stats.lots')}`
+                        : `${value} ${t('stats.trades')}`}
                     </span>
                   )}
                 />

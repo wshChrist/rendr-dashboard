@@ -624,7 +624,7 @@ export default function ProfileViewPage() {
               <IconTrendingUp className='h-5 w-5' />
             </div>
             <span className='text-muted-foreground text-sm'>
-              Total cashback
+              {t('profile.stats.totalCashback')}
             </span>
           </div>
           <p className='stat-number text-3xl font-bold'>
@@ -648,7 +648,7 @@ export default function ProfileViewPage() {
               <IconChartBar className='h-5 w-5' />
             </div>
             <span className='text-muted-foreground text-sm'>
-              Trades exécutés
+              {t('profile.stats.tradesExecuted')}
             </span>
           </div>
           <p className='stat-number text-3xl font-bold'>
@@ -672,7 +672,7 @@ export default function ProfileViewPage() {
               <IconUser className='h-5 w-5' />
             </div>
             <span className='text-muted-foreground text-sm'>
-              Brokers actifs
+              {t('profile.stats.activeBrokers')}
             </span>
           </div>
           <p className='stat-number text-3xl font-bold'>
@@ -724,9 +724,11 @@ export default function ProfileViewPage() {
                 <IconCreditCard className='h-4 w-4' />
               </div>
               <div>
-                <h3 className='text-lg font-semibold'>Méthodes de retrait</h3>
+                <h3 className='text-lg font-semibold'>
+                  {t('profile.withdrawalMethods.title')}
+                </h3>
                 <p className='text-muted-foreground text-sm'>
-                  Configurez vos méthodes de paiement préférées
+                  {t('profile.withdrawalMethods.description')}
                 </p>
               </div>
             </div>
@@ -755,7 +757,7 @@ export default function ProfileViewPage() {
                 </div>
                 <div className='flex items-center gap-2'>
                   <RendRBadge variant='accent' dot dotColor='green'>
-                    Par défaut
+                    {t('profile.withdrawalMethods.default')}
                   </RendRBadge>
                   <Button
                     variant='ghost'
@@ -785,7 +787,7 @@ export default function ProfileViewPage() {
                   <div>
                     <p className='font-medium'>PayPal</p>
                     <p className='text-muted-foreground text-sm'>
-                      Non configuré
+                      {t('profile.withdrawalMethods.notConfigured')}
                     </p>
                   </div>
                 </div>
@@ -815,7 +817,7 @@ export default function ProfileViewPage() {
                   <div>
                     <p className='font-medium'>Crypto (USDT)</p>
                     <p className='text-muted-foreground text-sm'>
-                      Non configuré
+                      {t('profile.withdrawalMethods.notConfigured')}
                     </p>
                   </div>
                 </div>
@@ -850,7 +852,7 @@ export default function ProfileViewPage() {
                   {t('profile.lastWithdrawals')}
                 </h3>
                 <p className='text-muted-foreground text-sm'>
-                  Historique de vos retraits récents
+                  {t('profile.withdrawalMethods.withdrawalHistory')}
                 </p>
               </div>
             </div>
@@ -866,7 +868,7 @@ export default function ProfileViewPage() {
                   )}
                 >
                   <p className='text-muted-foreground text-center text-sm'>
-                    Historique des retraits disponible prochainement
+                    {t('profile.withdrawalMethods.historyComingSoon')}
                   </p>
                 </div>
               ) : (
@@ -878,7 +880,7 @@ export default function ProfileViewPage() {
                   )}
                 >
                   <p className='text-muted-foreground text-center text-sm'>
-                    Aucun retrait effectué pour le moment
+                    {t('profile.withdrawalMethods.noWithdrawals')}
                   </p>
                 </div>
               )}
@@ -953,10 +955,10 @@ export default function ProfileViewPage() {
                     htmlFor='trading-alerts'
                     className='text-base font-medium'
                   >
-                    Alertes de trading
+                    {t('profile.notifications.tradingAlerts')}
                   </Label>
                   <p className='text-muted-foreground text-sm'>
-                    Soyez notifié quand vos trades sont synchronisés
+                    {t('profile.notifications.tradingAlertsDescription')}
                   </p>
                 </div>
                 <Switch
@@ -980,10 +982,10 @@ export default function ProfileViewPage() {
                     htmlFor='weekly-report'
                     className='text-base font-medium'
                   >
-                    Rapport hebdomadaire
+                    {t('profile.notifications.weeklyReport')}
                   </Label>
                   <p className='text-muted-foreground text-sm'>
-                    Recevez un récapitulatif de votre activité chaque semaine
+                    {t('profile.notifications.weeklyReportDescription')}
                   </p>
                 </div>
                 <Switch
@@ -1056,7 +1058,7 @@ export default function ProfileViewPage() {
                   <div>
                     <p className='font-medium'>{t('profile.changePassword')}</p>
                     <p className='text-muted-foreground text-sm'>
-                      Dernière modification il y a 3 mois
+                      {t('profile.security.lastModified')}
                     </p>
                   </div>
                   <Button
@@ -1065,7 +1067,7 @@ export default function ProfileViewPage() {
                     className='border-white/10 bg-white/5 hover:bg-white/10'
                     onClick={handleChangePassword}
                   >
-                    Modifier
+                    {t('profile.security.modify')}
                   </Button>
                 </div>
 
@@ -1080,7 +1082,7 @@ export default function ProfileViewPage() {
                 >
                   <div>
                     <p className='font-medium'>
-                      Authentification à deux facteurs
+                      {t('profile.security.twoFactorAuth')}
                     </p>
                     <p className='text-muted-foreground text-sm'>
                       {t('profile.addSecurityLayer')}
@@ -1109,7 +1111,7 @@ export default function ProfileViewPage() {
                         {t('profile.activeSessions')}
                       </p>
                       <p className='text-muted-foreground text-sm'>
-                        1 appareil connecté
+                        {t('profile.security.devicesConnected', { count: 1 })}
                       </p>
                     </div>
                   </div>
@@ -1119,7 +1121,7 @@ export default function ProfileViewPage() {
                     className='hover:bg-white/5'
                     onClick={handleViewSessions}
                   >
-                    Voir tout
+                    {t('profile.security.viewAll')}
                   </Button>
                 </div>
               </div>
@@ -1142,10 +1144,10 @@ export default function ProfileViewPage() {
               </div>
               <div>
                 <h3 className='text-lg font-semibold text-red-400'>
-                  Zone dangereuse
+                  {t('profile.security.dangerZone')}
                 </h3>
                 <p className='text-muted-foreground text-sm'>
-                  Actions irréversibles sur votre compte
+                  {t('profile.security.dangerZoneDescription')}
                 </p>
               </div>
             </div>
@@ -1162,8 +1164,7 @@ export default function ProfileViewPage() {
               <div>
                 <p className='font-medium'>{t('profile.deleteAccount')}</p>
                 <p className='text-muted-foreground text-sm'>
-                  Cette action est irréversible. Toutes vos données seront
-                  perdues.
+                  {t('profile.security.deleteAccountDescription')}
                 </p>
               </div>
               <Button
@@ -1171,7 +1172,7 @@ export default function ProfileViewPage() {
                 className='border-red-500/30 text-red-400 hover:bg-red-500/10 hover:text-red-300'
                 onClick={() => setDeleteAccountDialogOpen(true)}
               >
-                Supprimer
+                {t('profile.security.delete')}
               </Button>
             </div>
           </div>
@@ -1233,7 +1234,7 @@ export default function ProfileViewPage() {
                   />
                 </div>
                 <p className='text-muted-foreground text-center text-sm'>
-                  Cliquez sur l'icône pour changer votre photo de profil
+                  {t('profile.avatar.clickToChange')}
                 </p>
               </div>
 
@@ -1271,7 +1272,7 @@ export default function ProfileViewPage() {
 
               {/* Email */}
               <div className='space-y-2'>
-                <Label htmlFor='email'>Email</Label>
+                <Label htmlFor='email'>{t('profile.email')}</Label>
                 <Input
                   id='email'
                   type='email'
@@ -1410,7 +1411,9 @@ export default function ProfileViewPage() {
           </DialogHeader>
           <div className='space-y-4 py-4'>
             <div className='space-y-2'>
-              <Label htmlFor='bank-account'>Numéro de compte (IBAN)</Label>
+              <Label htmlFor='bank-account'>
+                {t('profile.bankAccountNumber')}
+              </Label>
               <Input
                 id='bank-account'
                 value={bankAccount}
@@ -1465,7 +1468,7 @@ export default function ProfileViewPage() {
                 type='email'
                 value={paypalEmail}
                 onChange={(e) => setPaypalEmail(e.target.value)}
-                placeholder='votre@email.com'
+                placeholder={t('profile.emailPlaceholder')}
                 className='border-white/10 bg-white/5'
               />
             </div>
@@ -1494,7 +1497,7 @@ export default function ProfileViewPage() {
           <DialogHeader>
             <DialogTitle>{t('profile.addCryptoAddress')}</DialogTitle>
             <DialogDescription>
-              Ajoutez votre adresse USDT pour recevoir vos retraits
+              {t('profile.addCryptoDescription')}
             </DialogDescription>
           </DialogHeader>
           <div className='space-y-4 py-4'>
@@ -1578,7 +1581,7 @@ export default function ProfileViewPage() {
               onClick={() => setSessionsDialogOpen(false)}
               className='border-white/10 bg-white/5'
             >
-              Fermer
+              {t('profile.close')}
             </Button>
             <Button
               onClick={() => {
@@ -1587,7 +1590,7 @@ export default function ProfileViewPage() {
               }}
               className='bg-[#c5d13f] text-zinc-900 hover:bg-[#c5d13f]/90'
             >
-              Paramètres de sécurité
+              {t('profile.securitySettingsButton')}
             </Button>
           </DialogFooter>
         </DialogContent>

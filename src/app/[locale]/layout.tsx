@@ -65,51 +65,27 @@ export default async function LocaleLayout({
   const messages = await getMessages({ locale });
 
   const cookieStore = await cookies();
-  const activeThemeValue = cookieStore.get('active_theme')?.value || 'rendr';
+  const activeThemeValue =
+    cookieStore.get('active_theme')?.value || 'default-scaled';
   const isScaled = activeThemeValue?.endsWith('-scaled');
 
   return (
-    <html lang={locale} suppressHydrationWarning>
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              try {
-                if (localStorage.theme === 'dark' || ((!('theme' in localStorage) || localStorage.theme === 'system') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                  document.querySelector('meta[name="theme-color"]').setAttribute('content', '${META_THEME_COLORS.dark}')
-                }
-              } catch (_) {}
-            `
-          }}
-        />
-      </head>
-      <body
-        suppressHydrationWarning
-        className={cn(
-          'bg-background overflow-hidden overscroll-none font-sans antialiased',
-          activeThemeValue ? `theme-${activeThemeValue}` : 'theme-rendr',
-          isScaled ? 'theme-scaled' : '',
-          fontVariables
-        )}
-      >
-        <NextIntlClientProvider messages={messages}>
-          <NextTopLoader color='#ffffff' showSpinner={false} />
-          <NuqsAdapter>
-            <ThemeProvider
-              attribute='class'
-              defaultTheme='dark'
-              enableSystem={false}
-              disableTransitionOnChange
-              enableColorScheme
-            >
-              <Providers activeThemeValue={activeThemeValue as string}>
-                <Toaster />
-                {children}
-              </Providers>
-            </ThemeProvider>
-          </NuqsAdapter>
-        </NextIntlClientProvider>
-      </body>
-    </html>
+    <NextIntlClientProvider messages={messages}>
+      <NextTopLoader color='#ffffff' showSpinner={false} />
+      <NuqsAdapter>
+        <ThemeProvider
+          attribute='class'
+          defaultTheme='dark'
+          enableSystem={false}
+          disableTransitionOnChange
+          enableColorScheme
+        >
+          <Providers activeThemeValue={activeThemeValue as string}>
+            <Toaster />
+            {children}
+          </Providers>
+        </ThemeProvider>
+      </NuqsAdapter>
+    </NextIntlClientProvider>
   );
 }

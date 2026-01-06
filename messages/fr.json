@@ -24,6 +24,7 @@
     "loading": "Chargement...",
     "error": "Erreur",
     "success": "Succès",
+    "cancel": "Annuler",
     "actions": {
       "save": "Enregistrer",
       "cancel": "Annuler",
@@ -38,7 +39,11 @@
       "goBack": "Retour",
       "backToHome": "Retour à l'accueil"
     },
-    "status": {
+    "status": "Statut",
+    "unknown": "Inconnu",
+    "save": "Enregistrer",
+    "processing": "Traitement...",
+    "statusTypes": {
       "loading": "Chargement...",
       "error": "Erreur",
       "success": "Succès",
@@ -52,7 +57,8 @@
     "period": "Période",
     "somethingMissing": "Quelque chose manque",
     "pageNotFound": "Désolé, la page que vous recherchez n'existe pas ou a été déplacée.",
-    "chooseTheme": "Choisir une langue",
+    "chooseTheme": "Choisir un thème",
+    "chooseLanguage": "Choisir une langue",
     "resetFilters": "Réinitialiser les filtres",
     "searchColumn": "Rechercher une colonne...",
     "toggleColumns": "Basculer les colonnes",
@@ -110,30 +116,33 @@
       "description": "Tableau de bord de base avec Next.js et Shadcn"
     },
     "overview": {
-      "title": "Overview",
-      "stats": "Statistics"
+      "title": "Vue d'ensemble",
+      "stats": "Statistiques"
     },
     "transactions": {
-      "title": "Transaction History",
-      "description": "Every trade earns you money. Here are the details.",
-      "searchPlaceholder": "Search for a pair, broker...",
+      "title": "Historique des Transactions",
+      "description": "Chaque trade vous rapporte de l'argent. Voici les détails.",
+      "searchPlaceholder": "Rechercher une paire, un broker...",
       "columns": {
         "date": "Date",
         "broker": "Broker",
-        "pair": "Pair",
+        "pair": "Paire",
         "volume": "Volume",
         "commission": "Commission",
         "cashback": "Cashback",
-        "status": "Status"
+        "status": "Statut"
       },
       "status": {
-        "confirmed": "Confirmed",
-        "pending": "Pending"
+        "confirmed": "Confirmé",
+        "pending": "En attente"
       },
       "transaction": "transaction",
-      "noTransactionsFound": "No transactions found",
-      "connectBrokerToSeeTrades": "Connect a broker to see your trades here",
-      "lots": "lots"
+      "noTransactionsFound": "Aucune transaction trouvée",
+      "connectBrokerToSeeTrades": "Connectez un broker pour voir vos trades ici",
+      "lots": "lots",
+      "loading": "Chargement des transactions...",
+      "filteredResults": "Résultats filtrés:",
+      "resetFilters": "Réinitialiser"
     },
     "brokers": {
       "title": "Brokers",
@@ -268,8 +277,8 @@
       "description": "We're working hard for you. Here are our latest improvements."
     },
     "profile": {
-      "title": "Your Personal Space",
-      "description": "Manage your account, preferences and payment methods."
+      "title": "Votre Espace Personnel",
+      "description": "Gérez votre compte, vos préférences et vos méthodes de paiement."
     },
     "admin": {
       "title": "Administration",
@@ -278,10 +287,10 @@
     "error": {
       "title": "Error",
       "description": "An error occurred while loading the data.",
-      "statsLoadError": "Unable to load statistics",
-      "activityLoadError": "Unable to load activity data",
-      "statsDisplayError": "Unable to display statistics at the moment",
-      "retry": "Retry"
+      "statsLoadError": "Impossible de charger les statistiques",
+      "activityLoadError": "Impossible de charger les données d'activité",
+      "statsDisplayError": "Impossible d'afficher les statistiques pour le moment",
+      "retry": "Réessayer"
     }
   },
   "stats": {
@@ -336,10 +345,10 @@
       "title": "Create an account",
       "pageTitle": "Create an account",
       "pageDescription": "Create your account to start trading with cashback",
-      "firstName": "First Name",
-      "firstNamePlaceholder": "John",
-      "lastName": "Last Name",
-      "lastNamePlaceholder": "Doe",
+      "firstName": "Prénom",
+      "firstNamePlaceholder": "Jean",
+      "lastName": "Nom",
+      "lastNamePlaceholder": "Dupont",
       "email": "Email",
       "emailPlaceholder": "your@email.com",
       "password": "Password",
@@ -477,15 +486,15 @@
     "noColumnsFound": "Aucune colonne trouvée.",
     "noResultsFound": "Aucun résultat trouvé.",
     "pagination": {
-      "goToFirst": "Go to first page",
-      "goToPrevious": "Go to previous page",
-      "goToNext": "Go to next page",
-      "goToLast": "Go to last page",
-      "rowsPerPage": "Rows per page",
+      "goToFirst": "Aller à la première page",
+      "goToPrevious": "Aller à la page précédente",
+      "goToNext": "Aller à la page suivante",
+      "goToLast": "Aller à la dernière page",
+      "rowsPerPage": "Lignes par page",
       "page": "Page",
-      "of": "of",
-      "selected": "row(s) selected",
-      "total": "row(s) total"
+      "of": "sur",
+      "selected": "ligne(s) sélectionnée(s)",
+      "total": "ligne(s) au total"
     }
   },
   "modal": {
@@ -614,12 +623,6 @@
   },
   "profile": {
     "bankInfoUpdated": "Informations bancaires mises à jour",
-    "notifications": {
-      "title": "Préférences de notification",
-      "description": "Choisissez comment vous souhaitez être informé",
-      "emailNotifications": "Notifications par email",
-      "emailDescription": "Recevez un email pour chaque nouveau cashback crédité"
-    },
     "personalInfo": {
       "title": "Mettez à jour vos informations personnelles"
     },
@@ -706,12 +709,59 @@
       "cryptoAdded": "Adresse crypto ajoutée avec succès",
       "passwordChanged": "Mot de passe changé avec succès",
       "accountDeleted": "Compte supprimé avec succès"
-    }
+    },
+    "stats": {
+      "totalCashback": "Total cashback",
+      "tradesExecuted": "Trades exécutés",
+      "activeBrokers": "Brokers actifs"
+    },
+    "withdrawalMethods": {
+      "title": "Méthodes de retrait",
+      "description": "Configurez vos méthodes de paiement préférées",
+      "default": "Par défaut",
+      "notConfigured": "Non configuré",
+      "withdrawalHistory": "Historique de vos retraits récents",
+      "historyComingSoon": "Historique des retraits disponible prochainement",
+      "noWithdrawals": "Aucun retrait effectué pour le moment"
+    },
+    "notifications": {
+      "title": "Préférences de notification",
+      "description": "Choisissez comment vous souhaitez être informé",
+      "emailNotifications": "Notifications par email",
+      "emailDescription": "Recevez un email pour chaque nouveau cashback crédité",
+      "tradingAlerts": "Alertes de trading",
+      "tradingAlertsDescription": "Soyez notifié quand vos trades sont synchronisés",
+      "weeklyReport": "Rapport hebdomadaire",
+      "weeklyReportDescription": "Recevez un récapitulatif de votre activité chaque semaine"
+    },
+    "security": {
+      "lastModified": "Dernière modification il y a 3 mois",
+      "modify": "Modifier",
+      "twoFactorAuth": "Authentification à deux facteurs",
+      "devicesConnected": "{count} appareil connecté",
+      "devicesConnectedPlural": "{count} appareils connectés",
+      "viewAll": "Voir tout",
+      "dangerZone": "Zone dangereuse",
+      "dangerZoneDescription": "Actions irréversibles sur votre compte",
+      "deleteAccountDescription": "Cette action est irréversible. Toutes vos données seront perdues.",
+      "delete": "Supprimer"
+    },
+    "avatar": {
+      "clickToChange": "Cliquez sur l'icône pour changer votre photo de profil"
+    },
+    "email": "Email",
+    "bankAccountNumber": "Numéro de compte (IBAN)",
+    "addCryptoDescription": "Ajoutez votre adresse USDT pour recevoir vos retraits",
+    "close": "Fermer",
+    "securitySettingsButton": "Paramètres de sécurité"
   },
   "overview": {
     "volumeTrading": "Volume de Trading",
     "browserDistribution": "Répartition des navigateurs",
     "totalVisitorsByBrowser": "Total des visiteurs par navigateur pour les 6 derniers mois",
+    "statsLast6Months": "Statistiques pour les 6 derniers mois",
+    "last6Months": "6 derniers mois",
+    "cashbackLast6Months": "Votre cashback sur les 6 derniers mois",
     "recentSales": {
       "title": "Recent Sales",
       "description": "You made 265 sales this month."
@@ -722,17 +772,28 @@
     "tradingVolume": "Trading Volume",
     "trade": "Trade",
     "recentActivity": {
-      "title": "Recent Activity",
-      "description": "Your latest actions on the platform",
-      "loading": "Loading...",
-      "noActivity": "No recent activity at the moment",
-      "tradeDescription": "Trade {pair} on {broker}",
+      "title": "Activité Récente",
+      "description": "Vos dernières actions sur la plateforme",
+      "loading": "Chargement...",
+      "noActivity": "Aucune activité récente pour le moment",
+      "tradeDescription": "Trade {pair} sur {broker}",
       "badges": {
         "trade": "Trade",
-        "withdrawal": "Withdrawal",
+        "withdrawal": "Retrait",
         "broker": "Broker",
-        "other": "Other"
+        "other": "Autre"
       }
+    },
+    "brokerDistribution": {
+      "title": "Répartition par Broker",
+      "description": "Distribution du cashback par broker partenaire",
+      "noData": "Aucune donnée de trading disponible"
+    },
+    "cashbackEvolution": {
+      "title": "Évolution du Cashback",
+      "upBy": "En hausse de {value}% ce mois",
+      "downBy": "En baisse de {value}% ce mois",
+      "total": "Total: {amount}€ sur 6 mois"
     }
   },
   "transactions": {
@@ -783,8 +844,8 @@
   },
   "forms": {
     "selectOption": "Sélectionner une option",
-    "firstName": "First name",
-    "lastName": "Last name"
+    "firstName": "Prénom",
+    "lastName": "Nom"
   },
   "org": {
     "createOrganization": "Créer une organisation"

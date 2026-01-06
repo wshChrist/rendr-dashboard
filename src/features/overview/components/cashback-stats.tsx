@@ -3,7 +3,9 @@
 import { IconTrendingUp, IconTrendingDown } from '@tabler/icons-react';
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 import { useMemo } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
+import { format, parseISO } from 'date-fns';
+import { fr, enUS } from 'date-fns/locale';
 
 import {
   ChartConfig,
@@ -27,25 +29,12 @@ const chartConfig = {
 
 export function CashbackStatsGraph() {
   const t = useTranslations();
+  const locale = useLocale();
+  const dateLocale = locale === 'en' ? enUS : fr;
   const { transactions, isLoading } = useTradingData();
 
   // Calculer les stats mensuelles depuis les transactions réelles
   const monthlyStatsData = useMemo(() => {
-    const monthNames = [
-      'Janvier',
-      'Février',
-      'Mars',
-      'Avril',
-      'Mai',
-      'Juin',
-      'Juillet',
-      'Août',
-      'Septembre',
-      'Octobre',
-      'Novembre',
-      'Décembre'
-    ];
-
     // Grouper les transactions par mois
     const transactionsByMonth = new Map<string, number>();
 
@@ -76,15 +65,15 @@ export function CashbackStatsGraph() {
     // Convertir en format attendu par le graphique
     return last6Months.map((monthKey) => {
       const [year, month] = monthKey.split('-');
-      const monthIndex = parseInt(month) - 1;
+      const monthDate = new Date(parseInt(year), parseInt(month) - 1, 1);
       const cashback = transactionsByMonth.get(monthKey) || 0;
 
       return {
-        month: monthNames[monthIndex],
+        month: format(monthDate, 'MMM', { locale: dateLocale }),
         cashback: cashback
       };
     });
-  }, [transactions]);
+  }, [transactions, dateLocale]);
 
   const totalCashback = useMemo(
     () => monthlyStatsData.reduce((acc, curr) => acc + curr.cashback, 0),
@@ -124,7 +113,9 @@ export function CashbackStatsGraph() {
     >
       {/* Header */}
       <div className='p-5 pb-0 md:p-6'>
-        <h3 className='text-lg font-semibold'>Évolution du Cashback</h3>
+        <h3 className='text-lg font-semibold'>
+          {t('overview.cashbackEvolution.title')}
+        </h3>
         <p className='text-muted-foreground text-sm'>
           {t('overview.cashbackLast6Months')}
         </p>
@@ -182,7 +173,9 @@ export function CashbackStatsGraph() {
                   indicator='dot'
                   formatter={(value, name) => (
                     <span>
-                      {name === 'cashback' ? `${value}€` : `${value} lots`}
+                      {name === 'cashback'
+                        ? `${value}€`
+                        : `${value} ${t('stats.lots')}`}
                     </span>
                   )}
                 />
@@ -208,22 +201,24 @@ export function CashbackStatsGraph() {
             <div className='flex items-center gap-2 leading-none font-medium'>
               {isPositive ? (
                 <>
-                  En hausse de {growth.toFixed(1)}% ce mois
+                  {t('overview.cashbackEvolution.upBy', {
+                    value: growth.toFixed(1)
+                  })}
                   <IconTrendingUp className='h-4 w-4 text-[#c5d13f]' />
                 </>
               ) : (
                 <>
-                  En baisse de {Math.abs(growth).toFixed(1)}% ce mois
+                  {t('overview.cashbackEvolution.downBy', {
+                    value: Math.abs(growth).toFixed(1)
+                  })}
                   <IconTrendingDown className='text-muted-foreground h-4 w-4' />
                 </>
               )}
             </div>
             <div className='text-muted-foreground flex items-center gap-2 leading-none'>
-              Total:{' '}
-              <span className='text-foreground font-semibold'>
-                {totalCashback.toFixed(2)}€
-              </span>{' '}
-              sur 6 mois
+              {t('overview.cashbackEvolution.total', {
+                amount: totalCashback.toFixed(2)
+              })}
             </div>
           </div>
         </div>

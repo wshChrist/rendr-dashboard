@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { Pie, PieChart, Cell, ResponsiveContainer } from 'recharts';
 import { useMemo } from 'react';
+import { useTranslations } from 'next-intl';
 
 import {
   ChartConfig,
@@ -23,6 +24,7 @@ const COLORS = [
 ];
 
 export function BrokerDistribution() {
+  const t = useTranslations();
   const { transactions, isLoading } = useTradingData();
 
   // Calculer les stats par broker depuis les transactions réelles
@@ -102,7 +104,7 @@ export function BrokerDistribution() {
         )}
       >
         <p className='text-muted-foreground text-sm'>
-          Aucune donnée de trading disponible
+          {t('overview.brokerDistribution.noData')}
         </p>
       </div>
     );
@@ -120,9 +122,11 @@ export function BrokerDistribution() {
     >
       {/* Header */}
       <div className='mb-4'>
-        <h3 className='text-lg font-semibold'>Répartition par Broker</h3>
+        <h3 className='text-lg font-semibold'>
+          {t('overview.brokerDistribution.title')}
+        </h3>
         <p className='text-muted-foreground text-sm'>
-          Distribution du cashback par broker partenaire
+          {t('overview.brokerDistribution.description')}
         </p>
       </div>
 
