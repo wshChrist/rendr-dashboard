@@ -96,7 +96,7 @@ function extractPlaceholders(text: string): string[] {
     placeholders.push(match[1]);
   }
 
-  return [...new Set(placeholders)]; // Supprime les doublons
+  return Array.from(new Set(placeholders)); // Supprime les doublons
 }
 
 /**
