@@ -129,7 +129,8 @@ function verifyPlaceholders(
   const placeholderMap = new Map<string, PlaceholderInfo[]>();
 
   // Collecte tous les placeholders pour chaque langue
-  for (const [lang, translationObj] of translations) {
+  for (const lang of translations.keys()) {
+    const translationObj = translations.get(lang)!;
     const keys = getAllKeys(translationObj);
     const placeholders: PlaceholderInfo[] = [];
 
@@ -154,7 +155,8 @@ function verifyPlaceholders(
     sourcePlaceholderMap.set(info.key, info.placeholders);
   }
 
-  for (const [lang, placeholders] of placeholderMap) {
+  for (const lang of placeholderMap.keys()) {
+    const placeholders = placeholderMap.get(lang)!;
     if (lang === sourceLang) continue;
 
     for (const info of placeholders) {
@@ -188,7 +190,8 @@ function verifyPlaceholders(
     }
 
     // Vérifie les clés qui ont des placeholders en source mais pas dans la langue cible
-    for (const [key, sourcePlaces] of sourcePlaceholderMap) {
+    for (const key of sourcePlaceholderMap.keys()) {
+      const sourcePlaces = sourcePlaceholderMap.get(key)!;
       const targetInfo = placeholders.find((p) => p.key === key);
       if (!targetInfo && getValueByKey(translations.get(lang)!, key)) {
         result.hasErrors = true;
@@ -216,8 +219,9 @@ function verifyMissingKeys(
 
   const sourceKeys = getAllKeys(translations.get(sourceLang)!);
 
-  for (const [lang, translationObj] of translations) {
+  for (const lang of translations.keys()) {
     if (lang === sourceLang) continue;
+    const translationObj = translations.get(lang)!;
 
     const targetKeys = getAllKeys(translationObj);
     const missing = sourceKeys.filter((k) => !targetKeys.includes(k));
@@ -266,8 +270,9 @@ function verifyUntranslatedTexts(
 
   const sourceObj = translations.get(sourceLang)!;
 
-  for (const [lang, translationObj] of translations) {
+  for (const lang of translations.keys()) {
     if (lang === sourceLang) continue;
+    const translationObj = translations.get(lang)!;
 
     const keys = getAllKeys(translationObj);
     const suspiciousKeys: string[] = [];
