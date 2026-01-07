@@ -15,12 +15,19 @@ export default async function Page() {
 
   return (
     <PageContainer>
-      <div className='space-y-6'>
-        <PageHeader
-          title={t('pages.profile.title')}
-          description={t('pages.profile.description')}
-        />
-        <ProfileViewPage />
+      <div className='relative flex flex-1 flex-col space-y-6 overflow-x-hidden'>
+        {/* Section Header */}
+        <section>
+          <PageHeader
+            title={t('pages.profile.title')}
+            description={t('pages.profile.description')}
+          />
+        </section>
+
+        {/* Main Content */}
+        <section className='space-y-4'>
+          <ProfileViewPage />
+        </section>
       </div>
     </PageContainer>
   );

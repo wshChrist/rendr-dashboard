@@ -39,6 +39,7 @@ import {
   IconReceipt
 } from '@tabler/icons-react';
 import { cn } from '@/lib/utils';
+import { TransactionMobileView } from '../transaction-mobile-view';
 
 interface TransactionTableProps {
   data: Transaction[];
@@ -92,7 +93,10 @@ export function TransactionTable({ data }: TransactionTableProps) {
     []
   );
 
-  const columns = React.useMemo(() => getTransactionColumns(t, locale), [t, locale]);
+  const columns = React.useMemo(
+    () => getTransactionColumns(t, locale),
+    [t, locale]
+  );
 
   const table = useReactTable({
     data,
@@ -117,34 +121,76 @@ export function TransactionTable({ data }: TransactionTableProps) {
     }
   });
 
+  const filteredRows = table.getFilteredRowModel().rows;
+  const paginatedRows = table.getRowModel().rows;
+  const paginatedData = paginatedRows.map((row) => row.original);
+
   return (
-    <div className='space-y-4'>
+    <div className='w-full max-w-full space-y-4 overflow-x-hidden'>
       {/* Toolbar */}
       <div
-        className='animate-fade-in-up flex flex-col gap-4 opacity-0 md:flex-row md:items-center md:justify-between'
+        className='animate-fade-in-up flex min-w-0 flex-col gap-4 opacity-0 md:flex-row md:items-center md:justify-between'
         style={{ animationFillMode: 'forwards' }}
       >
-        <div className='relative max-w-sm flex-1'>
+        <div className='relative max-w-sm min-w-0 flex-1'>
           <IconSearch className='text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2' />
           <Input
             placeholder={t('pages.transactions.searchPlaceholder')}
             value={globalFilter ?? ''}
             onChange={(e) => setGlobalFilter(e.target.value)}
-            className='border-white/10 bg-white/5 pl-9 focus:border-white/20'
+            className='w-full border-white/10 bg-white/5 pl-9 focus:border-white/20'
           />
         </div>
-        <div className='flex items-center gap-2'>
-          <span className='text-muted-foreground text-sm'>
-            {table.getFilteredRowModel().rows.length} {t('pages.transactions.transaction')}
-            {table.getFilteredRowModel().rows.length > 1 ? 's' : ''}
+        <div className='flex flex-shrink-0 items-center gap-2'>
+          <span className='text-muted-foreground text-sm whitespace-nowrap'>
+            {filteredRows.length} {t('pages.transactions.transaction')}
+            {filteredRows.length > 1 ? 's' : ''}
           </span>
         </div>
       </div>
 
-      {/* Table */}
+      {/* Mobile View */}
+      <div className='space-y-4 md:hidden'>
+        <TransactionMobileView data={paginatedData} />
+
+        {/* Mobile Pagination */}
+        {table.getPageCount() > 1 && (
+          <div className='flex items-center justify-between border-t border-white/5 pt-4'>
+            <div className='flex items-center gap-2'>
+              <span className='text-muted-foreground text-xs'>
+                {t('table.pagination.page')}{' '}
+                {table.getState().pagination.pageIndex + 1}{' '}
+                {t('table.pagination.of')} {table.getPageCount()}
+              </span>
+            </div>
+            <div className='flex items-center gap-1'>
+              <Button
+                variant='outline'
+                size='icon'
+                className='h-8 w-8 border-white/10 bg-white/5 hover:bg-white/10'
+                onClick={() => table.previousPage()}
+                disabled={!table.getCanPreviousPage()}
+              >
+                <IconChevronLeft className='h-4 w-4' />
+              </Button>
+              <Button
+                variant='outline'
+                size='icon'
+                className='h-8 w-8 border-white/10 bg-white/5 hover:bg-white/10'
+                onClick={() => table.nextPage()}
+                disabled={!table.getCanNextPage()}
+              >
+                <IconChevronRight className='h-4 w-4' />
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Table - Hidden on mobile */}
       <div
         className={cn(
-          'overflow-hidden rounded-2xl',
+          'hidden w-full max-w-full overflow-hidden rounded-2xl md:block',
           'bg-zinc-900/40 backdrop-blur-sm',
           'border border-white/5',
           'transition-all duration-300',
@@ -153,91 +199,88 @@ export function TransactionTable({ data }: TransactionTableProps) {
         )}
         style={{ animationDelay: '100ms', animationFillMode: 'forwards' }}
       >
-        <div className='overflow-x-auto'>
-          <Table>
-            <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
+        <Table>
+          <TableHeader>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow
+                key={headerGroup.id}
+                className='border-white/5 hover:bg-transparent'
+              >
+                {headerGroup.headers.map((header) => (
+                  <TableHead key={header.id} className='text-muted-foreground'>
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </TableHead>
+                ))}
+              </TableRow>
+            ))}
+          </TableHeader>
+          <TableBody>
+            {table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map((row, index) => (
                 <TableRow
-                  key={headerGroup.id}
-                  className='border-white/5 hover:bg-transparent'
+                  key={row.id}
+                  data-state={row.getIsSelected() && 'selected'}
+                  className='animate-fade-in-up border-white/5 opacity-0 hover:bg-white/5'
+                  style={{
+                    animationDelay: `${150 + index * 30}ms`,
+                    animationFillMode: 'forwards'
+                  }}
                 >
-                  {headerGroup.headers.map((header) => (
-                    <TableHead
-                      key={header.id}
-                      className='text-muted-foreground'
-                    >
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
                   ))}
                 </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows?.length ? (
-                table.getRowModel().rows.map((row, index) => (
-                  <TableRow
-                    key={row.id}
-                    data-state={row.getIsSelected() && 'selected'}
-                    className='animate-fade-in-up border-white/5 opacity-0 hover:bg-white/5'
-                    style={{
-                      animationDelay: `${150 + index * 30}ms`,
-                      animationFillMode: 'forwards'
-                    }}
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow className='border-white/5'>
-                  <TableCell
-                    colSpan={columns.length}
-                    className='h-32 text-center'
-                  >
-                    <div className='flex flex-col items-center gap-3'>
-                      <div className='rounded-xl border border-white/5 bg-white/5 p-3'>
-                        <IconReceipt className='text-muted-foreground h-6 w-6' />
-                      </div>
-                      <span className='text-muted-foreground'>
-                        {t('pages.transactions.noTransactionsFound')}
-                      </span>
-                      <span className='text-muted-foreground/60 text-sm'>
-                        {t('pages.transactions.connectBrokerToSeeTrades')}
-                      </span>
+              ))
+            ) : (
+              <TableRow className='border-white/5'>
+                <TableCell
+                  colSpan={columns.length}
+                  className='h-32 text-center'
+                >
+                  <div className='flex flex-col items-center gap-3'>
+                    <div className='rounded-xl border border-white/5 bg-white/5 p-3'>
+                      <IconReceipt className='text-muted-foreground h-6 w-6' />
                     </div>
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
+                    <span className='text-muted-foreground'>
+                      {t('pages.transactions.noTransactionsFound')}
+                    </span>
+                    <span className='text-muted-foreground/60 text-sm'>
+                      {t('pages.transactions.connectBrokerToSeeTrades')}
+                    </span>
+                  </div>
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
       </div>
 
-      {/* Pagination */}
+      {/* Pagination - Hidden on mobile */}
       <div
-        className='animate-fade-in-up flex flex-col gap-4 opacity-0 md:flex-row md:items-center md:justify-between'
+        className='animate-fade-in-up hidden min-w-0 flex-col gap-4 opacity-0 md:flex md:flex-row md:items-center md:justify-between'
         style={{ animationDelay: '200ms', animationFillMode: 'forwards' }}
       >
-        <div className='flex items-center gap-2'>
-          <span className='text-muted-foreground text-sm'>{t('table.pagination.rowsPerPage')}</span>
+        <div className='flex min-w-0 items-center gap-2'>
+          <span className='text-muted-foreground text-sm whitespace-nowrap'>
+            {t('table.pagination.rowsPerPage')}
+          </span>
           <Select
             value={`${table.getState().pagination.pageSize}`}
             onValueChange={(value) => {
               table.setPageSize(Number(value));
             }}
           >
-            <SelectTrigger className='h-8 w-[70px] border-white/10 bg-white/5'>
+            <SelectTrigger className='h-8 w-[70px] flex-shrink-0 border-white/10 bg-white/5'>
               <SelectValue placeholder={table.getState().pagination.pageSize} />
             </SelectTrigger>
             <SelectContent side='top'>
@@ -249,16 +292,17 @@ export function TransactionTable({ data }: TransactionTableProps) {
             </SelectContent>
           </Select>
         </div>
-        <div className='flex items-center gap-2'>
-          <span className='text-muted-foreground text-sm'>
-            {t('table.pagination.page')} {table.getState().pagination.pageIndex + 1} {t('table.pagination.of')}{' '}
-            {table.getPageCount()}
+        <div className='flex flex-shrink-0 items-center gap-2'>
+          <span className='text-muted-foreground text-sm whitespace-nowrap'>
+            {t('table.pagination.page')}{' '}
+            {table.getState().pagination.pageIndex + 1}{' '}
+            {t('table.pagination.of')} {table.getPageCount()}
           </span>
           <div className='flex items-center gap-1'>
             <Button
               variant='outline'
               size='icon'
-              className='h-8 w-8 border-white/10 bg-white/5 hover:bg-white/10'
+              className='h-8 w-8 flex-shrink-0 border-white/10 bg-white/5 hover:bg-white/10'
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
             >
@@ -267,7 +311,7 @@ export function TransactionTable({ data }: TransactionTableProps) {
             <Button
               variant='outline'
               size='icon'
-              className='h-8 w-8 border-white/10 bg-white/5 hover:bg-white/10'
+              className='h-8 w-8 flex-shrink-0 border-white/10 bg-white/5 hover:bg-white/10'
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
             >

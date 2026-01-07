@@ -21,10 +21,10 @@ export default async function OverViewLayout({
 
   return (
     <PageContainer>
-      <div className='relative flex flex-1 flex-col space-y-6'>
+      <div className='relative flex flex-1 flex-col space-y-6 overflow-x-hidden'>
         {/* Décorations de fond subtiles */}
-        <div className='pointer-events-none absolute top-0 right-0 h-64 w-64 rounded-full bg-white/[0.02] blur-3xl' />
-        <div className='pointer-events-none absolute bottom-1/4 left-0 h-48 w-48 rounded-full bg-white/[0.01] blur-3xl' />
+        <div className='pointer-events-none absolute top-0 right-0 h-64 w-64 overflow-hidden rounded-full bg-white/[0.02] blur-3xl' />
+        <div className='pointer-events-none absolute bottom-1/4 left-0 h-48 w-48 overflow-hidden rounded-full bg-white/[0.01] blur-3xl' />
 
         {/* Header personnalisé avec nom de l'utilisateur */}
         <WelcomeHeader />
@@ -61,14 +61,14 @@ export default async function OverViewLayout({
         </section>
 
         {/* Charts avec animations décalées */}
-        <section className='space-y-4'>
+        <section className='-mx-3 space-y-4 sm:-mx-4 md:-mx-6'>
           <SectionHeading
             title={t('pages.overview.stats')}
             size='sm'
-            className='animate-fade-in-up opacity-0'
+            className='animate-fade-in-up px-3 opacity-0 sm:px-4 md:px-6'
             style={{ animationDelay: '550ms', animationFillMode: 'forwards' }}
           />
-          <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-7'>
+          <div className='grid grid-cols-1 gap-4 px-3 sm:px-4 md:grid-cols-2 md:px-6 lg:grid-cols-7'>
             <div
               className='animate-fade-in-up col-span-4 opacity-0'
               style={{ animationDelay: '600ms', animationFillMode: 'forwards' }}
@@ -82,7 +82,7 @@ export default async function OverViewLayout({
               {pie_stats}
             </div>
             <div
-              className='animate-fade-in-up col-span-7 opacity-0'
+              className='animate-fade-in-up col-span-4 opacity-0 md:col-span-7'
               style={{ animationDelay: '800ms', animationFillMode: 'forwards' }}
             >
               {area_stats}

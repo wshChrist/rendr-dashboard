@@ -41,14 +41,19 @@ export default async function Page(props: pageProps) {
         </Link>
       }
     >
-      <Suspense
-        // key={key}
-        fallback={
-          <DataTableSkeleton columnCount={5} rowCount={8} filterCount={2} />
-        }
-      >
-        <ProductListingPage />
-      </Suspense>
+      <div className='relative flex flex-1 flex-col space-y-6 overflow-x-hidden'>
+        {/* Main Content */}
+        <section className='space-y-4'>
+          <Suspense
+            // key={key}
+            fallback={
+              <DataTableSkeleton columnCount={5} rowCount={8} filterCount={2} />
+            }
+          >
+            <ProductListingPage />
+          </Suspense>
+        </section>
+      </div>
     </PageContainer>
   );
 }

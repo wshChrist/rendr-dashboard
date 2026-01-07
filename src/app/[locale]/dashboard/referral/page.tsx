@@ -15,12 +15,19 @@ export default async function ReferralPage() {
 
   return (
     <PageContainer>
-      <div className='space-y-4'>
-        <PageHeader
-          title={t('pages.referral.title')}
-          description={t('pages.referral.description')}
-        />
-        <ReferralView />
+      <div className='relative flex flex-1 flex-col space-y-6 overflow-x-hidden'>
+        {/* Section Header */}
+        <section>
+          <PageHeader
+            title={t('pages.referral.title')}
+            description={t('pages.referral.description')}
+          />
+        </section>
+
+        {/* Main Content */}
+        <section className='space-y-4'>
+          <ReferralView />
+        </section>
       </div>
     </PageContainer>
   );

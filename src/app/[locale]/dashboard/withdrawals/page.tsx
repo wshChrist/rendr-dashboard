@@ -15,12 +15,19 @@ export default async function WithdrawalsPage() {
 
   return (
     <PageContainer>
-      <div className='space-y-4'>
-        <PageHeader
-          title={t('pages.withdrawals.title')}
-          description={t('pages.withdrawals.description')}
-        />
-        <WithdrawalsView />
+      <div className='relative flex flex-1 flex-col space-y-6 overflow-x-hidden'>
+        {/* Section Header */}
+        <section>
+          <PageHeader
+            title={t('pages.withdrawals.title')}
+            description={t('pages.withdrawals.description')}
+          />
+        </section>
+
+        {/* Main Content */}
+        <section className='space-y-4'>
+          <WithdrawalsView />
+        </section>
       </div>
     </PageContainer>
   );

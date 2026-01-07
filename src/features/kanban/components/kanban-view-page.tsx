@@ -9,7 +9,12 @@ export default function KanbanViewPage() {
       pageDescription='Manage tasks by dnd'
       pageHeaderAction={<NewTaskDialog />}
     >
-      <KanbanBoard />
+      <div className='relative flex flex-1 flex-col space-y-6 overflow-x-hidden'>
+        {/* Main Content */}
+        <section className='space-y-4'>
+          <KanbanBoard />
+        </section>
+      </div>
     </PageContainer>
   );
 }

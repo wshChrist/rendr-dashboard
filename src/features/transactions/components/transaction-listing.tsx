@@ -27,7 +27,7 @@ import { format } from 'date-fns';
 import { fr, enUS } from 'date-fns/locale';
 import { Transaction } from '@/types/cashback';
 
-export function TransactionListing() {
+export default function TransactionListing() {
   const t = useTranslations();
   const locale = useLocale();
   const dateLocale = locale === 'en' ? enUS : fr;

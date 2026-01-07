@@ -15,12 +15,19 @@ export default async function UpdatesPage() {
 
   return (
     <PageContainer>
-      <div className='space-y-4'>
-        <PageHeader
-          title={t('pages.updates.title')}
-          description={t('pages.updates.description')}
-        />
-        <AllUpdates />
+      <div className='relative flex flex-1 flex-col space-y-6 overflow-x-hidden'>
+        {/* Section Header */}
+        <section>
+          <PageHeader
+            title={t('pages.updates.title')}
+            description={t('pages.updates.description')}
+          />
+        </section>
+
+        {/* Main Content */}
+        <section className='space-y-4'>
+          <AllUpdates />
+        </section>
       </div>
     </PageContainer>
   );

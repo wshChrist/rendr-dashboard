@@ -18,19 +18,26 @@ export default async function MyBrokersPage() {
 
   return (
     <PageContainer>
-      <div className='space-y-4'>
-        <PageHeader
-          title={t('pages.brokers.myAccounts.title')}
-          description={t('pages.brokers.myAccounts.description')}
-        >
-          <Button asChild variant='outline'>
-            <Link href='/dashboard/brokers/available'>
-              {t('common.addBroker')}
-              <IconArrowRight className='ml-2 h-4 w-4' />
-            </Link>
-          </Button>
-        </PageHeader>
-        <MyBrokers />
+      <div className='relative flex flex-1 flex-col space-y-6 overflow-x-hidden'>
+        {/* Section Header */}
+        <section>
+          <PageHeader
+            title={t('pages.brokers.myAccounts.title')}
+            description={t('pages.brokers.myAccounts.description')}
+          >
+            <Button asChild variant='outline'>
+              <Link href='/dashboard/brokers/available'>
+                {t('common.addBroker')}
+                <IconArrowRight className='ml-2 h-4 w-4' />
+              </Link>
+            </Button>
+          </PageHeader>
+        </section>
+
+        {/* Main Content */}
+        <section className='space-y-4'>
+          <MyBrokers />
+        </section>
       </div>
     </PageContainer>
   );
