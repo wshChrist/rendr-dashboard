@@ -5,16 +5,15 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { FormInput } from '@/components/forms/form-input';
 import { FormSelect } from '@/components/forms/form-select';
 import { Form } from '@/components/ui/form';
 import { toast } from 'sonner';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { backendClient } from '@/lib/api/backend-client';
 import { createSupabaseClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
-import { brokersData } from '@/constants/cashback-data';
+import type { Broker } from '@/types/cashback';
 import { RendRBadge } from '@/components/ui/rendr-badge';
 
 // Le schéma sera créé dans le composant pour accéder aux traductions
@@ -26,16 +25,12 @@ type FormValues = {
   investor_password: string;
 };
 
-// Générer la liste des brokers depuis brokersData avec indication de disponibilité
-const BROKERS = brokersData.map((broker) => {
-  const isAvailable = broker.name === 'Vantage'; // Seul Vantage est disponible pour l'instant
-  return {
-    value: broker.name,
-    label: broker.name,
-    disabled: !isAvailable,
-    available: isAvailable
-  };
-});
+type BrokerSettings = {
+  broker_name: string;
+  is_available: boolean;
+  is_maintenance: boolean;
+  maintenance_message: string | null;
+};
 
 const PLATFORMS = [
   { value: 'MT4', label: 'MetaTrader 4' },
@@ -51,21 +46,100 @@ export function CreateTradingAccountForm({
 }: CreateTradingAccountFormProps) {
   const t = useTranslations();
   const [isLoading, setIsLoading] = useState(false);
+  const [brokers, setBrokers] = useState<Broker[]>([]);
+  const [brokerSettings, setBrokerSettings] = useState<
+    Map<string, BrokerSettings>
+  >(new Map());
+  const [isLoadingBrokers, setIsLoadingBrokers] = useState(true);
   const router = useRouter();
   const supabase = createSupabaseClient();
 
+  // Charger les brokers depuis l'API
+  useEffect(() => {
+    const loadBrokers = async () => {
+      try {
+        setIsLoadingBrokers(true);
+        const res = await fetch('/api/brokers');
+        if (!res.ok) {
+          throw new Error('Erreur lors du chargement des brokers');
+        }
+        const data = await res.json();
+        setBrokers(data as Broker[]);
+      } catch (error) {
+        console.error('Error loading brokers:', error);
+        setBrokers([]);
+      } finally {
+        setIsLoadingBrokers(false);
+      }
+    };
+
+    loadBrokers();
+  }, []);
+
+  // Charger les settings des brokers
+  useEffect(() => {
+    if (brokers.length === 0) return;
+
+    const loadSettings = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('broker_settings')
+          .select(
+            'broker_name, is_available, is_maintenance, maintenance_message'
+          );
+
+        if (!error && data) {
+          const settingsMap = new Map<string, BrokerSettings>();
+          data.forEach((row) => {
+            settingsMap.set(row.broker_name, {
+              broker_name: row.broker_name,
+              is_available: row.is_available ?? false,
+              is_maintenance: row.is_maintenance ?? false,
+              maintenance_message: row.maintenance_message ?? null
+            });
+          });
+          setBrokerSettings(settingsMap);
+        }
+      } catch (error) {
+        console.error('Error loading broker settings:', error);
+      }
+    };
+
+    loadSettings();
+  }, [brokers, supabase]);
+
+  // Générer la liste des brokers avec indication de disponibilité
+  const BROKERS = useMemo(() => {
+    return brokers.map((broker) => {
+      const settings = brokerSettings.get(broker.name);
+      const isAvailable = settings?.is_available ?? false;
+      const isMaintenance = settings?.is_maintenance ?? false;
+
+      return {
+        value: broker.name,
+        label: broker.name,
+        disabled: !isAvailable || isMaintenance,
+        available: isAvailable && !isMaintenance
+      };
+    });
+  }, [brokers, brokerSettings]);
+
   // Créer le schéma de validation avec les traductions
-  const formSchema = useMemo(() => z.object({
-    broker: z.string().min(1, t('brokers.form.brokerRequired')),
-    platform: z.enum(['MT4', 'MT5'], {
-      message: t('brokers.form.platformRequired')
-    }),
-    server: z.string().min(1, t('brokers.form.serverRequired')),
-    login: z.string().min(1, t('brokers.form.accountNumberRequired')),
-    investor_password: z
-      .string()
-      .min(1, t('brokers.form.investorPasswordRequired'))
-  }), [t]);
+  const formSchema = useMemo(
+    () =>
+      z.object({
+        broker: z.string().min(1, t('brokers.form.brokerRequired')),
+        platform: z.enum(['MT4', 'MT5'], {
+          message: t('brokers.form.platformRequired')
+        }),
+        server: z.string().min(1, t('brokers.form.serverRequired')),
+        login: z.string().min(1, t('brokers.form.accountNumberRequired')),
+        investor_password: z
+          .string()
+          .min(1, t('brokers.form.investorPasswordRequired'))
+      }),
+    [t]
+  );
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -154,82 +228,83 @@ export function CreateTradingAccountForm({
     }
   };
 
+  if (isLoadingBrokers) {
+    return (
+      <div className='flex items-center justify-center p-8'>
+        <p className='text-muted-foreground'>{t('common.loading')}</p>
+      </div>
+    );
+  }
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t('brokers.addTradingAccount')}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Form
-          form={form}
-          onSubmit={form.handleSubmit(onSubmit)}
-          className='space-y-6'
+    <Form
+      form={form}
+      onSubmit={form.handleSubmit(onSubmit)}
+      className='space-y-6'
+    >
+      <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
+        <FormSelect
+          control={form.control}
+          name='broker'
+          label={t('nav.brokers')}
+          placeholder={t('common.search')}
+          options={BROKERS}
+          required
+        />
+
+        <FormSelect
+          control={form.control}
+          name='platform'
+          label={t('brokers.form.platform')}
+          placeholder={t('brokers.form.selectPlatform')}
+          options={PLATFORMS}
+          required
+        />
+      </div>
+
+      <FormInput
+        control={form.control}
+        name='server'
+        label={t('brokers.form.server')}
+        placeholder={t('brokers.form.serverPlaceholder')}
+        description={t('brokers.form.serverDescription')}
+        required
+      />
+
+      <FormInput
+        control={form.control}
+        name='login'
+        label={t('brokers.form.accountNumber')}
+        placeholder={t('brokers.form.accountNumberPlaceholder')}
+        description={t('brokers.accountIdDescription')}
+        required
+        type='text'
+        inputMode='numeric'
+      />
+
+      <FormInput
+        control={form.control}
+        name='investor_password'
+        label={t('brokers.form.investorPassword')}
+        placeholder={t('brokers.form.investorPasswordPlaceholder')}
+        description={t('brokers.form.investorPasswordDescription')}
+        required
+        type='password'
+      />
+
+      <div className='flex justify-end gap-2'>
+        <Button
+          type='button'
+          variant='outline'
+          onClick={() => form.reset()}
+          disabled={isLoading}
         >
-          <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
-            <FormSelect
-              control={form.control}
-              name='broker'
-              label={t('nav.brokers')}
-              placeholder={t('common.search')}
-              options={BROKERS}
-              required
-            />
-
-            <FormSelect
-              control={form.control}
-              name='platform'
-              label={t('brokers.form.platform')}
-              placeholder={t('brokers.form.selectPlatform')}
-              options={PLATFORMS}
-              required
-            />
-          </div>
-
-          <FormInput
-            control={form.control}
-            name='server'
-            label={t('brokers.form.server')}
-            placeholder={t('brokers.form.serverPlaceholder')}
-            description={t('brokers.form.serverDescription')}
-            required
-          />
-
-          <FormInput
-            control={form.control}
-            name='login'
-            label={t('brokers.form.accountNumber')}
-            placeholder={t('brokers.form.accountNumberPlaceholder')}
-            description={t('brokers.accountIdDescription')}
-            required
-            type='text'
-            inputMode='numeric'
-          />
-
-          <FormInput
-            control={form.control}
-            name='investor_password'
-            label={t('brokers.form.investorPassword')}
-            placeholder={t('brokers.form.investorPasswordPlaceholder')}
-            description={t('brokers.form.investorPasswordDescription')}
-            required
-            type='password'
-          />
-
-          <div className='flex justify-end gap-2'>
-            <Button
-              type='button'
-              variant='outline'
-              onClick={() => form.reset()}
-              disabled={isLoading}
-            >
-              Annuler
-            </Button>
-            <Button type='submit' disabled={isLoading}>
-              {isLoading ? 'Création...' : 'Créer le compte'}
-            </Button>
-          </div>
-        </Form>
-      </CardContent>
-    </Card>
+          Annuler
+        </Button>
+        <Button type='submit' disabled={isLoading}>
+          {isLoading ? 'Création...' : 'Créer le compte'}
+        </Button>
+      </div>
+    </Form>
   );
 }

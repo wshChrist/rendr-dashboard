@@ -317,97 +317,97 @@
     "signIn": {
       "noAccountYet": "Pas encore de compte ? ",
       "signingInProgress": "Connexion en cours...",
-      "title": "Sign in to your RendR account",
-      "pageTitle": "Sign in",
-      "description": "Sign in to your RendR account to access your trading dashboard with cashback.",
-      "pageDescription": "Sign in to your account to continue",
+      "title": "Connectez-vous à votre compte RendR",
+      "pageTitle": "Connexion",
+      "description": "Connectez-vous à votre compte RendR pour accéder à votre dashboard de trading avec cashback.",
+      "pageDescription": "Connectez-vous à votre compte pour continuer",
       "email": "Email",
-      "emailPlaceholder": "your@email.com",
-      "password": "Password",
+      "emailPlaceholder": "votre@email.com",
+      "password": "Mot de passe",
       "passwordPlaceholder": "••••••••",
-      "continueWithEmail": "Continue With Email",
-      "orContinueWith": "Or continue with",
-      "signInSuccess": "Signed In Successfully!",
-      "signInError": "Error signing in",
-      "sessionError": "Session error. Please try again.",
-      "signInButton": "Sign in",
-      "signingIn": "Signing in...",
-      "forgotPassword": "Forgot password?",
-      "createAccount": "Create an account",
-      "connectionError": "An error occurred while signing in",
+      "continueWithEmail": "Continuer avec l'email",
+      "orContinueWith": "Ou continuer avec",
+      "signInSuccess": "Connexion réussie !",
+      "signInError": "Erreur lors de la connexion",
+      "sessionError": "Erreur de session. Veuillez réessayer.",
+      "signInButton": "Se connecter",
+      "signingIn": "Connexion...",
+      "forgotPassword": "Mot de passe oublié ?",
+      "createAccount": "Créer un compte",
+      "connectionError": "Une erreur s'est produite lors de la connexion",
       "validation": {
-        "invalidEmail": "Invalid email address",
-        "passwordMin": "Password must contain at least 8 characters"
+        "invalidEmail": "Adresse email invalide",
+        "passwordMin": "Le mot de passe doit contenir au moins 8 caractères"
       }
     },
     "signUp": {
       "signingUpProgress": "Inscription en cours...",
-      "title": "Create an account",
-      "pageTitle": "Create an account",
-      "pageDescription": "Create your account to start trading with cashback",
+      "title": "Créer un compte",
+      "pageTitle": "Créer un compte",
+      "pageDescription": "Créez votre compte pour commencer à trader avec cashback",
       "firstName": "Prénom",
       "firstNamePlaceholder": "Jean",
       "lastName": "Nom",
       "lastNamePlaceholder": "Dupont",
       "email": "Email",
-      "emailPlaceholder": "your@email.com",
-      "password": "Password",
+      "emailPlaceholder": "votre@email.com",
+      "password": "Mot de passe",
       "passwordPlaceholder": "••••••••",
-      "createAccount": "Create my account",
-      "accountCreated": "Account created successfully!",
-      "signUpError": "Error signing up",
-      "sessionError": "Session error. Please try again.",
-      "creatingAccount": "Creating account...",
-      "alreadyHaveAccount": "Already have an account?",
-      "accountCreationError": "An error occurred while creating the account",
+      "createAccount": "Créer mon compte",
+      "accountCreated": "Compte créé avec succès !",
+      "signUpError": "Erreur lors de l'inscription",
+      "sessionError": "Erreur de session. Veuillez réessayer.",
+      "creatingAccount": "Création du compte...",
+      "alreadyHaveAccount": "Vous avez déjà un compte ?",
+      "accountCreationError": "Une erreur s'est produite lors de la création du compte",
       "validation": {
-        "invalidEmail": "Invalid email address",
-        "passwordMin": "Password must contain at least 8 characters",
-        "firstNameRequired": "First name is required",
-        "lastNameRequired": "Last name is required"
+        "invalidEmail": "Adresse email invalide",
+        "passwordMin": "Le mot de passe doit contenir au moins 8 caractères",
+        "firstNameRequired": "Le prénom est requis",
+        "lastNameRequired": "Le nom est requis"
       }
     },
     "welcome": {
-      "title": "Welcome to RendR",
-      "description": "The trading platform with cashback that rewards every transaction. Maximize your gains while trading.",
-      "joinTitle": "Join RendR",
-      "joinDescription": "Create your account and start earning cashback on every transaction. Join a community of traders who maximize their gains.",
+      "title": "Bienvenue sur RendR",
+      "description": "La plateforme de trading avec cashback qui récompense chaque transaction. Maximisez vos gains en tradant.",
+      "joinTitle": "Rejoignez RendR",
+      "joinDescription": "Créez votre compte et commencez à gagner du cashback sur chaque transaction. Rejoignez une communauté de traders qui maximisent leurs gains.",
       "features": {
         "cashback": {
-          "title": "Cashback on every trade",
-          "description": "Receive a percentage of cashback on all your successful transactions."
+          "title": "Cashback sur chaque trade",
+          "description": "Recevez un pourcentage de cashback sur toutes vos transactions réussies."
         },
         "analytics": {
-          "title": "Advanced Analytics",
-          "description": "Track your performance in real-time with detailed dashboards."
+          "title": "Analyses avancées",
+          "description": "Suivez vos performances en temps réel avec des tableaux de bord détaillés."
         },
         "security": {
-          "title": "Maximum Security",
-          "description": "Your data and transactions are protected by the best security practices."
+          "title": "Sécurité maximale",
+          "description": "Vos données et transactions sont protégées par les meilleures pratiques de sécurité."
         }
       },
-      "footer": "Join thousands of traders who trust RendR"
+      "footer": "Rejoignez des milliers de traders qui font confiance à RendR"
     },
     "terms": {
-      "text": "By continuing, you accept our",
-      "termsOfService": "Terms of Service",
-      "and": "and our",
-      "privacyPolicy": "Privacy Policy",
+      "text": "En continuant, vous acceptez nos",
+      "termsOfService": "Conditions d'utilisation",
+      "and": "et notre",
+      "privacyPolicy": "Politique de confidentialité",
       "period": "."
     },
     "oauth": {
       "google": {
-        "continueWith": "Continue with Google",
-        "signingIn": "Signing in...",
-        "signingUp": "Signing up...",
-        "error": "An error occurred while signing in with Google"
+        "continueWith": "Continuer avec Google",
+        "signingIn": "Connexion...",
+        "signingUp": "Inscription...",
+        "error": "Une erreur s'est produite lors de la connexion avec Google"
       },
       "github": {
-        "continueWith": "Continue with GitHub",
-        "signingIn": "Signing in...",
-        "signingUp": "Signing up...",
-        "error": "An error occurred while signing in with GitHub",
-        "signUpError": "An error occurred while signing up with GitHub"
+        "continueWith": "Continuer avec GitHub",
+        "signingIn": "Connexion...",
+        "signingUp": "Inscription...",
+        "error": "Une erreur s'est produite lors de la connexion avec GitHub",
+        "signUpError": "Une erreur s'est produite lors de l'inscription avec GitHub"
       }
     }
   },
@@ -439,13 +439,23 @@
       "howItWorks": "Comment ça marche ?",
       "step1": "Choisissez un broker partenaire ci-dessous",
       "step2": "Créez un compte via notre lien d'affiliation",
-      "step4": "Recevez automatiquement du cashback sur chaque trade !"
+      "step4": "Recevez automatiquement du cashback sur chaque trade !",
+      "brokerRequired": "Le broker est requis",
+      "platformRequired": "La plateforme est requise",
+      "serverRequired": "Le serveur est requis",
+      "accountNumberRequired": "Le numéro de compte est requis",
+      "investorPasswordRequired": "Le mot de passe investisseur est requis"
     },
     "status": {
       "connected": "Connecté",
       "configuring": "Configuration en cours",
-      "disconnected": "Déconnecté"
+      "disconnected": "Déconnecté",
+      "available": "Disponible",
+      "comingSoon": "Bientôt disponible",
+      "maintenance": "En maintenance"
     },
+    "minDeposit": "Dépôt min.",
+    "noBrokersInCategory": "Aucun broker disponible dans cette catégorie",
     "noBrokerConnected": "Aucun broker connecté",
     "connectFirstAccount": "Connectez votre premier compte de trading pour commencer à recevoir du cashback",
     "addAccount": "Ajouter un compte",

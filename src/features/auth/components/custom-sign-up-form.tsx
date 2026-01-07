@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { createSupabaseClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -37,6 +37,7 @@ const getSignUpSchema = (t: any) =>
 
 export function CustomSignUpForm() {
   const t = useTranslations();
+  const locale = useLocale();
   const router = useRouter();
   const supabase = createSupabaseClient();
   const [isLoading, setIsLoading] = useState(false);
@@ -79,11 +80,9 @@ export function CustomSignUpForm() {
         // Confirmation d'email désactivée, connexion directe
         toast.success(t('auth.signUp.accountCreated'));
         // Attendre un court instant pour que les cookies soient sauvegardés
-        await new Promise((resolve) => setTimeout(resolve, 200));
-        // Rafraîchir le routeur pour que le middleware détecte la session
-        router.refresh();
-        // Rediriger vers le dashboard
-        router.push('/dashboard/overview');
+        await new Promise((resolve) => setTimeout(resolve, 300));
+        // Rediriger vers le dashboard avec la locale (le middleware détectera automatiquement la session)
+        window.location.href = `/${locale}/dashboard/overview`;
       } else if (authData.user) {
         // Si pas de session immédiatement, attendre un peu
         toast.success(t('auth.signUp.accountCreated'));
@@ -92,10 +91,10 @@ export function CustomSignUpForm() {
             data: { session }
           } = await supabase.auth.getSession();
           if (session) {
-            router.refresh();
-            router.push('/dashboard/overview');
+            window.location.href = `/${locale}/dashboard/overview`;
           } else {
             toast.error(t('auth.signUp.sessionError'));
+            setIsLoading(false);
           }
         }, 500);
       }

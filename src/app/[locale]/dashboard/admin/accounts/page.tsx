@@ -1,13 +1,13 @@
 import PageContainer from '@/components/layout/page-container';
 import { PageHeader } from '@/components/layout/page-header';
 import { requireAdmin } from '@/lib/auth/require-admin';
-import { AdminBrokersView } from '@/features/admin/components/admin-brokers-view';
+import { AdminAccountsApprovalView } from '@/features/admin/components/admin-accounts-approval-view';
 
 export const metadata = {
-  title: 'Dashboard : Administration - Brokers'
+  title: 'Dashboard : Administration - Approbation des comptes'
 };
 
-export default async function AdminBrokersPage() {
+export default async function AdminAccountsPage() {
   await requireAdmin();
 
   return (
@@ -15,9 +15,9 @@ export default async function AdminBrokersPage() {
       <div className='space-y-4'>
         <PageHeader
           title='Administration'
-          description='Activez/désactivez des brokers, mettez-les en maintenance, et gérez leur disponibilité.'
+          description='Approuvez ou rejetez les comptes de trading supplémentaires demandés par les utilisateurs.'
         />
-        <AdminBrokersView />
+        <AdminAccountsApprovalView />
       </div>
     </PageContainer>
   );

@@ -1,11 +1,14 @@
 import { Metadata } from 'next';
+import { getTranslations } from 'next-intl/server';
 import SignInViewPage from '@/features/auth/components/sign-in-view';
 
-export const metadata: Metadata = {
-  title: 'Connexion | RendR',
-  description:
-    'Connectez-vous à votre compte RendR pour accéder à votre dashboard de trading avec cashback.'
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations();
+  return {
+    title: `${t('auth.signIn.pageTitle')} | RendR`,
+    description: t('auth.signIn.description')
+  };
+}
 
 export default async function Page() {
   // Paramètre stars conservé pour compatibilité mais non utilisé dans le nouveau design

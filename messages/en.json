@@ -438,13 +438,23 @@
       "howItWorks": "How does it work?",
       "step1": "Choose a partner broker below",
       "step2": "Create an account via our affiliate link",
-      "step4": "Automatically receive cashback on every trade!"
+      "step4": "Automatically receive cashback on every trade!",
+      "brokerRequired": "Broker is required",
+      "platformRequired": "Platform is required",
+      "serverRequired": "Server is required",
+      "accountNumberRequired": "Account number is required",
+      "investorPasswordRequired": "Investor password is required"
     },
     "status": {
       "connected": "Connected",
       "configuring": "Configuring",
-      "disconnected": "Disconnected"
+      "disconnected": "Disconnected",
+      "available": "Available",
+      "comingSoon": "Coming soon",
+      "maintenance": "Under maintenance"
     },
+    "minDeposit": "Min. deposit",
+    "noBrokersInCategory": "No brokers available in this category",
     "noBrokerConnected": "No broker connected",
     "connectFirstAccount": "Connect your first trading account to start receiving cashback",
     "addAccount": "Add an account",

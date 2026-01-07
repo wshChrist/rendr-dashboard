@@ -172,7 +172,7 @@ export async function POST(request: NextRequest) {
         login,
         investor_password: encryptedPassword,
         external_account_id: externalAccountId,
-        status: 'pending_vps_setup'
+        status: 'pending_approval'
       })
       .select()
       .single();

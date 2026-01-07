@@ -97,6 +97,13 @@ export const navItems: NavItem[] = [
         icon: 'brokers',
         shortcut: ['a', 'b'],
         access: { role: 'admin' }
+      },
+      {
+        title: 'Comptes',
+        url: '/dashboard/admin/accounts',
+        icon: 'profile',
+        shortcut: ['a', 'c'],
+        access: { role: 'admin' }
       }
     ]
   },

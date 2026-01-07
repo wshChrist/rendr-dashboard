@@ -5,9 +5,10 @@ import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
 const adminNavItems = [
-  { title: 'Vue d’ensemble', href: '/dashboard/admin/overview' },
+  { title: "Vue d'ensemble", href: '/dashboard/admin/overview' },
   { title: 'Retraits', href: '/dashboard/admin/withdrawals' },
-  { title: 'Brokers', href: '/dashboard/admin/brokers' }
+  { title: 'Brokers', href: '/dashboard/admin/brokers' },
+  { title: 'Comptes', href: '/dashboard/admin/accounts' }
 ] as const;
 
 export function AdminNav() {
@@ -38,4 +39,3 @@ export function AdminNav() {
     </div>
   );
 }
-

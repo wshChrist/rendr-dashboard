@@ -1,8 +1,10 @@
 'use client';
 
 import { useState } from 'react';
+import * as React from 'react';
 import { useTranslations } from 'next-intl';
-import { brokersData, userBrokersData } from '@/constants/cashback-data';
+import { userBrokersData } from '@/constants/cashback-data';
+import type { Broker } from '@/types/cashback';
 import { Button } from '@/components/ui/button';
 import {
   IconExternalLink,
@@ -42,7 +44,7 @@ import { backendClient } from '@/lib/api/backend-client';
 import { createSupabaseClient } from '@/lib/supabase/client';
 
 interface ConnectBrokerDialogProps {
-  broker: (typeof brokersData)[0];
+  broker: Broker;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
 }
@@ -223,10 +225,10 @@ function ConnectBrokerDialog({
               <div className='flex items-start gap-2'>
                 <IconInfoCircle className='text-muted-foreground mt-0.5 h-4 w-4' />
                 <div className='text-muted-foreground space-y-1 text-xs'>
-                  <p className='text-foreground font-medium'>{t('brokers.form.security')}</p>
-                  <p>
-                    {t('brokers.form.securityDescription')}
+                  <p className='text-foreground font-medium'>
+                    {t('brokers.form.security')}
                   </p>
+                  <p>{t('brokers.form.securityDescription')}</p>
                 </div>
               </div>
             </div>
@@ -242,7 +244,9 @@ function ConnectBrokerDialog({
               {t('common.cancel')}
             </Button>
             <Button type='submit' disabled={isLoading}>
-              {isLoading ? t('brokers.form.connecting') : t('brokers.form.connectAccount')}
+              {isLoading
+                ? t('brokers.form.connecting')
+                : t('brokers.form.connectAccount')}
             </Button>
           </DialogFooter>
         </form>
@@ -258,126 +262,142 @@ const categoryLabels: Record<BrokerCategory, string> = {
   multi: 'Multi-marchés'
 };
 
-// Composant pour une carte de broker
+// Type pour les settings de broker
+interface BrokerSettings {
+  broker_name: string;
+  is_available: boolean;
+  is_maintenance: boolean;
+  maintenance_message: string | null;
+}
+
+// Composant pour une carte de broker compacte
 function BrokerCard({
   broker,
+  settings,
   onConnect
 }: {
-  broker: (typeof brokersData)[0];
-  onConnect: (broker: (typeof brokersData)[0]) => void;
+  broker: Broker;
+  settings?: BrokerSettings;
+  onConnect: (broker: Broker) => void;
 }) {
   const t = useTranslations();
   const [imageError, setImageError] = useState(false);
 
+  // Déterminer le statut du broker
+  // Si pas de settings, considérer comme non disponible par défaut
+  const isAvailable = settings ? settings.is_available : false;
+  const isMaintenance = settings?.is_maintenance ?? false;
+  const isComingSoon = !isAvailable && !isMaintenance;
+
+  // Minimum deposit (utiliser min_withdrawal comme proxy)
+  const minDeposit = broker.min_withdrawal;
+
   return (
     <div
       className={cn(
-        'group relative overflow-hidden rounded-xl p-4',
+        'group relative flex flex-col overflow-hidden rounded-xl p-4',
         'bg-zinc-900/40 backdrop-blur-sm',
-        'border border-white/5 hover:border-white/10',
-        'transition-all duration-300',
-        'hover:bg-zinc-900/50'
+        'border border-white/5 transition-all duration-300',
+        'hover:border-white/10 hover:bg-zinc-900/50',
+        'cursor-pointer'
       )}
+      onClick={() => {
+        if (isAvailable && !isMaintenance) {
+          onConnect(broker);
+        }
+      }}
     >
-      <div className='flex items-center gap-4'>
-        {/* Logo */}
-        <div className='relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-white/10 bg-white/5'>
+      {/* Logo centré */}
+      <div className='mb-3 flex items-center justify-center'>
+        <div className='relative flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl border border-white/10 bg-white/5 p-2 transition-transform duration-300 group-hover:scale-105'>
           {!imageError && broker.logo_url ? (
             <img
               src={broker.logo_url}
               alt={broker.name}
-              className='[box-sizing:content-box] h-full w-full object-contain'
+              className='h-full w-full object-contain'
               onError={() => setImageError(true)}
             />
           ) : (
-            <span className='text-sm font-bold'>
+            <span className='text-lg font-bold'>
               {broker.name.slice(0, 2).toUpperCase()}
             </span>
           )}
         </div>
+      </div>
 
-        {/* Info principale */}
-        <div className='min-w-0 flex-1'>
-          <div className='mb-1 flex items-center gap-2'>
-            <h3 className='text-sm font-semibold'>{broker.name}</h3>
-            {broker.name !== 'Vantage' && (
-              <RendRBadge variant='muted' size='sm'>
-                Bientôt disponible
-              </RendRBadge>
-            )}
-          </div>
-          <p className='text-muted-foreground mb-2 line-clamp-1 text-xs'>
-            {broker.description}
-          </p>
+      {/* Nom du broker */}
+      <h3 className='mb-2 text-center text-sm font-semibold'>{broker.name}</h3>
 
-          {/* Stats inline */}
-          <div className='flex items-center gap-4 text-xs'>
-            <div className='flex items-center gap-1'>
-              <IconPercentage className='h-3.5 w-3.5 text-[#c5d13f]' />
-              <span className='text-foreground font-bold'>
-                {(broker.cashback_rate * 100).toFixed(0)}%
-              </span>
-              <span className='text-muted-foreground'>cashback</span>
-            </div>
-            <div className='flex items-center gap-1'>
-              <IconCurrencyEuro className='text-muted-foreground h-3.5 w-3.5' />
-              <span className='font-semibold'>{broker.min_withdrawal}€</span>
-              <span className='text-muted-foreground'>min</span>
-            </div>
-            <div className='flex min-w-0 flex-1 items-center gap-1.5'>
-              {broker.supported_pairs.slice(0, 3).map((pair) => (
-                <RendRBadge
-                  key={pair}
-                  variant='outline'
-                  size='sm'
-                  className='h-4 px-1.5 font-mono text-[10px]'
-                >
-                  {pair}
-                </RendRBadge>
-              ))}
-              {broker.supported_pairs.length > 3 && (
-                <span className='text-muted-foreground text-[10px]'>
-                  +{broker.supported_pairs.length - 3}
-                </span>
-              )}
-            </div>
-          </div>
-        </div>
+      {/* Statut */}
+      <div className='mb-3 flex justify-center'>
+        {isMaintenance ? (
+          <RendRBadge variant='warning' dot dotColor='orange' size='sm'>
+            {t('brokers.status.maintenance')}
+          </RendRBadge>
+        ) : isComingSoon ? (
+          <RendRBadge variant='muted' size='sm'>
+            {t('brokers.status.comingSoon')}
+          </RendRBadge>
+        ) : (
+          <RendRBadge variant='success' dot dotColor='green' size='sm'>
+            {t('brokers.status.available')}
+          </RendRBadge>
+        )}
+      </div>
 
-        {/* Actions */}
-        <div className='flex shrink-0 items-center gap-2'>
-          {broker.name === 'Vantage' ? (
-            <Button
-              size='sm'
-              onClick={() => onConnect(broker)}
-              className='text-xs'
-            >
-              {t('brokers.form.connectBroker')}
-            </Button>
-          ) : (
-            <Button
-              size='sm'
-              disabled
-              className='cursor-not-allowed text-xs opacity-50'
-            >
-              Bientôt disponible
-            </Button>
-          )}
+      {/* Minimum deposit */}
+      <div className='mb-3 flex items-center justify-center gap-1.5'>
+        <IconCurrencyEuro className='text-muted-foreground h-3.5 w-3.5' />
+        <span className='text-xs'>
+          <span className='text-muted-foreground'>
+            {t('brokers.minDeposit')}:{' '}
+          </span>
+          <span className='font-semibold'>{minDeposit}€</span>
+        </span>
+      </div>
+
+      {/* Cashback rate */}
+      <div className='mb-3 flex items-center justify-center gap-1.5'>
+        <IconPercentage className='h-3.5 w-3.5 text-[#c5d13f]' />
+        <span className='text-xs'>
+          <span className='font-bold text-[#c5d13f]'>
+            {(broker.cashback_rate * 100).toFixed(0)}%
+          </span>
+          <span className='text-muted-foreground'> cashback</span>
+        </span>
+      </div>
+
+      {/* Message de maintenance si applicable */}
+      {isMaintenance && settings?.maintenance_message && (
+        <p className='text-muted-foreground mb-3 text-center text-xs'>
+          {settings.maintenance_message}
+        </p>
+      )}
+
+      {/* Bouton d'action */}
+      <div className='mt-auto'>
+        {isAvailable && !isMaintenance ? (
           <Button
-            variant='ghost'
-            size='icon'
-            className='h-8 w-8 hover:bg-white/5'
-            asChild
+            size='sm'
+            className='w-full text-xs'
+            onClick={(e) => {
+              e.stopPropagation();
+              onConnect(broker);
+            }}
           >
-            <a
-              href={broker.website_url}
-              target='_blank'
-              rel='noopener noreferrer'
-            >
-              <IconExternalLink className='h-3.5 w-3.5' />
-            </a>
+            {t('brokers.form.connectBroker')}
           </Button>
-        </div>
+        ) : (
+          <Button
+            size='sm'
+            disabled
+            className='w-full cursor-not-allowed text-xs opacity-50'
+          >
+            {isMaintenance
+              ? t('brokers.status.maintenance')
+              : t('brokers.status.comingSoon')}
+          </Button>
+        )}
       </div>
     </div>
   );
@@ -386,16 +406,132 @@ function BrokerCard({
 export function AvailableBrokers() {
   const t = useTranslations();
   const connectedBrokerIds = userBrokersData.map((ub) => ub.broker_id);
-  const [selectedBroker, setSelectedBroker] = useState<
-    (typeof brokersData)[0] | null
-  >(null);
+  const [selectedBroker, setSelectedBroker] = useState<Broker | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<
     BrokerCategory | 'all'
   >('all');
+  const [brokers, setBrokers] = useState<Broker[]>([]);
+  const [brokerSettings, setBrokerSettings] = useState<
+    Map<string, BrokerSettings>
+  >(new Map());
+  const [isLoadingSettings, setIsLoadingSettings] = useState(true);
+  const [isLoadingBrokers, setIsLoadingBrokers] = useState(true);
+
+  // Fonction pour charger les brokers depuis l'API
+  const loadBrokers = React.useCallback(async () => {
+    try {
+      setIsLoadingBrokers(true);
+      const res = await fetch('/api/brokers');
+      if (!res.ok) {
+        throw new Error('Erreur lors du chargement des brokers');
+      }
+      const data = await res.json();
+      setBrokers(data as Broker[]);
+    } catch (error) {
+      console.error('Error loading brokers:', error);
+      setBrokers([]);
+    } finally {
+      setIsLoadingBrokers(false);
+    }
+  }, []);
+
+  // Fonction pour charger les settings des brokers
+  const loadBrokerSettings = React.useCallback(async () => {
+    try {
+      // Récupérer les settings depuis Supabase directement (lecture publique)
+      const supabase = createSupabaseClient();
+      const { data, error } = await supabase
+        .from('broker_settings')
+        .select(
+          'broker_name, is_available, is_maintenance, maintenance_message'
+        );
+
+      if (!error && data) {
+        const settingsMap = new Map<string, BrokerSettings>();
+
+        // Créer une map de tous les brokers avec leurs settings
+        brokers.forEach((broker) => {
+          const dbSetting = data.find((row) => row.broker_name === broker.name);
+          if (dbSetting) {
+            // Utiliser les settings de la base de données
+            settingsMap.set(broker.name, {
+              broker_name: broker.name,
+              is_available: dbSetting.is_available ?? true,
+              is_maintenance: dbSetting.is_maintenance ?? false,
+              maintenance_message: dbSetting.maintenance_message ?? null
+            });
+          } else {
+            // Si pas de settings en DB, créer des valeurs par défaut (non disponible)
+            settingsMap.set(broker.name, {
+              broker_name: broker.name,
+              is_available: false, // Par défaut non disponible si pas de settings
+              is_maintenance: false,
+              maintenance_message: null
+            });
+          }
+        });
+
+        setBrokerSettings(settingsMap);
+      } else if (error) {
+        console.error('Error loading broker settings:', error);
+        // En cas d'erreur, créer des settings par défaut pour tous les brokers
+        const defaultSettingsMap = new Map<string, BrokerSettings>();
+        brokers.forEach((broker) => {
+          defaultSettingsMap.set(broker.name, {
+            broker_name: broker.name,
+            is_available: false,
+            is_maintenance: false,
+            maintenance_message: null
+          });
+        });
+        setBrokerSettings(defaultSettingsMap);
+      }
+    } catch (error) {
+      console.error('Error loading broker settings:', error);
+    } finally {
+      setIsLoadingSettings(false);
+    }
+  }, [brokers]);
+
+  // Charger les brokers au montage
+  React.useEffect(() => {
+    loadBrokers();
+  }, [loadBrokers]);
+
+  // Charger les settings quand les brokers sont chargés
+  React.useEffect(() => {
+    if (brokers.length > 0) {
+      loadBrokerSettings();
+    }
+  }, [brokers, loadBrokerSettings]);
+
+  // Rafraîchir périodiquement
+  React.useEffect(() => {
+    if (brokers.length === 0) return;
+
+    // Rafraîchir les brokers et settings toutes les 5 secondes
+    const interval = setInterval(() => {
+      loadBrokers();
+      loadBrokerSettings();
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [brokers.length, loadBrokers, loadBrokerSettings]);
+
+  // Écouter les changements de focus de la fenêtre pour rafraîchir quand on revient sur la page
+  React.useEffect(() => {
+    const handleFocus = () => {
+      loadBrokers();
+      loadBrokerSettings();
+    };
+
+    window.addEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', handleFocus);
+  }, [loadBrokers, loadBrokerSettings]);
 
   // Filtrer les brokers déjà connectés
-  const availableBrokersFiltered = brokersData.filter(
+  const availableBrokersFiltered = brokers.filter(
     (broker) => !connectedBrokerIds.includes(broker.id)
   );
 
@@ -412,10 +548,18 @@ export function AvailableBrokers() {
     new Set(availableBrokersFiltered.map((b) => b.category))
   ) as BrokerCategory[];
 
-  const handleConnectClick = (broker: (typeof brokersData)[0]) => {
+  const handleConnectClick = (broker: Broker) => {
     setSelectedBroker(broker);
     setIsDialogOpen(true);
   };
+
+  if (isLoadingBrokers || isLoadingSettings) {
+    return (
+      <div className='flex items-center justify-center p-8'>
+        <p className='text-muted-foreground'>{t('common.loading')}</p>
+      </div>
+    );
+  }
 
   return (
     <div className='space-y-4'>
@@ -434,7 +578,9 @@ export function AvailableBrokers() {
             <IconInfoCircle className='text-muted-foreground h-5 w-5' />
           </div>
           <div>
-            <h3 className='mb-2 font-semibold'>{t('brokers.howItWorks.title')}</h3>
+            <h3 className='mb-2 font-semibold'>
+              {t('brokers.howItWorks.title')}
+            </h3>
             <ol className='text-muted-foreground list-inside list-decimal space-y-1 text-sm'>
               <li>{t('brokers.howItWorks.step1')}</li>
               <li>{t('brokers.howItWorks.step2')}</li>
@@ -492,21 +638,28 @@ export function AvailableBrokers() {
         </div>
       </div>
 
-      {/* Broker cards - Layout compact innovant */}
+      {/* Broker cards - Grille en 2 colonnes */}
       {availableBrokers.length > 0 ? (
-        <div className='space-y-2'>
-          {availableBrokers.map((broker, index) => (
-            <div
-              key={broker.id}
-              className='animate-fade-in-up opacity-0'
-              style={{
-                animationDelay: `${(index + 1) * 50}ms`,
-                animationFillMode: 'forwards'
-              }}
-            >
-              <BrokerCard broker={broker} onConnect={handleConnectClick} />
-            </div>
-          ))}
+        <div className='grid grid-cols-2 gap-3 sm:gap-4'>
+          {availableBrokers.map((broker, index) => {
+            const settings = brokerSettings.get(broker.name);
+            return (
+              <div
+                key={broker.id}
+                className='animate-fade-in-up opacity-0'
+                style={{
+                  animationDelay: `${(index + 1) * 50}ms`,
+                  animationFillMode: 'forwards'
+                }}
+              >
+                <BrokerCard
+                  broker={broker}
+                  settings={settings}
+                  onConnect={handleConnectClick}
+                />
+              </div>
+            );
+          })}
         </div>
       ) : (
         <div
@@ -520,7 +673,7 @@ export function AvailableBrokers() {
           style={{ animationFillMode: 'forwards' }}
         >
           <p className='text-muted-foreground'>
-            Aucun broker disponible dans cette catégorie
+            {t('brokers.noBrokersInCategory')}
           </p>
         </div>
       )}

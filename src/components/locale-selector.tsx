@@ -49,9 +49,6 @@ export function LocaleSelector() {
           <span className='text-muted-foreground hidden sm:block'>
             {t('common.chooseLanguage')} :
           </span>
-          <span className='text-muted-foreground block sm:hidden'>
-            {currentLocale?.flag}
-          </span>
           <SelectValue>
             {currentLocale && (
               <div className='flex items-center gap-2'>
