@@ -331,7 +331,7 @@ function BrokerCard({
       {/* Statut */}
       <div className='mb-3 flex justify-center'>
         {isMaintenance ? (
-          <RendRBadge variant='warning' dot dotColor='orange' size='sm'>
+          <RendRBadge variant='warning' dot dotColor='red' size='sm'>
             {t('brokers.status.maintenance')}
           </RendRBadge>
         ) : isComingSoon ? (
