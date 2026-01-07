@@ -161,7 +161,7 @@ export function WithdrawalsMobileView({
                 {t('pages.withdrawals.columns.amount')}
               </span>
               <span className='text-2xl font-bold'>
-                {parseFloat(withdrawal.amount).toFixed(2)}€
+                {withdrawal.amount.toFixed(2)}€
               </span>
             </div>
 
