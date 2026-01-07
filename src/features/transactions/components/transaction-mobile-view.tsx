@@ -143,7 +143,7 @@ export function TransactionMobileView({
                   {t('pages.transactions.columns.volume')}
                 </span>
                 <span className='text-sm font-medium'>
-                  {parseFloat(transaction.volume).toFixed(2)}
+                  {transaction.volume.toFixed(2)}
                 </span>
               </div>
               <div className='flex flex-col'>
@@ -151,7 +151,7 @@ export function TransactionMobileView({
                   {t('pages.transactions.columns.commission')}
                 </span>
                 <span className='text-muted-foreground text-sm'>
-                  {parseFloat(transaction.commission).toFixed(2)}€
+                  {transaction.commission.toFixed(2)}€
                 </span>
               </div>
               <div className='flex flex-col items-end'>
@@ -160,7 +160,7 @@ export function TransactionMobileView({
                 </span>
                 <span className='flex items-center gap-1 text-sm font-semibold text-[#c5d13f]'>
                   <IconTrendingUp className='h-3 w-3' />+
-                  {parseFloat(transaction.cashback_amount).toFixed(2)}€
+                  {transaction.cashback_amount.toFixed(2)}€
                 </span>
               </div>
             </div>
