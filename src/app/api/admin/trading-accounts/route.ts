@@ -40,7 +40,10 @@ export async function GET(request: NextRequest) {
     }
 
     // Récupérer les informations utilisateur pour chaque compte
-    const userIds = [...new Set(accounts.map((acc: any) => acc.user_id))];
+    // Utiliser Array.from pour éviter les problèmes de compatibilité avec l'itération sur Set
+    const userIds = Array.from(
+      new Set(accounts.map((acc: any) => acc.user_id))
+    );
     const { data: users, error: usersError } = await supabaseAdmin
       .from('users')
       .select('id, email, name')
