@@ -32,6 +32,22 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from '@/components/ui/alert-dialog';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
+import { Separator } from '@/components/ui/separator';
+import { Skeleton } from '@/components/ui/skeleton';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from '@/components/ui/tooltip';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -49,13 +65,24 @@ import {
   IconCheck,
   IconChartBar,
   IconTrendingUp,
+  IconTrendingDown,
   IconCopy,
   IconLock,
   IconDeviceDesktop,
   IconHistory,
   IconSettings,
   IconAlertTriangle,
-  IconUpload
+  IconUpload,
+  IconTarget,
+  IconTrophy,
+  IconActivity,
+  IconDatabase,
+  IconServer,
+  IconChevronRight,
+  IconInfoCircle,
+  IconPercentage,
+  IconCurrencyDollar,
+  IconChartLine
 } from '@tabler/icons-react';
 import { format } from 'date-fns';
 import { fr, enUS } from 'date-fns/locale';
@@ -64,6 +91,7 @@ import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 import { useTranslations, useLocale } from 'next-intl';
+import Link from 'next/link';
 
 // Types pour les formulaires
 type ProfileFormValues = {
@@ -79,6 +107,25 @@ type PasswordFormValues = {
   confirmPassword: string;
 };
 
+// Interface pour les métriques de trading
+interface TradingMetrics {
+  winRate: number;
+  profitFactor: number;
+  totalProfit: number;
+  totalLoss: number;
+  averageWin: number;
+  averageLoss: number;
+  largestWin: number;
+  largestLoss: number;
+  profitLossRatio: number;
+  totalTrades: number;
+  winningTrades: number;
+  losingTrades: number;
+  breakEvenTrades: number;
+  averageCashbackPerTrade: number;
+  cashbackEfficiency: number; // % du profit couvert par le cashback
+}
+
 export default function ProfileViewPage() {
   const t = useTranslations();
   const locale = useLocale();
@@ -89,8 +136,81 @@ export default function ProfileViewPage() {
   const {
     transactions,
     accounts,
+    trades,
     isLoading: isLoadingTradingData
   } = useTradingData();
+
+  // Calculer les métriques de trading techniques
+  const tradingMetrics = useMemo<TradingMetrics>(() => {
+    if (!trades || trades.length === 0) {
+      return {
+        winRate: 0,
+        profitFactor: 0,
+        totalProfit: 0,
+        totalLoss: 0,
+        averageWin: 0,
+        averageLoss: 0,
+        largestWin: 0,
+        largestLoss: 0,
+        profitLossRatio: 0,
+        totalTrades: 0,
+        winningTrades: 0,
+        losingTrades: 0,
+        breakEvenTrades: 0,
+        averageCashbackPerTrade: 0,
+        cashbackEfficiency: 0
+      };
+    }
+
+    const profits = trades.map((trade) => parseFloat(trade.profit || '0'));
+    const winningTrades = profits.filter((p) => p > 0);
+    const losingTrades = profits.filter((p) => p < 0);
+    const breakEvenTrades = profits.filter((p) => p === 0);
+
+    const totalProfit = winningTrades.reduce((sum, p) => sum + p, 0);
+    const totalLoss = Math.abs(losingTrades.reduce((sum, p) => sum + p, 0));
+    const averageWin =
+      winningTrades.length > 0 ? totalProfit / winningTrades.length : 0;
+    const averageLoss =
+      losingTrades.length > 0 ? totalLoss / losingTrades.length : 0;
+    const largestWin =
+      winningTrades.length > 0 ? Math.max(...winningTrades) : 0;
+    const largestLoss =
+      losingTrades.length > 0 ? Math.abs(Math.min(...losingTrades)) : 0;
+
+    const profitFactor = totalLoss > 0 ? totalProfit / totalLoss : 0;
+    const winRate =
+      profits.length > 0 ? (winningTrades.length / profits.length) * 100 : 0;
+    const profitLossRatio = averageLoss > 0 ? averageWin / averageLoss : 0;
+
+    const totalCashback = transactions.reduce(
+      (sum, t) => sum + t.cashback_amount,
+      0
+    );
+    const averageCashbackPerTrade =
+      transactions.length > 0 ? totalCashback / transactions.length : 0;
+    const totalNetProfit = totalProfit - totalLoss;
+    const cashbackEfficiency =
+      totalNetProfit > 0 ? (totalCashback / totalNetProfit) * 100 : 0;
+
+    return {
+      winRate,
+      profitFactor,
+      totalProfit,
+      totalLoss,
+      averageWin,
+      averageLoss,
+      largestWin,
+      largestLoss,
+      profitLossRatio,
+      totalTrades: profits.length,
+      winningTrades: winningTrades.length,
+      losingTrades: losingTrades.length,
+      breakEvenTrades: breakEvenTrades.length,
+      averageCashbackPerTrade,
+      cashbackEfficiency
+    };
+  }, [trades, transactions]);
 
   // Calculer les stats depuis les données réelles
   const stats = useMemo(() => {
@@ -104,15 +224,13 @@ export default function ProfileViewPage() {
       (a) => a.status === 'connected'
     ).length;
 
-    // Calculer le solde disponible : total cashback moins retraits (0 pour l'instant)
-    // TODO: Calculer depuis la table withdrawals quand elle sera disponible
     const totalWithdrawn = 0;
     const availableBalance = totalCashback - totalWithdrawn;
-    const pendingCashback = 0; // Pour l'instant, on considère que tout est disponible
+    const pendingCashback = 0;
 
     return {
       total_cashback_earned: totalCashback,
-      available_balance: Math.max(0, availableBalance), // S'assurer qu'il n'est pas négatif
+      available_balance: Math.max(0, availableBalance),
       pending_cashback: pendingCashback,
       total_withdrawn: totalWithdrawn,
       total_volume: totalVolume,
@@ -120,8 +238,8 @@ export default function ProfileViewPage() {
       active_brokers: activeBrokers
     };
   }, [transactions, accounts]);
+
   const [emailNotifications, setEmailNotifications] = useState(true);
-  const [tradingAlerts, setTradingAlerts] = useState(true);
   const [weeklyReport, setWeeklyReport] = useState(false);
 
   useEffect(() => {
@@ -236,8 +354,13 @@ export default function ProfileViewPage() {
 
   if (!isLoaded || isLoadingTradingData) {
     return (
-      <div className='flex h-96 items-center justify-center'>
-        <div className='border-foreground h-8 w-8 animate-spin rounded-full border-2 border-t-transparent' />
+      <div className='space-y-6'>
+        <Skeleton className='h-32 w-full' />
+        <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-4'>
+          {[1, 2, 3, 4].map((i) => (
+            <Skeleton key={i} className='h-40' />
+          ))}
+        </div>
       </div>
     );
   }
@@ -292,17 +415,14 @@ export default function ProfileViewPage() {
         return;
       }
 
-      // Utiliser l'URL uploadée si disponible, sinon utiliser celle du formulaire ou celle existante
       let avatarUrl =
         uploadedAvatarUrl ||
         data.avatar ||
         user.user_metadata?.avatar_url ||
         '';
 
-      // Construire le nom complet
       const fullName = `${data.firstName} ${data.lastName}`.trim();
 
-      // Mettre à jour les métadonnées utilisateur
       const { data: updatedUserData, error: updateError } =
         await supabase.auth.updateUser({
           data: {
@@ -318,7 +438,6 @@ export default function ProfileViewPage() {
         throw updateError;
       }
 
-      // Mettre à jour l'état local
       setUser(updatedUserData.user);
       setAvatarFile(null);
       setAvatarPreview(null);
@@ -326,8 +445,6 @@ export default function ProfileViewPage() {
 
       toast.success(t('profile.profileUpdatedSuccess'));
       setEditProfileDialogOpen(false);
-
-      // Recharger la page pour s'assurer que tous les composants sont à jour
       router.refresh();
     } catch (error: any) {
       console.error('Erreur lors de la mise à jour du profil:', error);
@@ -358,11 +475,9 @@ export default function ProfileViewPage() {
         return;
       }
 
-      // Créer un nom de fichier unique
       const fileExt = file.name.split('.').pop();
       const fileName = `${user.id}/${Date.now()}.${fileExt}`;
 
-      // Uploader directement vers Supabase Storage
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('avatars')
         .upload(fileName, file, {
@@ -371,18 +486,12 @@ export default function ProfileViewPage() {
         });
 
       if (uploadError) {
-        // Si le bucket n'existe pas, utiliser une URL object pour prévisualiser
-        console.warn(
-          'Erreur upload avatar (bucket peut-être inexistant):',
-          uploadError
-        );
-        // Créer une URL temporaire pour la prévisualisation
+        console.warn('Erreur upload avatar:', uploadError);
         const tempUrl = URL.createObjectURL(file);
         setAvatarPreview(tempUrl);
         profileForm.setValue('avatar', tempUrl);
         toast.warning(t('profile.errors.bucketNotExists'));
       } else {
-        // Récupérer l'URL publique de l'image
         const {
           data: { publicUrl }
         } = supabase.storage.from('avatars').getPublicUrl(fileName);
@@ -395,7 +504,6 @@ export default function ProfileViewPage() {
     } catch (error: any) {
       console.error("Erreur lors de l'upload de l'avatar:", error);
       toast.error(t('profile.errors.imageUploadError'));
-      // Créer une URL temporaire pour la prévisualisation en cas d'erreur
       const tempUrl = URL.createObjectURL(file);
       setAvatarPreview(tempUrl);
     } finally {
@@ -408,7 +516,6 @@ export default function ProfileViewPage() {
   };
 
   const handleSaveBankAccount = () => {
-    // Ici vous pouvez ajouter la logique pour sauvegarder les informations bancaires
     toast.success(t('profile.bankInfoUpdated'));
     setEditBankDialogOpen(false);
   };
@@ -452,14 +559,6 @@ export default function ProfileViewPage() {
 
   const handleSavePassword = async (data: PasswordFormValues) => {
     try {
-      // Ici vous pouvez ajouter la logique pour changer le mot de passe via votre API
-      // Exemple: await fetch('/api/auth/change-password', {
-      //   method: 'POST',
-      //   body: JSON.stringify({
-      //     currentPassword: data.currentPassword,
-      //     newPassword: data.newPassword
-      //   })
-      // });
       toast.success(t('profile.success.passwordChanged'));
       setChangePasswordDialogOpen(false);
       passwordForm.reset();
@@ -481,17 +580,14 @@ export default function ProfileViewPage() {
         return;
       }
 
-      // Afficher un toast de chargement
       const loadingToast = toast.loading(t('profile.deletingAccount'));
 
-      // Appeler l'API pour supprimer le compte
       const response = await fetch('/api/user/delete', {
         method: 'DELETE'
       });
 
       const data = await response.json();
 
-      // Fermer le toast de chargement
       toast.dismiss(loadingToast);
 
       if (!response.ok) {
@@ -500,11 +596,9 @@ export default function ProfileViewPage() {
         return;
       }
 
-      // Succès
       toast.success(t('profile.success.accountDeleted'));
       setDeleteAccountDialogOpen(false);
 
-      // Rediriger vers la page de connexion
       setTimeout(() => {
         router.push('/auth/sign-in');
         router.refresh();
@@ -518,534 +612,648 @@ export default function ProfileViewPage() {
 
   return (
     <div className='space-y-6'>
-      {/* Header avec avatar - Style RendR */}
-      <div
+      {/* Header de profil technique */}
+      <Card
         className={cn(
-          'rounded-2xl p-6 md:p-8',
-          'bg-zinc-900/40 backdrop-blur-sm',
-          'border border-white/5',
+          'transition-all duration-300',
+          'hover:border-white/8 hover:bg-zinc-900/50',
           'animate-fade-in-up opacity-0'
         )}
         style={{ animationFillMode: 'forwards' }}
       >
-        <div className='flex flex-col gap-6 md:flex-row md:items-start md:justify-between'>
-          <div className='flex items-center gap-6'>
-            <div className='relative'>
-              <Avatar className='h-24 w-24 border-2 border-white/10'>
-                <AvatarImage
-                  src={user?.user_metadata?.avatar_url}
-                  alt={user?.user_metadata?.name || 'Avatar'}
-                />
-                <AvatarFallback className='text-foreground bg-white/10 text-2xl font-bold'>
-                  {initials}
-                </AvatarFallback>
-              </Avatar>
-              <div className='absolute -right-1 -bottom-1 rounded-full border-2 border-zinc-900 bg-[#c5d13f] p-1.5'>
-                <IconShieldCheck className='h-4 w-4 text-zinc-900' />
+        <CardContent className='pt-6'>
+          <div className='flex flex-col gap-6 md:flex-row md:items-start md:justify-between'>
+            <div className='flex items-center gap-6'>
+              <div className='relative'>
+                <Avatar className='h-20 w-20 border-2 border-white/10 md:h-24 md:w-24'>
+                  <AvatarImage
+                    src={user?.user_metadata?.avatar_url}
+                    alt={user?.user_metadata?.name || 'Avatar'}
+                  />
+                  <AvatarFallback className='text-foreground bg-white/10 text-xl font-bold md:text-2xl'>
+                    {initials}
+                  </AvatarFallback>
+                </Avatar>
+                <div className='absolute -right-1 -bottom-1 rounded-full border-2 border-zinc-900 bg-[#c5d13f] p-1.5'>
+                  <IconShieldCheck className='h-3 w-3 text-zinc-900 md:h-4 md:w-4' />
+                </div>
               </div>
-            </div>
-            <div className='space-y-3'>
-              <div className='flex items-center gap-3'>
-                <h1 className='text-2xl font-bold tracking-tight md:text-3xl'>
-                  {user?.user_metadata?.name ||
-                    user?.user_metadata?.full_name ||
-                    `${user?.user_metadata?.first_name || ''} ${user?.user_metadata?.last_name || ''}`.trim() ||
-                    t('profile.defaultName')}
-                </h1>
-                <RendRBadge variant='success' dot dotColor='green'>
-                  {t('profile.verified')}
-                </RendRBadge>
-              </div>
-              <div className='text-muted-foreground flex flex-wrap items-center gap-4'>
-                <span className='flex items-center gap-2'>
-                  <IconMail className='h-4 w-4' />
-                  <span className='text-sm'>{user?.email}</span>
-                </span>
-                <span className='flex items-center gap-2'>
-                  <IconCalendar className='h-4 w-4' />
-                  <span className='text-sm'>
-                    {t('profile.memberSince')} {memberSince}
+              <div className='space-y-2'>
+                <div className='flex items-center gap-3'>
+                  <h1 className='text-xl font-bold tracking-tight md:text-2xl'>
+                    {user?.user_metadata?.name ||
+                      user?.user_metadata?.full_name ||
+                      `${user?.user_metadata?.first_name || ''} ${user?.user_metadata?.last_name || ''}`.trim() ||
+                      t('profile.defaultName')}
+                  </h1>
+                  <RendRBadge variant='success' dot dotColor='green' size='sm'>
+                    {t('profile.verified')}
+                  </RendRBadge>
+                </div>
+                <div className='text-muted-foreground flex flex-wrap items-center gap-4 text-sm'>
+                  <span className='flex items-center gap-2'>
+                    <IconMail className='h-3.5 w-3.5' />
+                    <span>{user?.email}</span>
                   </span>
-                </span>
+                  <span className='flex items-center gap-2'>
+                    <IconCalendar className='h-3.5 w-3.5' />
+                    <span>
+                      {t('profile.memberSince')} {memberSince}
+                    </span>
+                  </span>
+                  <span className='flex items-center gap-2'>
+                    <IconDatabase className='h-3.5 w-3.5' />
+                    <span>
+                      {tradingMetrics.totalTrades} {t('profile.trades')}
+                    </span>
+                  </span>
+                </div>
+                <div className='flex items-center gap-2'>
+                  <RendRBadge variant='outline' size='sm'>
+                    {t('profile.userId')}: {user?.id.slice(0, 8)}...
+                  </RendRBadge>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant='ghost'
+                          size='sm'
+                          className='h-6 w-6 p-0'
+                          onClick={() => copyToClipboard(user?.id || '')}
+                        >
+                          <IconCopy className='h-3 w-3' />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{t('profile.copyUserId')}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
               </div>
             </div>
+
+            <Button
+              variant='outline'
+              className='border-white/10 bg-white/5 hover:bg-white/10'
+              onClick={handleEditProfile}
+            >
+              <IconEdit className='mr-2 h-4 w-4' />
+              {t('profile.editProfile')}
+            </Button>
           </div>
+        </CardContent>
+      </Card>
 
-          <Button
-            variant='outline'
-            className='border-white/10 bg-white/5 hover:bg-white/10'
-            onClick={handleEditProfile}
-          >
-            <IconEdit className='mr-2 h-4 w-4' />
-            {t('profile.editProfile')}
-          </Button>
-        </div>
-      </div>
-
-      {/* Stats rapides - Style RendR */}
-      <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-4'>
-        <div
+      {/* Métriques de trading techniques */}
+      <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-4'>
+        {/* Win Rate */}
+        <Card
           className={cn(
-            'rounded-2xl p-5',
-            'bg-zinc-900/40 backdrop-blur-sm',
-            'border border-[#c5d13f]/20',
             'transition-all duration-300',
-            'hover:border-[#c5d13f]/40',
+            'hover:border-white/8 hover:bg-zinc-900/50',
             'animate-fade-in-up opacity-0'
           )}
           style={{ animationDelay: '100ms', animationFillMode: 'forwards' }}
         >
-          <div className='mb-3 flex items-center gap-3'>
-            <div className='rounded-xl border border-[#c5d13f]/20 bg-[#c5d13f]/10 p-2'>
-              <IconWallet className='h-5 w-5 text-[#c5d13f]' />
+          <CardHeader className='pb-3'>
+            <div className='mb-3 flex items-center gap-2'>
+              <div className='rounded-xl border border-white/5 bg-white/5 p-2'>
+                <IconTarget className='h-5 w-5' />
+              </div>
+              <CardDescription className='mb-0'>
+                {t('profile.metrics.winRate')}
+              </CardDescription>
             </div>
-            <span className='text-muted-foreground text-sm'>
-              {t('stats.availableBalance')}
-            </span>
-          </div>
-          <p className='stat-number text-3xl font-bold text-[#c5d13f]'>
-            <AnimatedNumber value={stats.available_balance} suffix='€' />
-          </p>
-        </div>
+            <CardTitle className='text-3xl font-bold'>
+              {tradingMetrics.winRate.toFixed(1)}%
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Progress
+              value={tradingMetrics.winRate}
+              className='h-2 bg-white/5'
+            />
+            <div className='mt-2 flex items-center justify-between text-xs'>
+              <span className='text-muted-foreground/60'>
+                {tradingMetrics.winningTrades} {t('profile.metrics.wins')}
+              </span>
+              <span className='text-muted-foreground/60'>
+                {tradingMetrics.losingTrades} {t('profile.metrics.losses')}
+              </span>
+            </div>
+          </CardContent>
+        </Card>
 
-        <div
+        {/* Profit Factor */}
+        <Card
           className={cn(
-            'rounded-2xl p-5',
-            'bg-zinc-900/40 backdrop-blur-sm',
-            'border border-white/5',
             'transition-all duration-300',
             'hover:border-white/8 hover:bg-zinc-900/50',
             'animate-fade-in-up opacity-0'
           )}
           style={{ animationDelay: '150ms', animationFillMode: 'forwards' }}
         >
-          <div className='mb-3 flex items-center gap-3'>
-            <div className='rounded-xl border border-white/5 bg-white/5 p-2'>
-              <IconTrendingUp className='h-5 w-5' />
+          <CardHeader className='pb-3'>
+            <div className='mb-3 flex items-center gap-2'>
+              <div className='rounded-xl border border-white/5 bg-white/5 p-2'>
+                <IconChartLine className='h-5 w-5' />
+              </div>
+              <CardDescription className='mb-0'>
+                {t('profile.metrics.profitFactor')}
+              </CardDescription>
             </div>
-            <span className='text-muted-foreground text-sm'>
-              {t('profile.stats.totalCashback')}
-            </span>
-          </div>
-          <p className='stat-number text-3xl font-bold'>
-            <AnimatedNumber value={stats.total_cashback_earned} suffix='€' />
-          </p>
-        </div>
+            <CardTitle className='text-3xl font-bold'>
+              {tradingMetrics.profitFactor > 0
+                ? tradingMetrics.profitFactor.toFixed(2)
+                : '0.00'}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className='space-y-2 text-xs'>
+              <div className='flex items-center justify-between'>
+                <span className='text-muted-foreground/60'>
+                  {t('profile.metrics.totalProfit')}
+                </span>
+                <span className='font-medium text-green-500'>
+                  +{tradingMetrics.totalProfit.toFixed(2)}€
+                </span>
+              </div>
+              <div className='flex items-center justify-between'>
+                <span className='text-muted-foreground/60'>
+                  {t('profile.metrics.totalLoss')}
+                </span>
+                <span className='font-medium text-red-500'>
+                  -{tradingMetrics.totalLoss.toFixed(2)}€
+                </span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
-        <div
+        {/* Average Win/Loss */}
+        <Card
           className={cn(
-            'rounded-2xl p-5',
-            'bg-zinc-900/40 backdrop-blur-sm',
-            'border border-white/5',
             'transition-all duration-300',
             'hover:border-white/8 hover:bg-zinc-900/50',
             'animate-fade-in-up opacity-0'
           )}
           style={{ animationDelay: '200ms', animationFillMode: 'forwards' }}
         >
-          <div className='mb-3 flex items-center gap-3'>
-            <div className='rounded-xl border border-white/5 bg-white/5 p-2'>
-              <IconChartBar className='h-5 w-5' />
+          <CardHeader className='pb-3'>
+            <div className='mb-3 flex items-center gap-2'>
+              <div className='rounded-xl border border-white/5 bg-white/5 p-2'>
+                <IconTrendingUp className='h-5 w-5' />
+              </div>
+              <CardDescription className='mb-0'>
+                {t('profile.metrics.avgWinLoss')}
+              </CardDescription>
             </div>
-            <span className='text-muted-foreground text-sm'>
-              {t('profile.stats.tradesExecuted')}
-            </span>
-          </div>
-          <p className='stat-number text-3xl font-bold'>
-            <AnimatedInteger value={stats.total_trades} />
-          </p>
-        </div>
+            <CardTitle className='text-2xl font-bold'>
+              {tradingMetrics.profitLossRatio.toFixed(2)}:1
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className='space-y-2 text-xs'>
+              <div className='flex items-center justify-between'>
+                <span className='text-muted-foreground/60'>
+                  {t('profile.metrics.avgWin')}
+                </span>
+                <span className='font-medium text-green-500'>
+                  +{tradingMetrics.averageWin.toFixed(2)}€
+                </span>
+              </div>
+              <div className='flex items-center justify-between'>
+                <span className='text-muted-foreground/60'>
+                  {t('profile.metrics.avgLoss')}
+                </span>
+                <span className='font-medium text-red-500'>
+                  -{tradingMetrics.averageLoss.toFixed(2)}€
+                </span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
-        <div
+        {/* Cashback Efficiency */}
+        <Card
           className={cn(
-            'rounded-2xl p-5',
-            'bg-zinc-900/40 backdrop-blur-sm',
-            'border border-white/5',
+            'border-[#c5d13f]/20 bg-[#c5d13f]/5',
             'transition-all duration-300',
-            'hover:border-white/8 hover:bg-zinc-900/50',
+            'hover:border-[#c5d13f]/40',
             'animate-fade-in-up opacity-0'
           )}
           style={{ animationDelay: '250ms', animationFillMode: 'forwards' }}
         >
-          <div className='mb-3 flex items-center gap-3'>
-            <div className='rounded-xl border border-white/5 bg-white/5 p-2'>
-              <IconUser className='h-5 w-5' />
+          <CardHeader className='pb-3'>
+            <div className='mb-3 flex items-center gap-2'>
+              <div className='rounded-xl border border-[#c5d13f]/20 bg-[#c5d13f]/10 p-2'>
+                <IconCurrencyDollar className='h-5 w-5 text-[#c5d13f]' />
+              </div>
+              <CardDescription className='mb-0'>
+                {t('profile.metrics.cashbackEfficiency')}
+              </CardDescription>
             </div>
-            <span className='text-muted-foreground text-sm'>
-              {t('profile.stats.activeBrokers')}
-            </span>
-          </div>
-          <p className='stat-number text-3xl font-bold'>
-            <AnimatedInteger value={stats.active_brokers} />
-          </p>
-        </div>
+            <CardTitle className='text-3xl font-bold text-[#c5d13f]'>
+              {tradingMetrics.cashbackEfficiency.toFixed(1)}%
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Progress
+              value={Math.min(tradingMetrics.cashbackEfficiency, 100)}
+              className='h-2 bg-[#c5d13f]/20'
+            />
+            <p className='text-muted-foreground/60 mt-2 text-xs'>
+              {t('profile.metrics.cashbackEfficiencyDescription')}
+            </p>
+          </CardContent>
+        </Card>
       </div>
 
-      {/* Tabs principales - Style RendR */}
-      <Tabs defaultValue='payments' className='space-y-6'>
-        <TabsList className='rounded-xl border border-white/5 bg-white/5 p-1'>
-          <TabsTrigger
-            value='payments'
-            className='data-[state=active]:text-foreground rounded-lg data-[state=active]:bg-white/10'
-          >
-            <IconWallet className='mr-2 h-4 w-4' />
-            {t('profile.tabs.payments')}
-          </TabsTrigger>
-          <TabsTrigger
-            value='notifications'
-            className='data-[state=active]:text-foreground rounded-lg data-[state=active]:bg-white/10'
-          >
-            <IconBell className='mr-2 h-4 w-4' />
-            {t('profile.tabs.notifications')}
-          </TabsTrigger>
-          <TabsTrigger
-            value='security'
-            className='data-[state=active]:text-foreground rounded-lg data-[state=active]:bg-white/10'
-          >
-            <IconLock className='mr-2 h-4 w-4' />
-            {t('profile.tabs.security')}
-          </TabsTrigger>
-        </TabsList>
-
-        {/* Méthodes de paiement */}
-        <TabsContent value='payments' className='space-y-6'>
-          {/* Méthodes de retrait */}
-          <div
-            className={cn(
-              'rounded-2xl p-6',
-              'bg-zinc-900/40 backdrop-blur-sm',
-              'border border-white/5',
-              'animate-fade-in-up opacity-0'
-            )}
-            style={{ animationDelay: '300ms', animationFillMode: 'forwards' }}
-          >
-            <div className='mb-6 flex items-center gap-2'>
+      {/* Layout en deux colonnes : Performance & Comptes */}
+      <div className='grid gap-6 lg:grid-cols-2'>
+        {/* Statistiques de performance détaillées */}
+        <Card
+          className={cn(
+            'transition-all duration-300',
+            'hover:border-white/8 hover:bg-zinc-900/50',
+            'animate-fade-in-up opacity-0'
+          )}
+          style={{ animationDelay: '300ms', animationFillMode: 'forwards' }}
+        >
+          <CardHeader>
+            <div className='flex items-center gap-3'>
               <div className='rounded-xl border border-white/5 bg-white/5 p-2'>
-                <IconCreditCard className='h-4 w-4' />
+                <IconActivity className='h-5 w-5' />
               </div>
               <div>
-                <h3 className='text-lg font-semibold'>
-                  {t('profile.withdrawalMethods.title')}
-                </h3>
-                <p className='text-muted-foreground text-sm'>
-                  {t('profile.withdrawalMethods.description')}
+                <CardTitle>{t('profile.performance.title')}</CardTitle>
+                <CardDescription>
+                  {t('profile.performance.description')}
+                </CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className='space-y-4'>
+            <div className='grid gap-4 sm:grid-cols-2'>
+              <div className='rounded-xl border border-white/5 bg-white/5 p-4'>
+                <p className='text-muted-foreground mb-1 text-xs'>
+                  {t('profile.metrics.largestWin')}
+                </p>
+                <p className='text-lg font-bold text-green-500'>
+                  +{tradingMetrics.largestWin.toFixed(2)}€
+                </p>
+              </div>
+              <div className='rounded-xl border border-white/5 bg-white/5 p-4'>
+                <p className='text-muted-foreground mb-1 text-xs'>
+                  {t('profile.metrics.largestLoss')}
+                </p>
+                <p className='text-lg font-bold text-red-500'>
+                  -{tradingMetrics.largestLoss.toFixed(2)}€
                 </p>
               </div>
             </div>
-
+            <Separator />
             <div className='space-y-3'>
-              {/* Virement bancaire */}
-              <div
-                className={cn(
-                  'flex items-center justify-between',
-                  'rounded-xl p-4',
-                  'border border-white/5 bg-white/5',
-                  'transition-all duration-200',
-                  'hover:bg-white/10'
-                )}
-              >
-                <div className='flex items-center gap-4'>
-                  <div className='flex h-12 w-12 items-center justify-center rounded-xl border border-white/5 bg-white/5'>
-                    <IconCreditCard className='h-6 w-6' />
-                  </div>
-                  <div>
-                    <p className='font-medium'>{t('profile.bankTransfer')}</p>
-                    <p className='text-muted-foreground text-sm'>
-                      FR76 •••• •••• •••• 4532
-                    </p>
-                  </div>
-                </div>
-                <div className='flex items-center gap-2'>
-                  <RendRBadge variant='accent' dot dotColor='green'>
-                    {t('profile.withdrawalMethods.default')}
-                  </RendRBadge>
-                  <Button
-                    variant='ghost'
-                    size='sm'
-                    className='hover:bg-white/5'
-                    onClick={handleEditBankAccount}
-                  >
-                    <IconEdit className='h-4 w-4' />
-                  </Button>
-                </div>
+              <div className='flex items-center justify-between'>
+                <span className='text-muted-foreground text-sm'>
+                  {t('profile.metrics.totalTrades')}
+                </span>
+                <span className='font-semibold'>
+                  {tradingMetrics.totalTrades}
+                </span>
               </div>
-
-              {/* PayPal */}
-              <div
-                className={cn(
-                  'flex items-center justify-between',
-                  'rounded-xl p-4',
-                  'border border-white/5 bg-white/5',
-                  'transition-all duration-200',
-                  'hover:bg-white/10'
-                )}
-              >
-                <div className='flex items-center gap-4'>
-                  <div className='flex h-12 w-12 items-center justify-center rounded-xl border border-white/5 bg-white/5'>
-                    <IconBrandPaypal className='h-6 w-6' />
-                  </div>
-                  <div>
-                    <p className='font-medium'>PayPal</p>
-                    <p className='text-muted-foreground text-sm'>
-                      {t('profile.withdrawalMethods.notConfigured')}
-                    </p>
-                  </div>
-                </div>
-                <Button
-                  variant='outline'
-                  size='sm'
-                  className='border-white/10 bg-white/5'
-                >
-                  {t('common.actions.add')}
-                </Button>
+              <div className='flex items-center justify-between'>
+                <span className='text-muted-foreground text-sm'>
+                  {t('profile.metrics.winningTrades')}
+                </span>
+                <RendRBadge variant='success' size='sm'>
+                  {tradingMetrics.winningTrades}
+                </RendRBadge>
               </div>
-
-              {/* Crypto */}
-              <div
-                className={cn(
-                  'flex items-center justify-between',
-                  'rounded-xl p-4',
-                  'border border-white/5 bg-white/5',
-                  'transition-all duration-200',
-                  'hover:bg-white/10'
-                )}
-              >
-                <div className='flex items-center gap-4'>
-                  <div className='flex h-12 w-12 items-center justify-center rounded-xl border border-white/5 bg-white/5'>
-                    <IconCurrencyBitcoin className='h-6 w-6' />
-                  </div>
-                  <div>
-                    <p className='font-medium'>Crypto (USDT)</p>
-                    <p className='text-muted-foreground text-sm'>
-                      {t('profile.withdrawalMethods.notConfigured')}
-                    </p>
-                  </div>
-                </div>
-                <Button
-                  variant='outline'
-                  size='sm'
-                  className='border-white/10 bg-white/5'
-                  onClick={handleAddCrypto}
-                >
-                  {t('profile.add')}
-                </Button>
+              <div className='flex items-center justify-between'>
+                <span className='text-muted-foreground text-sm'>
+                  {t('profile.metrics.losingTrades')}
+                </span>
+                <RendRBadge variant='outline' size='sm'>
+                  {tradingMetrics.losingTrades}
+                </RendRBadge>
+              </div>
+              <div className='flex items-center justify-between'>
+                <span className='text-muted-foreground text-sm'>
+                  {t('profile.metrics.breakEvenTrades')}
+                </span>
+                <RendRBadge variant='muted' size='sm'>
+                  {tradingMetrics.breakEvenTrades}
+                </RendRBadge>
               </div>
             </div>
-          </div>
-
-          {/* Historique des retraits */}
-          <div
-            className={cn(
-              'rounded-2xl p-6',
-              'bg-zinc-900/40 backdrop-blur-sm',
-              'border border-white/5',
-              'animate-fade-in-up opacity-0'
-            )}
-            style={{ animationDelay: '350ms', animationFillMode: 'forwards' }}
-          >
-            <div className='mb-6 flex items-center gap-2'>
-              <div className='rounded-xl border border-white/5 bg-white/5 p-2'>
-                <IconHistory className='h-4 w-4' />
+            <Separator />
+            <div className='space-y-2'>
+              <div className='flex items-center justify-between'>
+                <span className='text-muted-foreground text-sm'>
+                  {t('profile.metrics.avgCashbackPerTrade')}
+                </span>
+                <span className='font-semibold text-[#c5d13f]'>
+                  {tradingMetrics.averageCashbackPerTrade.toFixed(2)}€
+                </span>
               </div>
-              <div>
-                <h3 className='text-lg font-semibold'>
-                  {t('profile.lastWithdrawals')}
-                </h3>
-                <p className='text-muted-foreground text-sm'>
-                  {t('profile.withdrawalMethods.withdrawalHistory')}
-                </p>
-              </div>
-            </div>
-
-            <div className='space-y-3'>
-              {stats.total_withdrawn > 0 ? (
-                // TODO: Afficher les retraits réels quand la table withdrawals sera disponible
-                <div
-                  className={cn(
-                    'flex items-center justify-center',
-                    'rounded-xl p-8',
-                    'border border-white/5 bg-white/5'
-                  )}
-                >
-                  <p className='text-muted-foreground text-center text-sm'>
-                    {t('profile.withdrawalMethods.historyComingSoon')}
-                  </p>
-                </div>
-              ) : (
-                <div
-                  className={cn(
-                    'flex items-center justify-center',
-                    'rounded-xl p-8',
-                    'border border-white/5 bg-white/5'
-                  )}
-                >
-                  <p className='text-muted-foreground text-center text-sm'>
-                    {t('profile.withdrawalMethods.noWithdrawals')}
-                  </p>
-                </div>
-              )}
-            </div>
-          </div>
-        </TabsContent>
-
-        {/* Notifications */}
-        <TabsContent value='notifications' className='space-y-6'>
-          <div
-            className={cn(
-              'rounded-2xl p-6',
-              'bg-zinc-900/40 backdrop-blur-sm',
-              'border border-white/5',
-              'animate-fade-in-up opacity-0'
-            )}
-            style={{ animationDelay: '300ms', animationFillMode: 'forwards' }}
-          >
-            <div className='mb-6 flex items-center gap-2'>
-              <div className='rounded-xl border border-white/5 bg-white/5 p-2'>
-                <IconBell className='h-4 w-4' />
-              </div>
-              <div>
-                <h3 className='text-lg font-semibold'>
-                  {t('profile.notifications.title')}
-                </h3>
-                <p className='text-muted-foreground text-sm'>
-                  {t('profile.notifications.description')}
-                </p>
-              </div>
-            </div>
-
-            <div className='space-y-4'>
-              <div
-                className={cn(
-                  'flex items-center justify-between',
-                  'rounded-xl p-4',
-                  'border border-white/5 bg-white/5',
-                  'transition-all duration-200',
-                  'hover:bg-white/10'
-                )}
-              >
-                <div className='space-y-1'>
-                  <Label
-                    htmlFor='email-notifications'
-                    className='text-base font-medium'
-                  >
-                    {t('profile.notifications.emailNotifications')}
-                  </Label>
-                  <p className='text-muted-foreground text-sm'>
-                    {t('profile.notifications.emailDescription')}
-                  </p>
-                </div>
-                <Switch
-                  id='email-notifications'
-                  checked={emailNotifications}
-                  onCheckedChange={setEmailNotifications}
-                />
-              </div>
-
-              <div
-                className={cn(
-                  'flex items-center justify-between',
-                  'rounded-xl p-4',
-                  'border border-white/5 bg-white/5',
-                  'transition-all duration-200',
-                  'hover:bg-white/10'
-                )}
-              >
-                <div className='space-y-1'>
-                  <Label
-                    htmlFor='trading-alerts'
-                    className='text-base font-medium'
-                  >
-                    {t('profile.notifications.tradingAlerts')}
-                  </Label>
-                  <p className='text-muted-foreground text-sm'>
-                    {t('profile.notifications.tradingAlertsDescription')}
-                  </p>
-                </div>
-                <Switch
-                  id='trading-alerts'
-                  checked={tradingAlerts}
-                  onCheckedChange={setTradingAlerts}
-                />
-              </div>
-
-              <div
-                className={cn(
-                  'flex items-center justify-between',
-                  'rounded-xl p-4',
-                  'border border-white/5 bg-white/5',
-                  'transition-all duration-200',
-                  'hover:bg-white/10'
-                )}
-              >
-                <div className='space-y-1'>
-                  <Label
-                    htmlFor='weekly-report'
-                    className='text-base font-medium'
-                  >
-                    {t('profile.notifications.weeklyReport')}
-                  </Label>
-                  <p className='text-muted-foreground text-sm'>
-                    {t('profile.notifications.weeklyReportDescription')}
-                  </p>
-                </div>
-                <Switch
-                  id='weekly-report'
-                  checked={weeklyReport}
-                  onCheckedChange={setWeeklyReport}
-                />
-              </div>
-            </div>
-          </div>
-        </TabsContent>
-
-        {/* Sécurité */}
-        <TabsContent value='security' className='space-y-6'>
-          <div
-            className={cn(
-              'rounded-2xl p-6',
-              'bg-zinc-900/40 backdrop-blur-sm',
-              'border border-white/5',
-              'animate-fade-in-up opacity-0'
-            )}
-            style={{ animationDelay: '300ms', animationFillMode: 'forwards' }}
-          >
-            <div className='mb-6 flex items-center gap-2'>
-              <div className='rounded-xl border border-white/5 bg-white/5 p-2'>
-                <IconLock className='h-4 w-4' />
-              </div>
-              <div>
-                <h3 className='text-lg font-semibold'>
-                  {t('profile.accountSecurity')}
-                </h3>
-                <p className='text-muted-foreground text-sm'>
-                  {t('profile.accountSecurityDescription')}
-                </p>
-              </div>
-            </div>
-
-            <div className='space-y-4'>
-              {/* Email */}
-              <div className='space-y-2'>
-                <Label>{t('profile.loginEmail')}</Label>
-                <div className='flex gap-2'>
-                  <Input
-                    value={user?.email || ''}
-                    disabled
-                    className='flex-1 border-white/10 bg-white/5'
+              <div className='flex items-center justify-between'>
+                <span className='text-muted-foreground text-sm'>
+                  {t('profile.metrics.totalCashback')}
+                </span>
+                <span className='font-semibold'>
+                  <AnimatedNumber
+                    value={stats.total_cashback_earned}
+                    suffix='€'
                   />
-                  <Button
-                    variant='outline'
-                    size='icon'
-                    className='border-white/10 bg-white/5 hover:bg-white/10'
-                    onClick={() => copyToClipboard(user?.email || '')}
-                  >
-                    <IconCopy className='h-4 w-4' />
-                  </Button>
+                </span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Comptes connectés */}
+        <Card
+          className={cn(
+            'transition-all duration-300',
+            'hover:border-white/8 hover:bg-zinc-900/50',
+            'animate-fade-in-up opacity-0'
+          )}
+          style={{ animationDelay: '400ms', animationFillMode: 'forwards' }}
+        >
+          <CardHeader>
+            <div className='flex items-center justify-between'>
+              <div className='flex items-center gap-3'>
+                <div className='rounded-xl border border-white/5 bg-white/5 p-2'>
+                  <IconServer className='h-5 w-5' />
+                </div>
+                <div>
+                  <CardTitle>{t('profile.connectedAccounts.title')}</CardTitle>
+                  <CardDescription>
+                    {t('profile.connectedAccounts.description')}
+                  </CardDescription>
                 </div>
               </div>
+              <Link href='/dashboard/brokers'>
+                <Button variant='outline' size='sm' className='gap-2'>
+                  {t('profile.manage')}
+                  <IconChevronRight className='h-4 w-4' />
+                </Button>
+              </Link>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {accounts.length > 0 ? (
+              <div className='space-y-3'>
+                {accounts.slice(0, 3).map((account) => (
+                  <div
+                    key={account.id}
+                    className='rounded-xl border border-white/5 bg-white/5 p-4 transition-colors hover:bg-white/10'
+                  >
+                    <div className='flex items-center justify-between'>
+                      <div className='flex items-center gap-3'>
+                        <div className='rounded-lg border border-white/5 bg-white/5 p-2'>
+                          <IconServer className='h-4 w-4' />
+                        </div>
+                        <div>
+                          <p className='font-medium'>{account.broker}</p>
+                          <p className='text-muted-foreground text-xs'>
+                            {account.account_id}
+                          </p>
+                        </div>
+                      </div>
+                      <RendRBadge
+                        variant={
+                          account.status === 'connected' ? 'success' : 'outline'
+                        }
+                        size='sm'
+                        dot={account.status === 'connected'}
+                        dotColor='green'
+                      >
+                        {account.status === 'connected'
+                          ? t('profile.connected')
+                          : t('profile.disconnected')}
+                      </RendRBadge>
+                    </div>
+                  </div>
+                ))}
+                {accounts.length > 3 && (
+                  <div className='text-muted-foreground text-center text-sm'>
+                    +{accounts.length - 3} {t('profile.moreAccounts')}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className='flex flex-col items-center justify-center py-8'>
+                <div className='mb-3 rounded-xl border border-white/5 bg-white/5 p-3'>
+                  <IconServer className='text-muted-foreground h-6 w-6' />
+                </div>
+                <p className='text-muted-foreground text-sm'>
+                  {t('profile.noAccountsConnected')}
+                </p>
+                <Link href='/dashboard/brokers'>
+                  <Button variant='outline' size='sm' className='mt-4'>
+                    {t('profile.connectAccount')}
+                  </Button>
+                </Link>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
 
-              {/* Actions de sécurité */}
-              <div className='space-y-3 border-t border-white/5 pt-4'>
+      {/* Statistiques globales */}
+      <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-4'>
+        <Link href='/dashboard/withdrawals' className='group'>
+          <Card
+            className={cn(
+              'border-[#c5d13f]/20 bg-[#c5d13f]/5',
+              'transition-all duration-300 ease-out',
+              'hover:border-[#c5d13f]/40 hover:bg-zinc-900/60',
+              'hover:-translate-y-1 hover:shadow-xl hover:shadow-black/20',
+              'cursor-pointer',
+              'animate-fade-in-up opacity-0'
+            )}
+            style={{ animationDelay: '500ms', animationFillMode: 'forwards' }}
+          >
+            <CardHeader className='pb-3'>
+              <div className='mb-3 flex items-center gap-2'>
+                <div className='rounded-xl border border-[#c5d13f]/20 bg-[#c5d13f]/10 p-2 transition-all duration-300 group-hover:border-[#c5d13f]/40 group-hover:bg-[#c5d13f]/20'>
+                  <IconWallet className='h-5 w-5 text-[#c5d13f]' />
+                </div>
+                <CardDescription className='mb-0'>
+                  {t('stats.availableBalance')}
+                </CardDescription>
+              </div>
+              <CardTitle className='text-2xl font-bold text-[#c5d13f] md:text-3xl'>
+                <AnimatedNumber value={stats.available_balance} suffix='€' />
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className='text-muted-foreground group-hover:text-foreground/80 flex items-center gap-1.5 text-sm transition-colors'>
+                {t('profile.viewWithdrawals')}
+                <IconChevronRight className='h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1' />
+              </div>
+            </CardContent>
+          </Card>
+        </Link>
+
+        <Link href='/dashboard/transactions' className='group'>
+          <Card
+            className={cn(
+              'transition-all duration-300 ease-out',
+              'hover:border-white/10 hover:bg-zinc-900/60',
+              'hover:-translate-y-1 hover:shadow-xl hover:shadow-black/20',
+              'cursor-pointer',
+              'animate-fade-in-up opacity-0'
+            )}
+            style={{ animationDelay: '550ms', animationFillMode: 'forwards' }}
+          >
+            <CardHeader className='pb-3'>
+              <div className='mb-3 flex items-center gap-2'>
+                <div className='rounded-xl border border-white/5 bg-white/5 p-2 transition-all duration-300 group-hover:border-white/10 group-hover:bg-white/10'>
+                  <IconTrendingUp className='h-5 w-5' />
+                </div>
+                <CardDescription className='mb-0'>
+                  {t('profile.stats.totalCashback')}
+                </CardDescription>
+              </div>
+              <CardTitle className='text-2xl font-bold md:text-3xl'>
+                <AnimatedNumber
+                  value={stats.total_cashback_earned}
+                  suffix='€'
+                />
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className='text-muted-foreground group-hover:text-foreground/80 flex items-center gap-1.5 text-sm transition-colors'>
+                {t('profile.viewTransactions')}
+                <IconChevronRight className='h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1' />
+              </div>
+            </CardContent>
+          </Card>
+        </Link>
+
+        <Link href='/dashboard/transactions' className='group'>
+          <Card
+            className={cn(
+              'transition-all duration-300 ease-out',
+              'hover:border-white/10 hover:bg-zinc-900/60',
+              'hover:-translate-y-1 hover:shadow-xl hover:shadow-black/20',
+              'cursor-pointer',
+              'animate-fade-in-up opacity-0'
+            )}
+            style={{ animationDelay: '600ms', animationFillMode: 'forwards' }}
+          >
+            <CardHeader className='pb-3'>
+              <div className='mb-3 flex items-center gap-2'>
+                <div className='rounded-xl border border-white/5 bg-white/5 p-2 transition-all duration-300 group-hover:border-white/10 group-hover:bg-white/10'>
+                  <IconChartBar className='h-5 w-5' />
+                </div>
+                <CardDescription className='mb-0'>
+                  {t('profile.stats.tradesExecuted')}
+                </CardDescription>
+              </div>
+              <CardTitle className='text-2xl font-bold md:text-3xl'>
+                <AnimatedInteger value={stats.total_trades} />
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className='text-muted-foreground group-hover:text-foreground/80 flex items-center gap-1.5 text-sm transition-colors'>
+                {t('profile.viewTrades')}
+                <IconChevronRight className='h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1' />
+              </div>
+            </CardContent>
+          </Card>
+        </Link>
+
+        <Link href='/dashboard/brokers' className='group'>
+          <Card
+            className={cn(
+              'transition-all duration-300 ease-out',
+              'hover:border-white/10 hover:bg-zinc-900/60',
+              'hover:-translate-y-1 hover:shadow-xl hover:shadow-black/20',
+              'cursor-pointer',
+              'animate-fade-in-up opacity-0'
+            )}
+            style={{ animationDelay: '650ms', animationFillMode: 'forwards' }}
+          >
+            <CardHeader className='pb-3'>
+              <div className='mb-3 flex items-center gap-2'>
+                <div className='rounded-xl border border-white/5 bg-white/5 p-2 transition-all duration-300 group-hover:border-white/10 group-hover:bg-white/10'>
+                  <IconServer className='h-5 w-5' />
+                </div>
+                <CardDescription className='mb-0'>
+                  {t('profile.stats.activeBrokers')}
+                </CardDescription>
+              </div>
+              <CardTitle className='text-2xl font-bold md:text-3xl'>
+                <AnimatedInteger value={stats.active_brokers} />
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className='text-muted-foreground group-hover:text-foreground/80 flex items-center gap-1.5 text-sm transition-colors'>
+                {t('profile.manageBrokers')}
+                <IconChevronRight className='h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1' />
+              </div>
+            </CardContent>
+          </Card>
+        </Link>
+      </div>
+
+      {/* Section Paramètres - Séparée et clairement identifiée */}
+      <Card
+        className={cn(
+          'border-white/5',
+          'transition-all duration-300',
+          'hover:border-white/8 hover:bg-zinc-900/50',
+          'animate-fade-in-up opacity-0'
+        )}
+        style={{ animationDelay: '700ms', animationFillMode: 'forwards' }}
+      >
+        <CardHeader>
+          <div className='flex items-center gap-3'>
+            <div className='rounded-xl border border-white/5 bg-white/5 p-2'>
+              <IconSettings className='h-5 w-5' />
+            </div>
+            <div>
+              <CardTitle>{t('profile.settings.title')}</CardTitle>
+              <CardDescription>
+                {t('profile.settings.description')}
+              </CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <Tabs defaultValue='payments' className='w-full'>
+            <TabsList className='grid w-full grid-cols-3 bg-white/5'>
+              <TabsTrigger
+                value='payments'
+                className='data-[state=active]:bg-white/10'
+              >
+                <IconWallet className='mr-2 h-4 w-4' />
+                {t('profile.tabs.payments')}
+              </TabsTrigger>
+              <TabsTrigger
+                value='notifications'
+                className='data-[state=active]:bg-white/10'
+              >
+                <IconBell className='mr-2 h-4 w-4' />
+                {t('profile.tabs.notifications')}
+              </TabsTrigger>
+              <TabsTrigger
+                value='security'
+                className='data-[state=active]:bg-white/10'
+              >
+                <IconLock className='mr-2 h-4 w-4' />
+                {t('profile.tabs.security')}
+              </TabsTrigger>
+            </TabsList>
+
+            {/* Méthodes de paiement */}
+            <TabsContent value='payments' className='mt-6 space-y-4'>
+              <div className='space-y-3'>
                 <div
                   className={cn(
                     'flex items-center justify-between',
@@ -1055,42 +1263,179 @@ export default function ProfileViewPage() {
                     'hover:bg-white/10'
                   )}
                 >
-                  <div>
-                    <p className='font-medium'>{t('profile.changePassword')}</p>
-                    <p className='text-muted-foreground text-sm'>
-                      {t('profile.security.lastModified')}
-                    </p>
+                  <div className='flex items-center gap-4'>
+                    <div className='flex h-12 w-12 items-center justify-center rounded-xl border border-white/5 bg-white/5'>
+                      <IconCreditCard className='h-6 w-6' />
+                    </div>
+                    <div>
+                      <p className='font-medium'>{t('profile.bankTransfer')}</p>
+                      <p className='text-muted-foreground text-sm'>
+                        FR76 •••• •••• •••• 4532
+                      </p>
+                    </div>
+                  </div>
+                  <div className='flex items-center gap-2'>
+                    <RendRBadge variant='accent' dot dotColor='green' size='sm'>
+                      {t('profile.withdrawalMethods.default')}
+                    </RendRBadge>
+                    <Button
+                      variant='ghost'
+                      size='sm'
+                      className='hover:bg-white/5'
+                      onClick={handleEditBankAccount}
+                    >
+                      <IconEdit className='h-4 w-4' />
+                    </Button>
+                  </div>
+                </div>
+
+                <div
+                  className={cn(
+                    'flex items-center justify-between',
+                    'rounded-xl p-4',
+                    'border border-white/5 bg-white/5',
+                    'transition-all duration-200',
+                    'hover:bg-white/10'
+                  )}
+                >
+                  <div className='flex items-center gap-4'>
+                    <div className='flex h-12 w-12 items-center justify-center rounded-xl border border-white/5 bg-white/5'>
+                      <IconBrandPaypal className='h-6 w-6' />
+                    </div>
+                    <div>
+                      <p className='font-medium'>PayPal</p>
+                      <p className='text-muted-foreground text-sm'>
+                        {t('profile.withdrawalMethods.notConfigured')}
+                      </p>
+                    </div>
                   </div>
                   <Button
                     variant='outline'
                     size='sm'
-                    className='border-white/10 bg-white/5 hover:bg-white/10'
+                    className='border-white/10 bg-white/5'
+                    onClick={handleAddPaypal}
+                  >
+                    {t('common.actions.add')}
+                  </Button>
+                </div>
+
+                <div
+                  className={cn(
+                    'flex items-center justify-between',
+                    'rounded-xl p-4',
+                    'border border-white/5 bg-white/5',
+                    'transition-all duration-200',
+                    'hover:bg-white/10'
+                  )}
+                >
+                  <div className='flex items-center gap-4'>
+                    <div className='flex h-12 w-12 items-center justify-center rounded-xl border border-white/5 bg-white/5'>
+                      <IconCurrencyBitcoin className='h-6 w-6' />
+                    </div>
+                    <div>
+                      <p className='font-medium'>Crypto (USDT)</p>
+                      <p className='text-muted-foreground text-sm'>
+                        {t('profile.withdrawalMethods.notConfigured')}
+                      </p>
+                    </div>
+                  </div>
+                  <Button
+                    variant='outline'
+                    size='sm'
+                    className='border-white/10 bg-white/5'
+                    onClick={handleAddCrypto}
+                  >
+                    {t('profile.add')}
+                  </Button>
+                </div>
+              </div>
+            </TabsContent>
+
+            {/* Notifications */}
+            <TabsContent value='notifications' className='mt-6 space-y-4'>
+              <div className='space-y-4'>
+                <div
+                  className={cn(
+                    'flex items-center justify-between',
+                    'rounded-xl p-4',
+                    'border border-white/5 bg-white/5'
+                  )}
+                >
+                  <div className='space-y-0.5'>
+                    <Label
+                      htmlFor='email-notifications'
+                      className='font-medium'
+                    >
+                      {t('profile.notifications.email')}
+                    </Label>
+                    <p className='text-muted-foreground text-sm'>
+                      {t('profile.notifications.emailDescription')}
+                    </p>
+                  </div>
+                  <Switch
+                    id='email-notifications'
+                    checked={emailNotifications}
+                    onCheckedChange={setEmailNotifications}
+                  />
+                </div>
+
+                <div
+                  className={cn(
+                    'flex items-center justify-between',
+                    'rounded-xl p-4',
+                    'border border-white/5 bg-white/5'
+                  )}
+                >
+                  <div className='space-y-0.5'>
+                    <Label htmlFor='weekly-report' className='font-medium'>
+                      {t('profile.notifications.weeklyReport')}
+                    </Label>
+                    <p className='text-muted-foreground text-sm'>
+                      {t('profile.notifications.weeklyReportDescription')}
+                    </p>
+                  </div>
+                  <Switch
+                    id='weekly-report'
+                    checked={weeklyReport}
+                    onCheckedChange={setWeeklyReport}
+                  />
+                </div>
+              </div>
+            </TabsContent>
+
+            {/* Sécurité */}
+            <TabsContent value='security' className='mt-6 space-y-4'>
+              <div className='space-y-4'>
+                <div
+                  className={cn(
+                    'flex items-center justify-between',
+                    'rounded-xl p-4',
+                    'border border-white/5 bg-white/5',
+                    'transition-all duration-200',
+                    'hover:bg-white/10'
+                  )}
+                >
+                  <div className='flex items-center gap-3'>
+                    <div className='rounded-lg border border-white/5 bg-white/5 p-2'>
+                      <IconLock className='h-4 w-4' />
+                    </div>
+                    <div>
+                      <p className='font-medium'>
+                        {t('profile.changePassword')}
+                      </p>
+                      <p className='text-muted-foreground text-sm'>
+                        {t('profile.password.title')}
+                      </p>
+                    </div>
+                  </div>
+                  <Button
+                    variant='outline'
+                    size='sm'
+                    className='border-white/10 bg-white/5'
                     onClick={handleChangePassword}
                   >
-                    {t('profile.security.modify')}
+                    {t('profile.change')}
                   </Button>
-                </div>
-
-                <div
-                  className={cn(
-                    'flex items-center justify-between',
-                    'rounded-xl p-4',
-                    'border border-white/5 bg-white/5',
-                    'transition-all duration-200',
-                    'hover:bg-white/10'
-                  )}
-                >
-                  <div>
-                    <p className='font-medium'>
-                      {t('profile.security.twoFactorAuth')}
-                    </p>
-                    <p className='text-muted-foreground text-sm'>
-                      {t('profile.addSecurityLayer')}
-                    </p>
-                  </div>
-                  <RendRBadge variant='outline'>
-                    {t('profile.notActivated')}
-                  </RendRBadge>
                 </div>
 
                 <div
@@ -1125,59 +1470,61 @@ export default function ProfileViewPage() {
                   </Button>
                 </div>
               </div>
-            </div>
-          </div>
 
-          {/* Zone dangereuse */}
-          <div
-            className={cn(
-              'rounded-2xl p-6',
-              'bg-zinc-900/40 backdrop-blur-sm',
-              'border border-red-500/20',
-              'animate-fade-in-up opacity-0'
-            )}
-            style={{ animationDelay: '350ms', animationFillMode: 'forwards' }}
-          >
-            <div className='mb-4 flex items-center gap-2'>
-              <div className='rounded-xl border border-red-500/20 bg-red-500/10 p-2'>
-                <IconAlertTriangle className='h-4 w-4 text-red-400' />
-              </div>
-              <div>
-                <h3 className='text-lg font-semibold text-red-400'>
-                  {t('profile.security.dangerZone')}
-                </h3>
-                <p className='text-muted-foreground text-sm'>
-                  {t('profile.security.dangerZoneDescription')}
-                </p>
-              </div>
-            </div>
+              <Separator />
 
-            <div
-              className={cn(
-                'flex items-center justify-between',
-                'rounded-xl p-4',
-                'border border-red-500/10 bg-red-500/5',
-                'transition-all duration-200',
-                'hover:bg-red-500/10'
-              )}
-            >
-              <div>
-                <p className='font-medium'>{t('profile.deleteAccount')}</p>
-                <p className='text-muted-foreground text-sm'>
-                  {t('profile.security.deleteAccountDescription')}
-                </p>
-              </div>
-              <Button
-                variant='outline'
-                className='border-red-500/30 text-red-400 hover:bg-red-500/10 hover:text-red-300'
-                onClick={() => setDeleteAccountDialogOpen(true)}
+              {/* Zone dangereuse */}
+              <div
+                className={cn(
+                  'rounded-xl p-4',
+                  'border border-red-500/20 bg-red-500/5'
+                )}
               >
-                {t('profile.security.delete')}
-              </Button>
-            </div>
-          </div>
-        </TabsContent>
-      </Tabs>
+                <div className='mb-4 flex items-center gap-2'>
+                  <div className='rounded-xl border border-red-500/20 bg-red-500/10 p-2'>
+                    <IconAlertTriangle className='h-4 w-4 text-red-400' />
+                  </div>
+                  <div>
+                    <h3 className='text-sm font-semibold text-red-400'>
+                      {t('profile.security.dangerZone')}
+                    </h3>
+                    <p className='text-muted-foreground text-xs'>
+                      {t('profile.security.dangerZoneDescription')}
+                    </p>
+                  </div>
+                </div>
+
+                <div
+                  className={cn(
+                    'flex items-center justify-between',
+                    'rounded-lg p-3',
+                    'border border-red-500/10 bg-red-500/5',
+                    'transition-all duration-200',
+                    'hover:bg-red-500/10'
+                  )}
+                >
+                  <div>
+                    <p className='text-sm font-medium'>
+                      {t('profile.deleteAccount')}
+                    </p>
+                    <p className='text-muted-foreground text-xs'>
+                      {t('profile.security.deleteAccountDescription')}
+                    </p>
+                  </div>
+                  <Button
+                    variant='outline'
+                    size='sm'
+                    className='border-red-500/30 text-red-400 hover:bg-red-500/10 hover:text-red-300'
+                    onClick={() => setDeleteAccountDialogOpen(true)}
+                  >
+                    {t('profile.security.delete')}
+                  </Button>
+                </div>
+              </div>
+            </TabsContent>
+          </Tabs>
+        </CardContent>
+      </Card>
 
       {/* Dialogue pour éditer le profil */}
       <Dialog

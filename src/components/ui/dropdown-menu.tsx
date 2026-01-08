@@ -36,15 +36,71 @@ function DropdownMenuContent({
   sideOffset = 4,
   ...props
 }: React.ComponentProps<typeof DropdownMenuPrimitive.Content>) {
+  const [isPositioned, setIsPositioned] = React.useState(false);
+  const contentRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    const content = contentRef.current;
+    if (!content) return;
+
+    // Observer les changements d'état
+    const observer = new MutationObserver(() => {
+      const isOpen = content.getAttribute('data-state') === 'open';
+      if (!isOpen) {
+        setIsPositioned(false);
+        return;
+      }
+
+      // Fonction pour vérifier si le positionnement est prêt
+      const checkPosition = () => {
+        const rect = content.getBoundingClientRect();
+        // Si l'élément n'est pas en haut à gauche (0,0), le positionnement est prêt
+        if (rect.top !== 0 || rect.left !== 0) {
+          setIsPositioned(true);
+        } else {
+          // Réessayer au prochain frame
+          requestAnimationFrame(checkPosition);
+        }
+      };
+
+      // Démarrer la vérification
+      requestAnimationFrame(checkPosition);
+    });
+
+    // Observer les changements d'attribut data-state
+    observer.observe(content, {
+      attributes: true,
+      attributeFilter: ['data-state']
+    });
+
+    // Vérification initiale
+    const isOpen = content.getAttribute('data-state') === 'open';
+    if (isOpen) {
+      const checkPosition = () => {
+        const rect = content.getBoundingClientRect();
+        if (rect.top !== 0 || rect.left !== 0) {
+          setIsPositioned(true);
+        } else {
+          requestAnimationFrame(checkPosition);
+        }
+      };
+      requestAnimationFrame(checkPosition);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <DropdownMenuPrimitive.Portal>
       <DropdownMenuPrimitive.Content
+        ref={contentRef}
         data-slot='dropdown-menu-content'
         sideOffset={sideOffset}
         className={cn(
-          'bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 max-h-(--radix-dropdown-menu-content-available-height) min-w-[8rem] origin-(--radix-dropdown-menu-content-transform-origin) overflow-x-hidden overflow-y-auto rounded-md border p-1 shadow-md',
+          'bg-popover text-popover-foreground z-50 max-h-(--radix-dropdown-menu-content-available-height) min-w-[8rem] origin-(--radix-dropdown-menu-content-transform-origin) overflow-x-hidden overflow-y-auto rounded-md border p-1 shadow-md',
           // Cacher le menu jusqu'à ce que le positionnement soit calculé pour éviter le flash
           'data-[state=closed]:pointer-events-none data-[state=closed]:hidden',
+          !isPositioned && 'invisible',
           className
         )}
         {...props}
@@ -228,13 +284,69 @@ function DropdownMenuSubContent({
   className,
   ...props
 }: React.ComponentProps<typeof DropdownMenuPrimitive.SubContent>) {
+  const [isPositioned, setIsPositioned] = React.useState(false);
+  const contentRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    const content = contentRef.current;
+    if (!content) return;
+
+    // Observer les changements d'état
+    const observer = new MutationObserver(() => {
+      const isOpen = content.getAttribute('data-state') === 'open';
+      if (!isOpen) {
+        setIsPositioned(false);
+        return;
+      }
+
+      // Fonction pour vérifier si le positionnement est prêt
+      const checkPosition = () => {
+        const rect = content.getBoundingClientRect();
+        // Si l'élément n'est pas en haut à gauche (0,0), le positionnement est prêt
+        if (rect.top !== 0 || rect.left !== 0) {
+          setIsPositioned(true);
+        } else {
+          // Réessayer au prochain frame
+          requestAnimationFrame(checkPosition);
+        }
+      };
+
+      // Démarrer la vérification
+      requestAnimationFrame(checkPosition);
+    });
+
+    // Observer les changements d'attribut data-state
+    observer.observe(content, {
+      attributes: true,
+      attributeFilter: ['data-state']
+    });
+
+    // Vérification initiale
+    const isOpen = content.getAttribute('data-state') === 'open';
+    if (isOpen) {
+      const checkPosition = () => {
+        const rect = content.getBoundingClientRect();
+        if (rect.top !== 0 || rect.left !== 0) {
+          setIsPositioned(true);
+        } else {
+          requestAnimationFrame(checkPosition);
+        }
+      };
+      requestAnimationFrame(checkPosition);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <DropdownMenuPrimitive.SubContent
+      ref={contentRef}
       data-slot='dropdown-menu-sub-content'
       className={cn(
-        'bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 min-w-[8rem] origin-(--radix-dropdown-menu-content-transform-origin) overflow-hidden rounded-md border p-1 shadow-lg',
+        'bg-popover text-popover-foreground z-50 min-w-[8rem] origin-(--radix-dropdown-menu-content-transform-origin) overflow-hidden rounded-md border p-1 shadow-lg',
         // Cacher le sous-menu jusqu'à ce que le positionnement soit calculé
         'data-[state=closed]:pointer-events-none data-[state=closed]:hidden',
+        !isPositioned && 'invisible',
         className
       )}
       {...props}

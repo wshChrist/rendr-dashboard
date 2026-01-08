@@ -78,32 +78,78 @@ export const navItems: NavItem[] = [
     access: { role: 'admin' },
     items: [
       {
-        title: 'Vue d’ensemble',
+        title: "Vue d'ensemble",
         url: '/dashboard/admin/overview',
         icon: 'dashboard',
         shortcut: ['a', 'v'],
         access: { role: 'admin' }
       },
       {
-        title: 'Retraits',
-        url: '/dashboard/admin/withdrawals',
-        icon: 'withdrawals',
-        shortcut: ['a', 'r'],
-        access: { role: 'admin' }
+        title: 'Espace de travail',
+        url: '#',
+        icon: 'dashboard',
+        shortcut: ['a', 'w'],
+        access: { role: 'admin' },
+        items: [
+          {
+            title: 'Objectifs',
+            url: '/dashboard/admin/goals',
+            icon: 'dashboard',
+            shortcut: ['a', 'g'],
+            access: { role: 'admin' }
+          },
+          {
+            title: 'Calendrier',
+            url: '/dashboard/admin/calendar',
+            icon: 'updates',
+            shortcut: ['a', 'l'],
+            access: { role: 'admin' }
+          },
+          {
+            title: 'Documents',
+            url: '/dashboard/admin/documents',
+            icon: 'transactions',
+            shortcut: ['a', 'd'],
+            access: { role: 'admin' }
+          }
+        ]
       },
       {
-        title: 'Brokers',
-        url: '/dashboard/admin/brokers',
-        icon: 'brokers',
-        shortcut: ['a', 'b'],
-        access: { role: 'admin' }
-      },
-      {
-        title: 'Comptes',
-        url: '/dashboard/admin/accounts',
-        icon: 'profile',
-        shortcut: ['a', 'c'],
-        access: { role: 'admin' }
+        title: 'Gestion',
+        url: '#',
+        icon: 'settings',
+        shortcut: ['a', 'm'],
+        access: { role: 'admin' },
+        items: [
+          {
+            title: 'Utilisateurs',
+            url: '/dashboard/admin/users',
+            icon: 'users',
+            shortcut: ['a', 'u'],
+            access: { role: 'admin' }
+          },
+          {
+            title: 'Retraits',
+            url: '/dashboard/admin/withdrawals',
+            icon: 'withdrawals',
+            shortcut: ['a', 'r'],
+            access: { role: 'admin' }
+          },
+          {
+            title: 'Brokers',
+            url: '/dashboard/admin/brokers',
+            icon: 'brokers',
+            shortcut: ['a', 'b'],
+            access: { role: 'admin' }
+          },
+          {
+            title: 'Comptes',
+            url: '/dashboard/admin/accounts',
+            icon: 'profile',
+            shortcut: ['a', 'c'],
+            access: { role: 'admin' }
+          }
+        ]
       }
     ]
   },

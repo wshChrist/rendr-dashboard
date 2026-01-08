@@ -1,6 +1,5 @@
 import PageContainer from '@/components/layout/page-container';
 import { PageHeader } from '@/components/layout/page-header';
-import { AdminNav } from '@/features/admin/components/admin-nav';
 import { requireAdmin } from '@/lib/auth/require-admin';
 import { AdminOverviewView } from '@/features/admin/components/admin-overview-view';
 
@@ -17,9 +16,7 @@ export default async function AdminOverviewPage() {
         <PageHeader
           title='Administration'
           description='Pilotez la plateforme: KPIs, retraits, brokers, maintenance.'
-        >
-          <AdminNav />
-        </PageHeader>
+        />
 
         <AdminOverviewView />
       </div>

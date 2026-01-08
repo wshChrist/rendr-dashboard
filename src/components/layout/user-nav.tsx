@@ -102,11 +102,11 @@ export function UserNav() {
             <DropdownMenuItem onClick={() => router.push('/dashboard/profile')}>
               {t('ui.profile')}
             </DropdownMenuItem>
-            <DropdownMenuItem>{t('ui.billing')}</DropdownMenuItem>
-            <DropdownMenuItem>{t('ui.settings')}</DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={handleSignOut}>{t('ui.signOut')}</DropdownMenuItem>
+          <DropdownMenuItem onClick={handleSignOut}>
+            {t('ui.signOut')}
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     );

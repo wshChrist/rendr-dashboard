@@ -42,20 +42,16 @@ export async function calculateAndRecordReferralEarnings(
 
     const referrerId = referralRelationship.referrer_id;
 
-    // Calculer le montant total que RendR gagne sur ce trade
-    const rendREarnings = calculateRendREarnings(brokerName, symbol, lots);
+    // Calculer le montant total que RendR gagne sur ce trade (revenus du broker)
+    const revenue = calculateRendREarnings(brokerName, symbol, lots);
 
-    // Le trader reçoit 50% de ce que RendR gagne (cashback)
-    const cashbackAmount = rendREarnings * 0.5;
-
-    // RendR garde 50% de ce qu'il gagne
-    const rendRShare = rendREarnings * 0.5;
-
-    // Taux de commission parrain : 10% de la part de RendR
-    // Le parrain reçoit 10% de ce que RendR garde (50% du total)
-    // Cela équivaut à 10% * 50% = 5% du montant total gagné par RendR
-    const commissionRate = 10.0; // TODO: Rendre configurable par utilisateur
-    const commissionAmount = (rendRShare * commissionRate) / 100;
+    // Avec referral, la répartition est :
+    // - RendR : 30% des revenus
+    // - Trader (filleul) : 50% des revenus (cashback)
+    // - Parrain : 20% des revenus (commission)
+    const cashbackAmount = revenue * 0.5; // 50% pour le trader
+    const commissionAmount = revenue * 0.2; // 20% pour le parrain
+    const commissionRate = 20.0; // 20% du revenu total
 
     // Période actuelle (format: YYYY-MM)
     const period = new Date().toISOString().slice(0, 7);

@@ -6,6 +6,9 @@ import { cn } from '@/lib/utils';
 
 const adminNavItems = [
   { title: "Vue d'ensemble", href: '/dashboard/admin/overview' },
+  { title: 'Objectifs', href: '/dashboard/admin/goals' },
+  { title: 'Calendrier', href: '/dashboard/admin/calendar' },
+  { title: 'Documents', href: '/dashboard/admin/documents' },
   { title: 'Retraits', href: '/dashboard/admin/withdrawals' },
   { title: 'Brokers', href: '/dashboard/admin/brokers' },
   { title: 'Comptes', href: '/dashboard/admin/accounts' }

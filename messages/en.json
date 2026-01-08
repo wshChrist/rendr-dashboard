@@ -37,7 +37,9 @@
       "search": "Search",
       "continue": "Continue",
       "goBack": "Go back",
-      "backToHome": "Back to Home"
+      "backToHome": "Back to Home",
+      "previous": "Previous",
+      "next": "Next"
     },
     "status": "Status",
     "unknown": "Unknown",
@@ -60,6 +62,7 @@
     "chooseTheme": "Choose a theme",
     "chooseLanguage": "Choose a language",
     "resetFilters": "Reset filters",
+    "clear": "Clear",
     "searchColumn": "Search for a column...",
     "toggleColumns": "Toggle columns",
     "theme": "Theme",
@@ -116,6 +119,7 @@
       },
       "transaction": "transaction",
       "noTransactionsFound": "No transactions found",
+      "noResultsWithFilters": "No transactions match your filters",
       "connectBrokerToSeeTrades": "Connect a broker to see your trades here",
       "lots": "lots",
       "loading": "Loading transactions...",
@@ -443,7 +447,28 @@
       "platformRequired": "Platform is required",
       "serverRequired": "Server is required",
       "accountNumberRequired": "Account number is required",
-      "investorPasswordRequired": "Investor password is required"
+      "investorPasswordRequired": "Investor password is required",
+      "step1Title": "Broker Information",
+      "step1Description": "Select the broker and trading platform",
+      "step2Title": "Server Configuration",
+      "step2Description": "Enter the server connection information",
+      "step3Title": "Login Credentials",
+      "step3Description": "Enter your trading account credentials",
+      "steps": {
+        "broker": "Broker",
+        "server": "Server",
+        "credentials": "Credentials"
+      },
+      "broker": "Broker",
+      "serverName": "Server Name",
+      "createAccount": "Create Account",
+      "accountCreatedSuccess": "Account created successfully!",
+      "accountCreatedDescription": "The account {accountId} will be automatically configured on the VPS.",
+      "unavailable": "Unavailable",
+      "fillRequiredFields": "Please fill in all required fields",
+      "sessionErrorTitle": "Session Error",
+      "sessionErrorDescription": "Unable to retrieve session",
+      "createError": "Error creating account"
     },
     "status": {
       "connected": "Connected",
@@ -596,7 +621,12 @@
     },
     "success": {
       "codeCreated": "Referral code created successfully!"
-    }
+    },
+    "viewReferrals": "View all referrals",
+    "activeReferrals": "active referrals",
+    "commissionDescription": "Commission on each trade",
+    "averageDescription": "Average per active referral",
+    "howItWorksDescription": "Simple steps to start earning"
   },
   "withdrawals": {
     "availableBalance": "Available Balance",
@@ -628,7 +658,34 @@
     },
     "success": {
       "createSuccess": "Withdrawal request created successfully"
-    }
+    },
+    "available": "Available",
+    "withdrawable": "Withdrawable",
+    "processing": "Processing",
+    "success": "Success",
+    "availableBalanceDescription": "This is your available balance that you can withdraw at any time.",
+    "amountTooltip": "Enter the amount you want to withdraw (minimum 20€)",
+    "validAmount": "Valid amount",
+    "invalidAmount": "Invalid amount",
+    "minimumNotReached": "Minimum amount not reached",
+    "minimumAmountRequired": "You need at least {amount} to make a withdrawal.",
+    "details": "Details",
+    "statistics": "Statistics",
+    "totalWithdrawals": "Total Withdrawals",
+    "averageAmount": "Average Amount",
+    "information": "Information",
+    "withdrawalInfo": "Withdrawals are processed within 1-3 business days. Make sure your payment details are correct.",
+    "processingTime": "Processing time: 1-3 business days",
+    "minimumAmount": "Minimum amount",
+    "noPendingWithdrawals": "No pending withdrawals",
+    "noPendingWithdrawalsDescription": "You don't have any pending withdrawals at the moment.",
+    "noCompletedWithdrawals": "No completed withdrawals",
+    "noCompletedWithdrawalsDescription": "Your completed withdrawals will appear here.",
+    "clickToWithdraw": "Click to request a withdrawal",
+    "recentActivity": "Recent Activity",
+    "lastWithdrawals": "Your last withdrawal requests",
+    "noRecentActivity": "No recent withdrawal activity",
+    "allTime": "All time"
   },
   "profile": {
     "memberSince": "Member since",
@@ -730,7 +787,6 @@
       "default": "Default",
       "notConfigured": "Not configured",
       "withdrawalHistory": "Your recent withdrawal history",
-      "historyComingSoon": "Withdrawal history coming soon",
       "noWithdrawals": "No withdrawals made yet"
     },
     "notifications": {
@@ -738,8 +794,6 @@
       "description": "Choose how you want to be notified",
       "emailNotifications": "Email Notifications",
       "emailDescription": "Receive an email for each new cashback credited",
-      "tradingAlerts": "Trading Alerts",
-      "tradingAlertsDescription": "Get notified when your trades are synchronized",
       "weeklyReport": "Weekly Report",
       "weeklyReportDescription": "Receive a summary of your activity every week"
     },
@@ -762,7 +816,54 @@
     "bankAccountNumber": "Account Number (IBAN)",
     "addCryptoDescription": "Add your USDT address to receive your withdrawals",
     "close": "Close",
-    "securitySettingsButton": "Security Settings"
+    "securitySettingsButton": "Security Settings",
+    "userId": "User ID",
+    "copyUserId": "Copy User ID",
+    "trades": "trades",
+    "change": "Change",
+    "connected": "Connected",
+    "disconnected": "Disconnected",
+    "manage": "Manage",
+    "moreAccounts": "more accounts",
+    "noAccountsConnected": "No accounts connected",
+    "connectAccount": "Connect an account",
+    "viewWithdrawals": "View withdrawals",
+    "viewTransactions": "View transactions",
+    "viewTrades": "View trades",
+    "manageBrokers": "Manage brokers",
+    "settings": {
+      "title": "Account Settings",
+      "description": "Manage your account preferences and security settings"
+    },
+    "metrics": {
+      "winRate": "Win Rate",
+      "profitFactor": "Profit Factor",
+      "avgWinLoss": "Avg Win/Loss Ratio",
+      "cashbackEfficiency": "Cashback Efficiency",
+      "totalProfit": "Total Profit",
+      "totalLoss": "Total Loss",
+      "avgWin": "Avg Win",
+      "avgLoss": "Avg Loss",
+      "largestWin": "Largest Win",
+      "largestLoss": "Largest Loss",
+      "totalTrades": "Total Trades",
+      "winningTrades": "Winning Trades",
+      "losingTrades": "Losing Trades",
+      "breakEvenTrades": "Break Even",
+      "avgCashbackPerTrade": "Avg Cashback/Trade",
+      "totalCashback": "Total Cashback",
+      "wins": "wins",
+      "losses": "losses",
+      "cashbackEfficiencyDescription": "Cashback coverage of net profit"
+    },
+    "performance": {
+      "title": "Performance Metrics",
+      "description": "Detailed trading performance statistics"
+    },
+    "connectedAccounts": {
+      "title": "Connected Accounts",
+      "description": "Your active trading accounts"
+    }
   },
   "overview": {
     "recentSales": {
@@ -813,6 +914,7 @@
     "last30Days": "Last 30 days",
     "last90Days": "Last 90 days",
     "perTrade": "per trade",
+    "avgPerTrade": "Average per trade",
     "status": {
       "confirmed": "Confirmed",
       "pending": "Pending"
@@ -822,7 +924,20 @@
       "pending": "pending"
     },
     "noTransactionsToExport": "No transactions to export",
-    "popularPairs": "Popular Pairs"
+    "popularPairs": "Popular Pairs",
+    "celebration": {
+      "title": "Your Cashback Journey",
+      "description": "Every trade you make earns you cashback. Watch your rewards grow!",
+      "everyTrade": "Cashback on every trade",
+      "automatic": "Automatic & instant",
+      "noLimit": "No limits",
+      "totalEarned": "Total earned",
+      "last7Days": "Last 7 days",
+      "recentCashback": "earned in cashback this week",
+      "tooltip": "Your cashback is growing",
+      "tooltipContent": "This represents your total cashback earned from all your trades. Keep trading to increase this amount!",
+      "cashbackEarned": "Cashback"
+    }
   },
   "admin": {
     "pendingWithdrawals": "Pending withdrawals",
@@ -901,7 +1016,17 @@
       "contactUs": "Contact us"
     },
     "seeAll": "See all",
-    "latestUpdates": "Latest platform updates"
+    "latestUpdates": "Latest platform updates",
+    "searchPlaceholder": "Search updates...",
+    "noResults": "No results found",
+    "searchResults": "Search Results",
+    "results": "result(s)",
+    "allUpdates": "All updates",
+    "filteredBy": "Filtered by {type}",
+    "details": "Details",
+    "moreInfo": "More information",
+    "share": "Share",
+    "newUpdatesAvailable": "New updates are available!"
   },
   "tradingAccount": {
     "mustBeConnected": "You must be logged in",

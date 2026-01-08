@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   IconUsers,
   IconGift,
@@ -15,7 +16,9 @@ import {
   IconPercentage,
   IconChartBar,
   IconLink,
-  IconLoader2
+  IconLoader2,
+  IconChevronRight,
+  IconTrendingUp
 } from '@tabler/icons-react';
 import { RendRBadge } from '@/components/ui/rendr-badge';
 import { cn } from '@/lib/utils';
@@ -23,6 +26,20 @@ import { ReferralTable } from './referral-table';
 import type { ReferredUser } from './referral-table-columns';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+import { Skeleton } from '@/components/ui/skeleton';
+import {
+  AnimatedNumber,
+  AnimatedInteger
+} from '@/components/ui/animated-number';
+import Link from 'next/link';
 
 interface ReferralData {
   code: string | null;
@@ -184,366 +201,449 @@ export function ReferralView() {
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className='flex h-64 items-center justify-center'>
-        <IconLoader2 className='text-muted-foreground h-8 w-8 animate-spin' />
-      </div>
-    );
-  }
+  const averageEarnings = useMemo(() => {
+    if (referralData.activeReferrals > 0 && referralData.totalEarnings > 0) {
+      return referralData.totalEarnings / referralData.activeReferrals;
+    }
+    return 0;
+  }, [referralData]);
 
   return (
     <div className='space-y-6'>
-      {/* Stats Cards */}
-      <div className='grid gap-4 md:grid-cols-4'>
+      {/* Stats Cards - Style Overview */}
+      <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4'>
         {/* Filleuls Total */}
         <div
           className={cn(
-            'rounded-2xl p-5',
+            'relative overflow-hidden',
+            'rounded-2xl p-5 md:p-6',
             'bg-zinc-900/40 backdrop-blur-sm',
             'border border-white/5',
-            'transition-all duration-300',
-            'hover:border-white/8 hover:bg-zinc-900/50',
+            'transition-all duration-300 ease-out',
+            'hover:border-white/10 hover:bg-zinc-900/60',
+            'hover:-translate-y-1 hover:shadow-xl hover:shadow-black/20',
             'animate-fade-in-up opacity-0'
           )}
           style={{ animationFillMode: 'forwards' }}
         >
-          <div className='mb-2 flex items-center gap-2'>
-            <span className='rounded-xl border border-white/5 bg-white/5 p-2'>
-              <IconUsers className='h-4 w-4' />
-            </span>
-            <span className='text-muted-foreground text-sm'>
+          <div className='mb-4 flex items-start justify-between'>
+            <div className='rounded-xl border border-white/5 bg-white/5 p-2 transition-all duration-300'>
+              <IconUsers className='h-5 w-5' />
+            </div>
+            <RendRBadge variant='outline' size='sm'>
               {t('referral.totalReferrals')}
-            </span>
+            </RendRBadge>
           </div>
-          <p className='stat-number text-3xl font-bold'>
-            {referralData.totalReferrals || 0}
+          <p className='text-muted-foreground mb-1 text-sm'>
+            {t('referral.totalReferrals')}
           </p>
-          <p className='text-muted-foreground mt-1 text-sm'>
-            {referralData.activeReferrals || 0} {t('referral.active')}
-          </p>
+          <div className='text-foreground stat-number mb-4 text-2xl font-bold md:text-3xl'>
+            {isLoading ? (
+              <Skeleton className='h-8 w-16' />
+            ) : (
+              <AnimatedInteger value={referralData.totalReferrals || 0} />
+            )}
+          </div>
+          <div className='space-y-1.5 border-t border-white/5 pt-4'>
+            <div className='text-foreground/90 text-sm font-medium'>
+              {isLoading ? '...' : referralData.activeReferrals || 0}{' '}
+              {t('referral.active')}
+            </div>
+            <div className='text-muted-foreground text-sm'>
+              {t('referral.activeReferrals')}
+            </div>
+          </div>
         </div>
 
         {/* Gains Totaux */}
-        <div
-          className={cn(
-            'rounded-2xl p-5',
-            'bg-zinc-900/40 backdrop-blur-sm',
-            'border border-[#c5d13f]/20',
-            'transition-all duration-300',
-            'hover:border-[#c5d13f]/40',
-            'animate-fade-in-up opacity-0'
-          )}
-          style={{ animationDelay: '100ms', animationFillMode: 'forwards' }}
-        >
-          <div className='mb-2 flex items-center gap-2'>
-            <span className='rounded-xl border border-white/5 bg-white/5 p-2'>
-              <IconGift className='h-4 w-4' />
-            </span>
-            <span className='text-muted-foreground text-sm'>
+        <Link href='#referrals' className='group'>
+          <div
+            className={cn(
+              'relative overflow-hidden',
+              'rounded-2xl p-5 md:p-6',
+              'bg-zinc-900/40 backdrop-blur-sm',
+              'border border-[#c5d13f]/20',
+              'transition-all duration-300 ease-out',
+              'hover:border-[#c5d13f]/40 hover:bg-zinc-900/60',
+              'hover:-translate-y-1 hover:shadow-xl hover:shadow-black/20',
+              'cursor-pointer',
+              'animate-fade-in-up opacity-0'
+            )}
+            style={{ animationDelay: '100ms', animationFillMode: 'forwards' }}
+          >
+            <div className='mb-4 flex items-start justify-between'>
+              <div className='rounded-xl border border-[#c5d13f]/20 bg-[#c5d13f]/10 p-2 transition-all duration-300 group-hover:border-[#c5d13f]/40 group-hover:bg-[#c5d13f]/20'>
+                <IconGift className='h-5 w-5 text-[#c5d13f]' />
+              </div>
+              <RendRBadge variant='accent' dot dotColor='green' size='sm'>
+                {t('referral.totalEarnings')}
+              </RendRBadge>
+            </div>
+            <p className='text-muted-foreground mb-1 text-sm'>
               {t('referral.totalEarnings')}
-            </span>
+            </p>
+            <div className='text-foreground stat-number mb-4 text-2xl font-bold text-[#c5d13f] md:text-3xl'>
+              {isLoading ? (
+                <Skeleton className='h-8 w-24' />
+              ) : (
+                <AnimatedNumber
+                  value={referralData.totalEarnings || 0}
+                  suffix='€'
+                />
+              )}
+            </div>
+            <div className='space-y-1.5 border-t border-white/5 pt-4'>
+              <div className='text-foreground/90 text-sm font-medium'>
+                +
+                {isLoading
+                  ? '...'
+                  : (referralData.pendingEarnings || 0).toFixed(2)}
+                € {t('referral.pending')}
+              </div>
+              <div className='text-muted-foreground group-hover:text-foreground/80 flex items-center gap-1.5 text-sm transition-colors'>
+                {t('referral.viewReferrals')}
+                <IconChevronRight className='h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1' />
+              </div>
+            </div>
           </div>
-          <p className='text-foreground stat-number text-3xl font-bold'>
-            {referralData.totalEarnings?.toFixed(2) || '0.00'}€
-          </p>
-          <p className='mt-1 text-sm text-[#c5d13f]'>
-            +{referralData.pendingEarnings?.toFixed(2) || '0.00'}€{' '}
-            {t('referral.pending')}
-          </p>
-        </div>
+        </Link>
 
         {/* Taux de Commission */}
         <div
           className={cn(
-            'rounded-2xl p-5',
+            'relative overflow-hidden',
+            'rounded-2xl p-5 md:p-6',
             'bg-zinc-900/40 backdrop-blur-sm',
             'border border-white/5',
-            'transition-all duration-300',
-            'hover:border-white/8 hover:bg-zinc-900/50',
+            'transition-all duration-300 ease-out',
+            'hover:border-white/10 hover:bg-zinc-900/60',
+            'hover:-translate-y-1 hover:shadow-xl hover:shadow-black/20',
             'animate-fade-in-up opacity-0'
           )}
           style={{ animationDelay: '200ms', animationFillMode: 'forwards' }}
         >
-          <div className='mb-2 flex items-center gap-2'>
-            <span className='rounded-xl border border-white/5 bg-white/5 p-2'>
-              <IconPercentage className='h-4 w-4' />
-            </span>
-            <span className='text-muted-foreground text-sm'>
-              {t('referral.commissionRate')}
-            </span>
+          <div className='mb-4 flex items-start justify-between'>
+            <div className='rounded-xl border border-white/5 bg-white/5 p-2 transition-all duration-300'>
+              <IconPercentage className='h-5 w-5' />
+            </div>
+            <RendRBadge variant='outline' size='sm'>
+              {referralData.commissionRate}%
+            </RendRBadge>
           </div>
-          <p className='text-foreground stat-number text-3xl font-bold'>
+          <p className='text-muted-foreground mb-1 text-sm'>
+            {t('referral.commissionRate')}
+          </p>
+          <div className='text-foreground stat-number mb-4 text-2xl font-bold md:text-3xl'>
             {referralData.commissionRate}%
-          </p>
-          <p className='text-muted-foreground mt-1 text-sm'>
-            {t('referral.fromReferrals')}
-          </p>
+          </div>
+          <div className='space-y-1.5 border-t border-white/5 pt-4'>
+            <div className='text-foreground/90 text-sm font-medium'>
+              {t('referral.fromReferrals')}
+            </div>
+            <div className='text-muted-foreground text-sm'>
+              {t('referral.commissionDescription')}
+            </div>
+          </div>
         </div>
 
         {/* Gain Moyen */}
         <div
           className={cn(
-            'rounded-2xl p-5',
+            'relative overflow-hidden',
+            'rounded-2xl p-5 md:p-6',
             'bg-zinc-900/40 backdrop-blur-sm',
             'border border-white/5',
-            'transition-all duration-300',
-            'hover:border-white/8 hover:bg-zinc-900/50',
+            'transition-all duration-300 ease-out',
+            'hover:border-white/10 hover:bg-zinc-900/60',
+            'hover:-translate-y-1 hover:shadow-xl hover:shadow-black/20',
             'animate-fade-in-up opacity-0'
           )}
           style={{ animationDelay: '300ms', animationFillMode: 'forwards' }}
         >
-          <div className='mb-2 flex items-center gap-2'>
-            <span className='rounded-xl border border-white/5 bg-white/5 p-2'>
-              <IconChartBar className='h-4 w-4' />
-            </span>
-            <span className='text-muted-foreground text-sm'>
-              {t('referral.averageEarnings')}
-            </span>
+          <div className='mb-4 flex items-start justify-between'>
+            <div className='rounded-xl border border-white/5 bg-white/5 p-2 transition-all duration-300'>
+              <IconChartBar className='h-5 w-5' />
+            </div>
+            <RendRBadge variant='outline' size='sm'>
+              <IconTrendingUp className='h-3 w-3' />
+            </RendRBadge>
           </div>
-          <p className='stat-number text-3xl font-bold'>
-            {referralData.activeReferrals > 0 && referralData.totalEarnings > 0
-              ? (
-                  referralData.totalEarnings / referralData.activeReferrals
-                ).toFixed(2)
-              : '0.00'}
-            €
+          <p className='text-muted-foreground mb-1 text-sm'>
+            {t('referral.averageEarnings')}
           </p>
-          <p className='text-muted-foreground mt-1 text-sm'>
-            {t('referral.perActiveReferral')}
-          </p>
+          <div className='text-foreground stat-number mb-4 text-2xl font-bold md:text-3xl'>
+            {isLoading ? (
+              <Skeleton className='h-8 w-20' />
+            ) : (
+              <AnimatedNumber value={averageEarnings} suffix='€' />
+            )}
+          </div>
+          <div className='space-y-1.5 border-t border-white/5 pt-4'>
+            <div className='text-foreground/90 text-sm font-medium'>
+              {t('referral.perActiveReferral')}
+            </div>
+            <div className='text-muted-foreground text-sm'>
+              {t('referral.averageDescription')}
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Referral Link Card */}
-      <div
+      {/* Layout en deux colonnes */}
+      <div className='grid gap-6 lg:grid-cols-2'>
+        {/* Code/Lien de parrainage */}
+        <Card
+          className={cn(
+            'transition-all duration-300',
+            'hover:border-white/8 hover:bg-zinc-900/50',
+            'animate-fade-in-up opacity-0'
+          )}
+          style={{ animationDelay: '400ms', animationFillMode: 'forwards' }}
+        >
+          <CardHeader>
+            <div className='flex items-center gap-3'>
+              <div className='rounded-xl border border-[#c5d13f]/20 bg-[#c5d13f]/10 p-2'>
+                <IconLink className='h-5 w-5 text-[#c5d13f]' />
+              </div>
+              <div>
+                <CardTitle>
+                  {referralData.code
+                    ? t('referral.yourLink')
+                    : t('referral.createYourCode')}
+                </CardTitle>
+                <CardDescription>
+                  {referralData.code
+                    ? t('referral.shareLinkDescription', {
+                        rate: referralData.commissionRate
+                      })
+                    : t('referral.chooseUniqueCode')}
+                </CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className='space-y-5'>
+            {!referralData.code ? (
+              <form onSubmit={handleCreateCode} className='space-y-4'>
+                <div className='space-y-2'>
+                  <Label htmlFor='code' className='text-sm font-medium'>
+                    {t('referral.yourCode')}
+                  </Label>
+                  <div className='flex gap-2'>
+                    <Input
+                      id='code'
+                      value={newCode}
+                      onChange={(e) => {
+                        setNewCode(e.target.value.toUpperCase());
+                        setCodeError('');
+                      }}
+                      placeholder={t('pages.referral.codePlaceholder')}
+                      className='border-white/10 bg-white/5 font-mono'
+                      maxLength={20}
+                      disabled={isCreatingCode}
+                    />
+                    <Button
+                      type='submit'
+                      disabled={isCreatingCode || !newCode.trim()}
+                      className='bg-[#c5d13f] text-black hover:bg-[#c5d13f]/90'
+                    >
+                      {isCreatingCode ? (
+                        <IconLoader2 className='h-4 w-4 animate-spin' />
+                      ) : (
+                        t('referral.createCode')
+                      )}
+                    </Button>
+                  </div>
+                  {codeError && (
+                    <p className='text-sm text-red-500'>{codeError}</p>
+                  )}
+                  <p className='text-muted-foreground text-xs'>
+                    {t('referral.codeRules')}
+                  </p>
+                </div>
+              </form>
+            ) : (
+              <>
+                <div className='space-y-2'>
+                  <Label className='text-sm font-medium'>
+                    {t('referral.yourLink')}
+                  </Label>
+                  <div className='flex gap-2'>
+                    <Input
+                      value={referralData.link}
+                      readOnly
+                      className='border-white/10 bg-white/5 font-mono'
+                    />
+                    <Button
+                      variant='outline'
+                      onClick={() => copyToClipboard(referralData.link)}
+                    >
+                      {copied ? (
+                        <IconCheck className='h-4 w-4 text-[#c5d13f]' />
+                      ) : (
+                        <IconCopy className='h-4 w-4' />
+                      )}
+                    </Button>
+                  </div>
+                </div>
+
+                <Separator />
+
+                <div className='flex items-center gap-3 rounded-xl border border-white/5 bg-white/5 p-3'>
+                  <span className='text-muted-foreground text-sm'>
+                    {t('referral.yourCode')}:
+                  </span>
+                  <RendRBadge variant='outline' size='lg' className='font-mono'>
+                    {referralData.code}
+                  </RendRBadge>
+                  <Button
+                    variant='ghost'
+                    size='sm'
+                    onClick={() => copyToClipboard(referralData.code || '')}
+                  >
+                    <IconCopy className='h-4 w-4' />
+                  </Button>
+                </div>
+
+                <Separator />
+
+                <div className='space-y-2'>
+                  <Label className='text-sm font-medium'>
+                    {t('referral.share')}
+                  </Label>
+                  <div className='flex flex-wrap gap-2'>
+                    <Button
+                      variant='outline'
+                      size='sm'
+                      onClick={() => shareLink('native')}
+                      className='flex-1'
+                    >
+                      <IconShare className='mr-2 h-4 w-4' />
+                      {t('referral.share')}
+                    </Button>
+                    <Button
+                      variant='outline'
+                      size='sm'
+                      onClick={() => shareLink('twitter')}
+                    >
+                      <IconBrandTwitter className='h-4 w-4' />
+                    </Button>
+                    <Button
+                      variant='outline'
+                      size='sm'
+                      onClick={() => shareLink('telegram')}
+                    >
+                      <IconBrandTelegram className='h-4 w-4' />
+                    </Button>
+                    <Button
+                      variant='outline'
+                      size='sm'
+                      onClick={() => shareLink('whatsapp')}
+                    >
+                      <IconBrandWhatsapp className='h-4 w-4' />
+                    </Button>
+                  </div>
+                </div>
+              </>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* How it works */}
+        <Card
+          className={cn(
+            'transition-all duration-300',
+            'hover:border-white/8 hover:bg-zinc-900/50',
+            'animate-fade-in-up opacity-0'
+          )}
+          style={{ animationDelay: '500ms', animationFillMode: 'forwards' }}
+        >
+          <CardHeader>
+            <div className='flex items-center gap-3'>
+              <div className='rounded-xl border border-white/5 bg-white/5 p-2'>
+                <IconGift className='h-5 w-5' />
+              </div>
+              <div>
+                <CardTitle>{t('referral.howItWorks')}</CardTitle>
+                <CardDescription>
+                  {t('referral.howItWorksDescription')}
+                </CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className='space-y-4'>
+              {[
+                {
+                  step: 1,
+                  title: t('referral.shareLink'),
+                  desc: t('referral.step1Description')
+                },
+                {
+                  step: 2,
+                  title: t('referral.theySignUp'),
+                  desc: t('referral.step2Description')
+                },
+                {
+                  step: 3,
+                  title: t('referral.youEarn'),
+                  desc: t('referral.step3Description', {
+                    rate: referralData.commissionRate
+                  })
+                }
+              ].map((item, index) => (
+                <div key={item.step}>
+                  <div className='flex gap-4'>
+                    <div className='flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-white/10 text-sm font-bold'>
+                      {item.step}
+                    </div>
+                    <div className='flex-1 space-y-1'>
+                      <h4 className='text-sm font-semibold'>{item.title}</h4>
+                      <p className='text-muted-foreground text-xs'>
+                        {item.desc}
+                      </p>
+                    </div>
+                  </div>
+                  {index < 2 && <Separator className='my-4' />}
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Referred Users */}
+      <Card
+        id='referrals'
         className={cn(
-          'rounded-2xl p-5 md:p-6',
-          'bg-zinc-900/40 backdrop-blur-sm',
-          'border border-white/5',
           'transition-all duration-300',
           'hover:border-white/8 hover:bg-zinc-900/50',
           'animate-fade-in-up opacity-0'
         )}
-        style={{ animationDelay: '400ms', animationFillMode: 'forwards' }}
-      >
-        {!referralData.code ? (
-          /* Formulaire de création de code */
-          <div>
-            <div className='mb-5 flex items-center gap-2'>
-              <span className='rounded-xl border border-white/5 bg-white/5 p-2'>
-                <IconLink className='h-4 w-4' />
-              </span>
-              <div>
-                <h3 className='text-lg font-semibold'>
-                  {t('referral.createYourCode')}
-                </h3>
-                <p className='text-muted-foreground text-sm'>
-                  {t('referral.chooseUniqueCode')}
-                </p>
-              </div>
-            </div>
-
-            <form onSubmit={handleCreateCode} className='space-y-4'>
-              <div>
-                <label className='text-muted-foreground mb-2 block text-sm font-medium'>
-                  {t('referral.yourCode')}
-                </label>
-                <div className='flex gap-2'>
-                  <Input
-                    value={newCode}
-                    onChange={(e) => {
-                      setNewCode(e.target.value.toUpperCase());
-                      setCodeError('');
-                    }}
-                    placeholder={t('pages.referral.codePlaceholder')}
-                    className='border-white/10 bg-white/5 font-mono'
-                    maxLength={20}
-                    disabled={isCreatingCode}
-                  />
-                  <Button
-                    type='submit'
-                    disabled={isCreatingCode || !newCode.trim()}
-                  >
-                    {isCreatingCode ? (
-                      <IconLoader2 className='h-4 w-4 animate-spin' />
-                    ) : (
-                      t('referral.createCode')
-                    )}
-                  </Button>
-                </div>
-                {codeError && (
-                  <p className='mt-2 text-sm text-red-500'>{codeError}</p>
-                )}
-                <p className='text-muted-foreground mt-2 text-xs'>
-                  {t('referral.codeRules')}
-                </p>
-              </div>
-            </form>
-          </div>
-        ) : (
-          /* Affichage du code existant */
-          <>
-            <div className='mb-5 flex items-center gap-2'>
-              <span className='rounded-xl border border-white/5 bg-white/5 p-2'>
-                <IconLink className='h-4 w-4' />
-              </span>
-              <div>
-                <h3 className='text-lg font-semibold'>
-                  {t('referral.yourLink')}
-                </h3>
-                <p className='text-muted-foreground text-sm'>
-                  {t('referral.shareLinkDescription', {
-                    rate: referralData.commissionRate
-                  })}
-                </p>
-              </div>
-            </div>
-
-            <div className='space-y-4'>
-              <div className='flex gap-2'>
-                <Input
-                  value={referralData.link}
-                  readOnly
-                  className='border-white/10 bg-white/5 font-mono'
-                />
-                <Button
-                  variant='outline'
-                  onClick={() => copyToClipboard(referralData.link)}
-                >
-                  {copied ? (
-                    <IconCheck className='h-4 w-4 text-[#c5d13f]' />
-                  ) : (
-                    <IconCopy className='h-4 w-4' />
-                  )}
-                </Button>
-              </div>
-
-              <div className='flex items-center gap-3 rounded-xl border border-white/5 bg-white/5 p-3'>
-                <span className='text-muted-foreground text-sm'>
-                  {t('referral.yourCode')}:
-                </span>
-                <RendRBadge variant='outline' size='lg' className='font-mono'>
-                  {referralData.code}
-                </RendRBadge>
-                <Button
-                  variant='ghost'
-                  size='sm'
-                  onClick={() => copyToClipboard(referralData.code || '')}
-                >
-                  <IconCopy className='h-4 w-4' />
-                </Button>
-              </div>
-
-              <div className='flex flex-wrap gap-2'>
-                <Button
-                  variant='outline'
-                  size='sm'
-                  onClick={() => shareLink('native')}
-                >
-                  <IconShare className='mr-2 h-4 w-4' />
-                  {t('referral.share')}
-                </Button>
-                <Button
-                  variant='outline'
-                  size='sm'
-                  onClick={() => shareLink('twitter')}
-                >
-                  <IconBrandTwitter className='mr-2 h-4 w-4' />
-                  {t('referral.twitter')}
-                </Button>
-                <Button
-                  variant='outline'
-                  size='sm'
-                  onClick={() => shareLink('telegram')}
-                >
-                  <IconBrandTelegram className='mr-2 h-4 w-4' />
-                  {t('referral.telegram')}
-                </Button>
-                <Button
-                  variant='outline'
-                  size='sm'
-                  onClick={() => shareLink('whatsapp')}
-                >
-                  <IconBrandWhatsapp className='mr-2 h-4 w-4' />
-                  {t('referral.whatsapp')}
-                </Button>
-              </div>
-            </div>
-          </>
-        )}
-      </div>
-
-      {/* How it works */}
-      <div
-        className={cn(
-          'rounded-2xl p-5 md:p-6',
-          'bg-zinc-900/40 backdrop-blur-sm',
-          'border border-white/5',
-          'animate-fade-in-up opacity-0'
-        )}
-        style={{ animationDelay: '500ms', animationFillMode: 'forwards' }}
-      >
-        <h3 className='mb-6 text-lg font-semibold'>
-          {t('referral.howItWorks')}
-        </h3>
-        <div className='grid gap-6 md:grid-cols-3'>
-          {[
-            {
-              step: 1,
-              title: t('referral.shareLink'),
-              desc: t('referral.step1Description')
-            },
-            {
-              step: 2,
-              title: t('referral.theySignUp'),
-              desc: t('referral.step2Description')
-            },
-            {
-              step: 3,
-              title: t('referral.youEarn'),
-              desc: t('referral.step3Description', {
-                rate: referralData.commissionRate
-              })
-            }
-          ].map((item) => (
-            <div key={item.step} className='space-y-3 text-center'>
-              <div className='mx-auto flex h-12 w-12 items-center justify-center rounded-xl border border-white/10 bg-white/10 text-xl font-bold'>
-                {item.step}
-              </div>
-              <h4 className='font-semibold'>{item.title}</h4>
-              <p className='text-muted-foreground text-sm'>{item.desc}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Referred Users */}
-      <div
-        className={cn(
-          'rounded-2xl p-5 md:p-6',
-          'bg-zinc-900/40 backdrop-blur-sm',
-          'border border-white/5',
-          'animate-fade-in-up opacity-0'
-        )}
         style={{ animationDelay: '600ms', animationFillMode: 'forwards' }}
       >
-        <div className='mb-6 flex items-center gap-2'>
-          <span className='rounded-xl border border-white/5 bg-white/5 p-2'>
-            <IconUsers className='h-4 w-4' />
-          </span>
-          <div>
-            <h3 className='text-lg font-semibold'>
-              {t('referral.yourReferrals')}
-            </h3>
-            <p className='text-muted-foreground text-sm'>
-              {t('referral.manageReferrals')}
-            </p>
+        <CardHeader>
+          <div className='flex items-center gap-3'>
+            <div className='rounded-xl border border-white/5 bg-white/5 p-2'>
+              <IconUsers className='h-5 w-5' />
+            </div>
+            <div>
+              <CardTitle>{t('referral.yourReferrals')}</CardTitle>
+              <CardDescription>{t('referral.manageReferrals')}</CardDescription>
+            </div>
           </div>
-        </div>
-
-        <ReferralTable data={referredUsers} />
-      </div>
+        </CardHeader>
+        <CardContent>
+          {isLoading ? (
+            <div className='space-y-4'>
+              {[1, 2, 3].map((i) => (
+                <Skeleton key={i} className='h-16 w-full' />
+              ))}
+            </div>
+          ) : (
+            <ReferralTable data={referredUsers} />
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }

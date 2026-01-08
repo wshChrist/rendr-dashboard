@@ -10,6 +10,25 @@ export type TransactionStatus = 'confirmed' | 'pending';
 
 export type BrokerCategory = 'forex' | 'crypto' | 'futures' | 'multi';
 
+// Catégories de paires pour le paiement par lot
+export type PairCategory =
+  | 'majors'
+  | 'minors'
+  | 'exotics'
+  | 'indices'
+  | 'metals'
+  | 'crypto';
+
+// Structure pour les paiements par lot par catégorie de paires
+export interface PayoutPerLotByCategory {
+  majors?: number; // Paiement par lot pour les paires majeures (EUR/USD, GBP/USD, etc.)
+  minors?: number; // Paiement par lot pour les paires mineures (EUR/GBP, EUR/JPY, etc.)
+  exotics?: number; // Paiement par lot pour les paires exotiques
+  indices?: number; // Paiement par lot pour les indices (US30, NAS100, etc.)
+  metals?: number; // Paiement par lot pour les métaux (XAU/USD, XAG/USD, etc.)
+  crypto?: number; // Paiement par lot pour les cryptomonnaies
+}
+
 export interface Broker {
   id: string;
   name: string;
@@ -20,6 +39,7 @@ export interface Broker {
   description: string;
   website_url: string;
   supported_pairs: string[]; // Paires forex supportées
+  payout_per_lot_by_category?: PayoutPerLotByCategory; // Montants payés par lot par catégorie
   created_at: string;
 }
 

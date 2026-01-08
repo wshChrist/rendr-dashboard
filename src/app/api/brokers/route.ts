@@ -31,6 +31,7 @@ export async function GET() {
       description: row.description || '',
       website_url: row.website_url,
       supported_pairs: row.supported_pairs || [],
+      payout_per_lot_by_category: row.payout_per_lot_by_category || undefined,
       created_at: row.created_at
     }));
 

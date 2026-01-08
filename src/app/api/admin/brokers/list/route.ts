@@ -35,6 +35,7 @@ export async function GET() {
       description: row.description || '',
       website_url: row.website_url,
       supported_pairs: row.supported_pairs || [],
+      payout_per_lot_by_category: row.payout_per_lot_by_category || undefined,
       created_at: row.created_at
     }));
 
@@ -52,7 +53,7 @@ export async function GET() {
 
 /**
  * Créer un nouveau broker
- * Body: { name, logo_url, category, cashback_rate, min_withdrawal, description, website_url, supported_pairs }
+ * Body: { name, logo_url, category, cashback_rate, min_withdrawal, description, website_url, supported_pairs, payout_per_lot_by_category }
  */
 export async function POST(request: NextRequest) {
   const auth = await assertAdminApi();
@@ -124,6 +125,48 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Validation de payout_per_lot_by_category si fourni
+    if (
+      body.payout_per_lot_by_category !== undefined &&
+      (typeof body.payout_per_lot_by_category !== 'object' ||
+        Array.isArray(body.payout_per_lot_by_category))
+    ) {
+      return NextResponse.json(
+        {
+          error: 'Requête invalide',
+          message: 'payout_per_lot_by_category doit être un objet'
+        },
+        { status: 400 }
+      );
+    }
+
+    // Valider que les valeurs de payout_per_lot_by_category sont des nombres positifs
+    if (body.payout_per_lot_by_category) {
+      const payoutKeys = [
+        'majors',
+        'minors',
+        'exotics',
+        'indices',
+        'metals',
+        'crypto'
+      ];
+      for (const key of payoutKeys) {
+        if (
+          body.payout_per_lot_by_category[key] !== undefined &&
+          (typeof body.payout_per_lot_by_category[key] !== 'number' ||
+            body.payout_per_lot_by_category[key] < 0)
+        ) {
+          return NextResponse.json(
+            {
+              error: 'Requête invalide',
+              message: `${key} dans payout_per_lot_by_category doit être un nombre positif`
+            },
+            { status: 400 }
+          );
+        }
+      }
+    }
+
     const supabaseAdmin = createServiceRoleClient();
 
     const { data, error } = await supabaseAdmin
@@ -138,7 +181,8 @@ export async function POST(request: NextRequest) {
         website_url: body.website_url.trim(),
         supported_pairs: Array.isArray(body.supported_pairs)
           ? body.supported_pairs
-          : []
+          : [],
+        payout_per_lot_by_category: body.payout_per_lot_by_category || null
       })
       .select()
       .single();

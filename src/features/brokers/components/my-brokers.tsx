@@ -425,9 +425,14 @@ export function MyBrokers() {
                   {t('brokers.addAccount')}
                 </Button>
               </DialogTrigger>
-              <DialogContent className='max-w-2xl'>
+              <DialogContent className='max-h-[90vh] overflow-y-auto sm:max-w-[700px]'>
                 <DialogHeader>
-                  <DialogTitle>{t('brokers.addTradingAccount')}</DialogTitle>
+                  <DialogTitle className='flex items-center gap-2'>
+                    <div className='rounded-lg border border-white/5 bg-white/5 p-2'>
+                      <IconPlus className='h-4 w-4' />
+                    </div>
+                    {t('brokers.addTradingAccount')}
+                  </DialogTitle>
                 </DialogHeader>
                 <CreateTradingAccountForm
                   onSuccess={() => {
@@ -849,9 +854,14 @@ export function MyBrokers() {
               </div>
             </div>
           </DialogTrigger>
-          <DialogContent className='max-h-[90vh] max-w-2xl overflow-y-auto'>
+          <DialogContent className='max-h-[90vh] overflow-y-auto sm:max-w-[700px]'>
             <DialogHeader>
-              <DialogTitle>{t('brokers.addTradingAccount')}</DialogTitle>
+              <DialogTitle className='flex items-center gap-2'>
+                <div className='rounded-lg border border-white/5 bg-white/5 p-2'>
+                  <IconPlus className='h-4 w-4' />
+                </div>
+                {t('brokers.addTradingAccount')}
+              </DialogTitle>
             </DialogHeader>
             <CreateTradingAccountForm
               onSuccess={() => {

@@ -15,7 +15,7 @@ import {
   AnimatedInteger
 } from '@/components/ui/animated-number';
 import { useTradingData } from '@/hooks/use-trading-data';
-import { useMemo } from 'react';
+import { useMemo, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 
@@ -110,36 +110,88 @@ function StatCardItem({
 
 export function StatsCards() {
   const t = useTranslations();
-  const { transactions, accounts, isLoading } = useTradingData();
+  const {
+    transactions,
+    accounts,
+    isLoading: isLoadingTrading
+  } = useTradingData();
+  const [withdrawalStats, setWithdrawalStats] = useState({
+    available_balance: 0,
+    total_withdrawn: 0,
+    pending_cashback: 0,
+    total_cashback_earned: 0,
+    total_volume: 0,
+    total_trades: 0,
+    active_brokers: 0
+  });
+  const [isLoadingStats, setIsLoadingStats] = useState(true);
+
+  // Charger les stats de retraits depuis l'API
+  useEffect(() => {
+    const loadWithdrawalStats = async () => {
+      try {
+        setIsLoadingStats(true);
+        const response = await fetch('/api/withdrawals/stats');
+        if (response.ok) {
+          const data = await response.json();
+          setWithdrawalStats({
+            available_balance: data.available_balance || 0,
+            total_withdrawn: data.total_withdrawn || 0,
+            pending_cashback: data.pending_cashback || 0,
+            total_cashback_earned: data.total_cashback_earned || 0,
+            total_volume: data.total_volume || 0,
+            total_trades: data.total_trades || 0,
+            active_brokers: data.active_brokers || 0
+          });
+        }
+      } catch (error) {
+        console.error(
+          'Erreur lors du chargement des stats de retraits:',
+          error
+        );
+      } finally {
+        setIsLoadingStats(false);
+      }
+    };
+
+    loadWithdrawalStats();
+  }, []);
 
   // Calculer les stats depuis les données réelles
   const stats = useMemo(() => {
-    const totalCashback = transactions.reduce(
-      (acc, t) => acc + t.cashback_amount,
-      0
-    );
-    const totalVolume = transactions.reduce((acc, t) => acc + t.volume, 0);
-    const totalTrades = transactions.length;
-    const activeBrokers = accounts.filter(
-      (a) => a.status === 'connected'
-    ).length;
+    // Utiliser les stats de l'API si disponibles, sinon calculer depuis les transactions
+    const totalCashback =
+      withdrawalStats.total_cashback_earned > 0
+        ? withdrawalStats.total_cashback_earned
+        : transactions.reduce((acc, t) => acc + t.cashback_amount, 0);
 
-    // Pour l'instant, tout le cashback est disponible (pas de table withdrawals encore)
-    // TODO: Calculer depuis les retraits réels quand cette fonctionnalité sera disponible
-    const totalWithdrawn = 0; // À calculer depuis la table withdrawals
-    const pendingCashback = 0; // Pas de cashback en attente pour l'instant
-    const availableBalance = totalCashback - totalWithdrawn;
+    const totalVolume =
+      withdrawalStats.total_volume > 0
+        ? withdrawalStats.total_volume
+        : transactions.reduce((acc, t) => acc + t.volume, 0);
+
+    const totalTrades =
+      withdrawalStats.total_trades > 0
+        ? withdrawalStats.total_trades
+        : transactions.length;
+
+    const activeBrokers =
+      withdrawalStats.active_brokers > 0
+        ? withdrawalStats.active_brokers
+        : accounts.filter((a) => a.status === 'connected').length;
 
     return {
-      available_balance: availableBalance,
-      pending_cashback: pendingCashback,
+      available_balance: withdrawalStats.available_balance,
+      pending_cashback: withdrawalStats.pending_cashback,
       total_cashback_earned: totalCashback,
-      total_withdrawn: totalWithdrawn,
+      total_withdrawn: withdrawalStats.total_withdrawn,
       total_volume: totalVolume,
       total_trades: totalTrades,
       active_brokers: activeBrokers
     };
-  }, [transactions, accounts]);
+  }, [transactions, accounts, withdrawalStats]);
+
+  const isLoading = isLoadingTrading || isLoadingStats;
 
   if (isLoading) {
     return (

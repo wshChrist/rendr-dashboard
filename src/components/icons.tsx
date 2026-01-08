@@ -87,6 +87,7 @@ export const Icons = {
   check: IconCheck,
   workspace: IconFolder,
   teams: IconUsers,
+  users: IconUsers,
   pro: IconCrown,
   exclusive: IconStar,
   account: IconUserCircle,

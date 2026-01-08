@@ -202,22 +202,56 @@ export default function AppSidebar() {
                         >
                           <DropdownMenuLabel>{item.title}</DropdownMenuLabel>
                           <DropdownMenuSeparator />
-                          {item.items?.map((subItem) => (
-                            <DropdownMenuItem
-                              key={subItem.title}
-                              asChild
-                              className={
-                                pathname === subItem.url ? 'bg-accent' : ''
-                              }
-                            >
-                              <Link
-                                href={subItem.url}
-                                className='cursor-pointer'
+                          {item.items?.map((subItem, subIndex) => {
+                            // Si le sous-item a lui-même des items (sous-catégorie)
+                            if (subItem.items && subItem.items.length > 0) {
+                              return (
+                                <React.Fragment key={subItem.title}>
+                                  {subIndex > 0 && <DropdownMenuSeparator />}
+                                  <DropdownMenuGroup>
+                                    <DropdownMenuLabel className='text-muted-foreground text-xs font-semibold'>
+                                      {subItem.title}
+                                    </DropdownMenuLabel>
+                                    {subItem.items.map((subSubItem) => (
+                                      <DropdownMenuItem
+                                        key={subSubItem.title}
+                                        asChild
+                                        className={
+                                          pathname === subSubItem.url
+                                            ? 'bg-accent'
+                                            : ''
+                                        }
+                                      >
+                                        <Link
+                                          href={subSubItem.url}
+                                          className='cursor-pointer'
+                                        >
+                                          {subSubItem.title}
+                                        </Link>
+                                      </DropdownMenuItem>
+                                    ))}
+                                  </DropdownMenuGroup>
+                                </React.Fragment>
+                              );
+                            }
+                            // Sinon, afficher comme un item normal
+                            return (
+                              <DropdownMenuItem
+                                key={subItem.title}
+                                asChild
+                                className={
+                                  pathname === subItem.url ? 'bg-accent' : ''
+                                }
                               >
-                                {subItem.title}
-                              </Link>
-                            </DropdownMenuItem>
-                          ))}
+                                <Link
+                                  href={subItem.url}
+                                  className='cursor-pointer'
+                                >
+                                  {subItem.title}
+                                </Link>
+                              </DropdownMenuItem>
+                            );
+                          })}
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </SidebarMenuItem>
@@ -254,19 +288,62 @@ export default function AppSidebar() {
                       </CollapsibleTrigger>
                       <CollapsibleContent>
                         <SidebarMenuSub>
-                          {item.items?.map((subItem) => (
-                            <SidebarMenuSubItem key={subItem.title}>
-                              <SidebarMenuSubButton
-                                asChild
-                                isActive={pathname === subItem.url}
-                                className='transition-all duration-200 hover:translate-x-1'
-                              >
-                                <Link href={subItem.url}>
-                                  <span>{subItem.title}</span>
-                                </Link>
-                              </SidebarMenuSubButton>
-                            </SidebarMenuSubItem>
-                          ))}
+                          {item.items?.map((subItem) => {
+                            // Si le sous-item a lui-même des items (sous-catégorie)
+                            if (subItem.items && subItem.items.length > 0) {
+                              return (
+                                <Collapsible
+                                  key={subItem.title}
+                                  asChild
+                                  className='group/collapsible-sub'
+                                >
+                                  <SidebarMenuSubItem>
+                                    <CollapsibleTrigger asChild>
+                                      <SidebarMenuSubButton className='transition-all duration-200 hover:translate-x-1'>
+                                        <span>{subItem.title}</span>
+                                        <IconChevronRight className='ml-auto h-3 w-3 transition-transform duration-200 group-data-[state=open]/collapsible-sub:rotate-90' />
+                                      </SidebarMenuSubButton>
+                                    </CollapsibleTrigger>
+                                    <CollapsibleContent>
+                                      <SidebarMenuSub>
+                                        {subItem.items.map((subSubItem) => (
+                                          <SidebarMenuSubItem
+                                            key={subSubItem.title}
+                                          >
+                                            <SidebarMenuSubButton
+                                              asChild
+                                              isActive={
+                                                pathname === subSubItem.url
+                                              }
+                                              className='pl-6 transition-all duration-200 hover:translate-x-1'
+                                            >
+                                              <Link href={subSubItem.url}>
+                                                <span>{subSubItem.title}</span>
+                                              </Link>
+                                            </SidebarMenuSubButton>
+                                          </SidebarMenuSubItem>
+                                        ))}
+                                      </SidebarMenuSub>
+                                    </CollapsibleContent>
+                                  </SidebarMenuSubItem>
+                                </Collapsible>
+                              );
+                            }
+                            // Sinon, afficher comme un item normal
+                            return (
+                              <SidebarMenuSubItem key={subItem.title}>
+                                <SidebarMenuSubButton
+                                  asChild
+                                  isActive={pathname === subItem.url}
+                                  className='transition-all duration-200 hover:translate-x-1'
+                                >
+                                  <Link href={subItem.url}>
+                                    <span>{subItem.title}</span>
+                                  </Link>
+                                </SidebarMenuSubButton>
+                              </SidebarMenuSubItem>
+                            );
+                          })}
                         </SidebarMenuSub>
                       </CollapsibleContent>
                     </SidebarMenuItem>

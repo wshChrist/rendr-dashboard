@@ -8,6 +8,7 @@ import { CustomSignUpForm } from './custom-sign-up-form';
 import { motion } from 'motion/react';
 import { ReferralRegistrationHandler } from '@/components/referral-registration-handler';
 import { useTranslations } from 'next-intl';
+import { LocaleSelector } from '@/components/locale-selector';
 
 export default function SignUpViewPage({ stars }: { stars: number }) {
   const t = useTranslations();
@@ -20,6 +21,11 @@ export default function SignUpViewPage({ stars }: { stars: number }) {
           <div className='bg-primary/5 absolute -top-40 -right-40 h-80 w-80 rounded-full blur-3xl' />
           <div className='bg-primary/5 absolute -bottom-40 -left-40 h-80 w-80 rounded-full blur-3xl' />
           <div className='bg-primary/3 absolute top-1/2 left-1/2 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl' />
+        </div>
+
+        {/* Language Selector */}
+        <div className='absolute top-4 right-4 z-20'>
+          <LocaleSelector />
         </div>
 
         {/* Main content */}
