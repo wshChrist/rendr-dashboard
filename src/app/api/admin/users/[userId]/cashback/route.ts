@@ -4,13 +4,13 @@ import { createServiceRoleClient } from '@/lib/supabase/server';
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { userId: string } }
+  { params }: { params: Promise<{ userId: string }> }
 ) {
   const auth = await assertAdminApi();
   if (!auth.ok) return auth.response;
 
   try {
-    const { userId } = params;
+    const { userId } = await params;
     const body = await request.json();
     const { period, cashback_amount } = body;
 
