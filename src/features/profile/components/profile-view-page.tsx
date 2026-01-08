@@ -1019,7 +1019,7 @@ export default function ProfileViewPage() {
                         <div>
                           <p className='font-medium'>{account.broker}</p>
                           <p className='text-muted-foreground text-xs'>
-                            {account.account_id}
+                            {account.login || account.external_account_id}
                           </p>
                         </div>
                       </div>
