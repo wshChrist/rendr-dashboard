@@ -317,7 +317,7 @@ type StepProps = {
   logoUrl: string;
   setLogoUrl: (value: string) => void;
   logoFiles: File[];
-  setLogoFiles: (files: File[]) => void;
+  setLogoFiles: React.Dispatch<React.SetStateAction<File[]>>;
   isUploadingLogo: boolean;
   setIsUploadingLogo: (value: boolean) => void;
   category: BrokerCategory;
