@@ -1032,9 +1032,6 @@
     "noUpdates": "Aucune mise à jour",
     "noUpdatesFilter": "Aucune mise à jour ne correspond à ce filtre. Essayez un autre filtre ou revenez plus tard."
   },
-    "noUpdates": "No updates",
-    "noUpdatesFilter": "No updates match this filter. Try another filter or come back later."
-  },
   "tradingAccount": {
     "mustBeConnected": "Vous devez être connecté",
     "pleaseConnect": "Veuillez vous connecter avec Supabase Auth"
