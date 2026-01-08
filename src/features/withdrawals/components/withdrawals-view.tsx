@@ -493,7 +493,7 @@ export function WithdrawalsView() {
                           </p>
                           <p className='text-muted-foreground text-xs'>
                             {new Date(
-                              withdrawal.created_at
+                              withdrawal.requested_at
                             ).toLocaleDateString()}
                           </p>
                         </div>
